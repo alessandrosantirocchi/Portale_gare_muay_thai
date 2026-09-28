@@ -1,6 +1,6 @@
 import type { Database } from "@/integrations/supabase/types";
 
-export const SERIE = ["PRIMA", "SECONDA", "TERZA", "LIGHT", "ALTRO"] as const;
+export const CLASSI = ["A", "B", "C", "N"] as const;
 export const CATEGORIE = ["SENIOR", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 ANNI", "YOUNG CADETTI 10–12 ANNI", "GIOCO SPORT FINO A 9 ANNI", "ALTRO"] as const;
 export const DISCIPLINE_GARA = ["MUAY THAI", "K1", "FIGHT CODE", "ALTRO"] as const;
 export const STATI_EVENTO = ["bozza", "iscrizioni aperte", "iscrizioni chiuse", "matchmaking", "pubblicato", "concluso"] as const;
