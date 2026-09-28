@@ -166,8 +166,9 @@ function GestioneEventi() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     nome: "",
-    disciplina: "Contatto Pieno",
-    discipline_ammesse: ["Contatto Pieno"] as string[],
+    disciplina: "Muay Thai",
+    discipline_ammesse: ["Muay Thai"] as string[],
+    formati_incontro: {} as Record<string, string[]>,
     tipo: "Istituzionale",
     data_evento: "",
     luogo: "",
@@ -190,6 +191,7 @@ function GestioneEventi() {
         nome: form.nome,
         disciplina: form.disciplina,
         discipline_ammesse: form.discipline_ammesse,
+        formati_incontro: form.formati_incontro,
         tipo: form.tipo,
         data_evento: form.data_evento,
         luogo: form.luogo,
@@ -212,8 +214,9 @@ function GestioneEventi() {
       queryClient.invalidateQueries({ queryKey: ["eventi"] });
       setForm({
         nome: "",
-        disciplina: "Contatto Pieno",
-        discipline_ammesse: ["Contatto Pieno"],
+        disciplina: "Muay Thai",
+        discipline_ammesse: ["Muay Thai"],
+        formati_incontro: {},
         tipo: "Istituzionale",
         data_evento: "",
         luogo: "",
@@ -243,7 +246,7 @@ function GestioneEventi() {
         >
           <Input label="Nome evento" value={form.nome} onChange={(v) => setForm({ ...form, nome: v })} required />
           <div className="grid grid-cols-2 gap-3">
-            <DisciplineEvento value={form.discipline_ammesse} onChange={(v) => setForm({ ...form, discipline_ammesse: v, disciplina: v[0] ?? "" })} />
+            <DisciplineEvento value={form.discipline_ammesse} onChange={(v) => setForm({ ...form, discipline_ammesse: v, disciplina: v[0] ?? "" })} formati={form.formati_incontro} onFormatiChange={(v) => setForm({ ...form, formati_incontro: v })} />
             <Select label="Tipo" value={form.tipo} onChange={(v) => setForm({ ...form, tipo: v })} options={["Istituzionale", "Non Istituzionale"]} />
           </div>
           <Input label="Data evento" type="date" value={form.data_evento} onChange={(v) => setForm({ ...form, data_evento: v })} required />
@@ -342,8 +345,9 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
   const queryClient = useQueryClient();
   const [f, setF] = useState({
     nome: evento.nome ?? "",
-    disciplina: evento.disciplina ?? "Contatto Pieno",
-    discipline_ammesse: evento.discipline_ammesse?.length ? evento.discipline_ammesse as string[] : [evento.disciplina ?? "Contatto Pieno"],
+    disciplina: evento.disciplina ?? "Muay Thai",
+    discipline_ammesse: (evento.discipline_ammesse?.length ? evento.discipline_ammesse as string[] : [evento.disciplina ?? "Muay Thai"]).map((v) => ["Contatto Pieno", "Light Contact"].includes(v) ? "Kickboxing" : v),
+    formati_incontro: (evento.formati_incontro ?? {}) as Record<string, string[]>,
     tipo: evento.tipo ?? "Istituzionale",
     data_evento: evento.data_evento ?? "",
     luogo: evento.luogo ?? "",
@@ -369,6 +373,7 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
           nome: f.nome,
           disciplina: f.disciplina,
           discipline_ammesse: f.discipline_ammesse,
+          formati_incontro: f.formati_incontro,
           tipo: f.tipo,
           data_evento: f.data_evento,
           luogo: f.luogo,
@@ -406,7 +411,7 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
     >
       <Input label="Nome evento" value={f.nome} onChange={(v) => setF({ ...f, nome: v })} required />
       <div className="grid grid-cols-2 gap-3">
-        <DisciplineEvento value={f.discipline_ammesse} onChange={(v) => setF({ ...f, discipline_ammesse: v, disciplina: v[0] ?? "" })} />
+        <DisciplineEvento value={f.discipline_ammesse} onChange={(v) => setF({ ...f, discipline_ammesse: v, disciplina: v[0] ?? "" })} formati={f.formati_incontro} onFormatiChange={(v) => setF({ ...f, formati_incontro: v })} />
         <Select label="Tipo" value={f.tipo} onChange={(v) => setF({ ...f, tipo: v })} options={["Istituzionale", "Non Istituzionale"]} />
       </div>
       <div className="grid grid-cols-2 gap-3">
