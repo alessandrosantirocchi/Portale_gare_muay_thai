@@ -15,7 +15,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
     { header: "Data nascita", key: "data_nascita", width: 17 }, { header: "Età", key: "eta", width: 10 },
     { header: "Genere", key: "sesso", width: 12 }, { header: "Team", key: "team", width: 30 },
     { header: "Coach", key: "coach", width: 25 }, { header: "Disciplina", key: "disciplina", width: 20 },
-    { header: "Classe", key: "serie", width: 12 }, { header: "Categoria di peso IFMA", key: "categoriaPeso", width: 24 },
+    { header: "Classe", key: "serie", width: 12 }, { header: "Categoria di peso", key: "categoriaPeso", width: 24 },
     { header: "Peso kg", key: "peso", width: 13 }, { header: "Totale match", key: "match", width: 15 },
   ];
   iscrizioni.forEach((i) => roster.addRow(lookup.get(i.id)));
@@ -26,7 +26,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
     { header: "Cognome", key: "cognome", width: 25 }, { header: "Team", key: "team", width: 30 },
     { header: "Coach", key: "coach", width: 25 }, { header: "Peso kg", key: "peso", width: 13 },
     { header: "Disciplina", key: "disciplina", width: 20 }, { header: "Classe", key: "serie", width: 12 },
-    { header: "Categoria di peso IFMA", key: "categoriaPeso", width: 24 }, { header: "Totale match", key: "match", width: 15 },
+    { header: "Categoria di peso", key: "categoriaPeso", width: 24 }, { header: "Totale match", key: "match", width: 15 },
   ];
   pools.forEach((p) => p.iscrizione_ids.forEach((id) => poolSheet.addRow({ numero: p.numero, ...lookup.get(id) })));
 
@@ -47,7 +47,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
   sheet.getCell("B3").value = "ANGOLO ROSSO";
   sheet.getCell("E3").value = "INCONTRO";
   sheet.getCell("H3").value = "ANGOLO BLU";
-  sheet.getRow(4).values = ["Numero match", "Nome", "Cognome", "Team", "Disciplina", "Classe", "Categoria di peso IFMA", "Nome", "Cognome", "Team"];
+  sheet.getRow(4).values = ["Numero match", "Nome", "Cognome", "Team", "Disciplina", "Classe", "Categoria di peso", "Nome", "Cognome", "Team"];
 
   const red = "FFCF1D26", blue = "FF116CB7", green = "FF8AC54A", yellow = "FFFFED38";
   const fill = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
