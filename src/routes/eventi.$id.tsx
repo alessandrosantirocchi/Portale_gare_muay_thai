@@ -145,8 +145,8 @@ function SchedaEvento() {
         </div>
       </div>
 
-      <section className="mt-9 border-t border-border pt-6" aria-label="Pool e abbinamenti">
-             <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-xl uppercase">Pool e abbinamenti</h2><p className="mt-1 text-xs text-muted-foreground">{pools.length} pool · {matches.length} match pubblicati</p></div><label className="grid gap-1 text-xs text-muted-foreground">Cerca atleta o società<input type="search" value={cercaAbbinamento} onChange={(e) => setCercaAbbinamento(e.target.value)} placeholder="Nome, cognome o società" className="w-full min-w-0 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground sm:w-64" /></label></div>
+      <section className="mt-9 border-t border-border pt-6" aria-label="Atleti iscritti e abbinamenti">
+             <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-xl uppercase">Atleti iscritti e abbinamenti</h2><p className="mt-1 text-xs text-muted-foreground">{iscritti.length} atleti iscritti · {pools.length} pool · {matches.length} match pubblicati</p></div><label className="grid gap-1 text-xs text-muted-foreground">Cerca atleta o società<input type="search" value={cercaAbbinamento} onChange={(e) => setCercaAbbinamento(e.target.value)} placeholder="Nome, cognome o società" className="w-full min-w-0 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground sm:w-64" /></label></div>
              {(() => {
                const testo = cercaAbbinamento.trim().toLocaleLowerCase("it-IT");
                const corrisponde = (t: string) => !testo || t.includes(testo);
