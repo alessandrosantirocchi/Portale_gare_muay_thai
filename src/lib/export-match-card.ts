@@ -50,7 +50,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
   sheet.getRow(4).values = ["Numero match", "Angolo 1 nome", "Angolo 1 cognome", "Team 1", "Angolo 1 peso", "Angolo 2 nome", "Angolo 2 cognome", "Team 2", "Angolo 2 peso", "Disciplina", "Classe", "Categoria"];
 
   const red = "FFCF1D26", blue = "FF116CB7", green = "FF8AC54A", yellow = "FFFFED38";
-  const fill = (argb: string): ExcelJS.Fill => ({ type: "pattern", pattern: "solid", fgColor: { argb } });
+  const fill = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
   sheet.getRow(1).height = 40;
   sheet.getRow(2).height = 26;
   sheet.getRow(3).height = 28;
@@ -89,7 +89,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
     other.autoFilter = { from: { row: 1, column: 1 }, to: { row: Math.max(other.rowCount, 1), column: other.columnCount } };
   }
   sheet.pageSetup = { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 };
-  sheet.printTitlesRow = "1:4";
+  sheet.pageSetup.printTitlesRow = "1:4";
   const bytes = await workbook.xlsx.writeBuffer();
   const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
   const anchor = document.createElement("a");
