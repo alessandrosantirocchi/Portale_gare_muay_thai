@@ -137,26 +137,6 @@ function SchedaEvento() {
               </Pannello>
             </>
           )}
-
-          <h2 className="mt-8 mb-3 font-display text-xl font-semibold uppercase tracking-wide">
-            Atleti iscritti
-          </h2>
-          <Pannello className="divide-y divide-border overflow-hidden">
-            {iscritti.length === 0 && <Vuoto testo="Nessun atleta iscritto per ora." />}
-            {iscritti.map((i: any) => (
-              <div key={i.id} className="flex items-center justify-between gap-3 px-5 py-3">
-                <div>
-                  <p className="text-sm font-medium">
-                    {i.nome} {i.cognome}
-                  </p>
-                  <p className="text-[12px] text-muted-foreground">{i.nome_societa}</p>
-                </div>
-                <span className="font-mono text-[12px] text-muted-foreground">
-                  {i.categoria ?? `${i.peso_kg ?? "—"} kg`} · {i.stato}
-                </span>
-              </div>
-            ))}
-          </Pannello>
          </div>
 
         <div className="lg:col-span-5">
