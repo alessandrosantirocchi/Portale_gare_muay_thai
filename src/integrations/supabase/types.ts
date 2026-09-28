@@ -17,6 +17,7 @@ export type Database = {
       atleti: {
         Row: {
           categoria: string | null
+          categoria_peso: string | null
           certificato_disciplina: string | null
           certificato_path: string | null
           certificato_rilascio: string | null
@@ -42,6 +43,7 @@ export type Database = {
         }
         Insert: {
           categoria?: string | null
+          categoria_peso?: string | null
           certificato_disciplina?: string | null
           certificato_path?: string | null
           certificato_rilascio?: string | null
@@ -67,6 +69,7 @@ export type Database = {
         }
         Update: {
           categoria?: string | null
+          categoria_peso?: string | null
           certificato_disciplina?: string | null
           certificato_path?: string | null
           certificato_rilascio?: string | null

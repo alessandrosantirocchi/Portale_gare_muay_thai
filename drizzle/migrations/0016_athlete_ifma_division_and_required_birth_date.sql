@@ -1,0 +1,3 @@
+ALTER TABLE public.atleti ADD COLUMN IF NOT EXISTS categoria_peso text;
+ALTER TABLE public.atleti ADD CONSTRAINT atleti_birth_date_required CHECK (data_nascita IS NOT NULL AND data_nascita <= CURRENT_DATE AND data_nascita > DATE '1900-01-01') NOT VALID;
+ALTER TABLE public.atleti ADD CONSTRAINT atleti_ifma_division_valid CHECK (categoria_peso IS NULL OR categoria_peso = ANY (ARRAY['-30 kg','-32 kg','-34 kg','-36 kg','-38 kg','-40 kg','-42 kg','-44 kg','-45 kg','-46 kg','-48 kg','-50 kg','-51 kg','-52 kg','-54 kg','-56 kg','-57 kg','-58 kg','-60 kg','-63.5 kg','-67 kg','-71 kg','-75 kg','-81 kg','-86 kg','-91 kg','+60 kg','+63.5 kg','+67 kg','+71 kg','+75 kg','+81 kg','+91 kg'])) NOT VALID;
