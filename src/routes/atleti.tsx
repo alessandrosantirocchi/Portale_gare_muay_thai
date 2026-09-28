@@ -133,9 +133,9 @@ function IscrizioniAtleta({ atleta }: { atleta: Atleta }) {
     queryKey: ["iscrizioni-atleta", atleta.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("iscrizioni")
+        .from("iscrizioni_pubbliche")
         .select(
-          "id, stato, categoria_peso, disciplina, created_at, eventi(nome, data_evento, luogo, disciplina)",
+          "id, stato, categoria, disciplina, created_at, eventi(nome, data_evento, luogo, disciplina)",
         )
         .eq("atleta_id", atleta.id)
         .order("created_at", { ascending: false });
@@ -172,7 +172,7 @@ function IscrizioniAtleta({ atleta }: { atleta: Atleta }) {
                 {formatDataBreve(i.eventi?.data_evento)}
                 {i.eventi?.luogo ? ` · ${i.eventi.luogo}` : ""} ·{" "}
                 {i.disciplina || i.eventi?.disciplina || atleta.disciplina}
-                {i.categoria_peso ? ` · ${i.categoria_peso}` : ""}
+                {i.categoria ? ` · ${i.categoria}` : ""}
               </p>
             </div>
             <StatoIscrizione stato={i.stato} />
