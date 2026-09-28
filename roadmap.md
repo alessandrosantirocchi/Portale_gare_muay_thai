@@ -11,6 +11,7 @@
 - [ ] Unificare i filtri delle discipline duplicati per maiuscole/minuscole nel calendario
 - [ ] Centrare il sottotitolo sotto il logo grande e nascondere il logo piccolo solo in homepage
 - [ ] Audit generale di registrazioni, matchmaking e flussi collegati
+- [ ] Separare discipline (Kickboxing, K1, Muay Thai) dalle tipologie di incontro (Light, Contatto Pieno) nei form evento e filtri
 - [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
 - [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
 - [x] Home: hero, top 3 ranking, prossimi eventi, calendario
