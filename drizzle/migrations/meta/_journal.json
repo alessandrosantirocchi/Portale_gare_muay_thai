@@ -71,6 +71,13 @@
       "when": 1790631519776,
       "tag": "0009_automatic_registration_pools",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790631535552,
+      "tag": "0010_correct_automatic_pool_seed",
+      "breakpoints": true
     }
   ]
 }
