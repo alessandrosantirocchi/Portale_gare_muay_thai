@@ -33,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/area")({
 function AreaSocieta() {
   const { user } = useSession();
   const { data: profilo } = useProfilo(user?.id);
+  const logoUrl = useLogoUrl(profilo?.logo_path);
   const { data: admin } = useIsAdmin(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
