@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CLASSI, CATEGORIE } from "@/lib/fight-hub";
+import { CLASSI, CATEGORIE, etaAllaData } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
 import { categoriaPesoIfma } from "@/lib/pesi-ifma";
 
@@ -10,6 +10,7 @@ type Registration = {
   snapshot_cognome: string | null; snapshot_peso_kg: number | null;
   snapshot_serie: string | null; snapshot_categoria: string | null;
   snapshot_sesso?: string | null; snapshot_data_nascita?: string | null; categoria_peso?: string | null;
+  senior_17?: boolean | null;
   snapshot_coach: string | null; snapshot_totale_match: number | null;
   disciplina: string | null;
   eventi: { nome: string; data_evento: string; stato: string; fine_iscrizioni: string; apertura_iscrizioni: string | null; discipline_ammesse: string[] | null } | null;
@@ -19,14 +20,14 @@ export function ModificaIscrizione({ iscrizione: i, userId }: { iscrizione: Regi
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [form, setForm] = useState({ peso: String(i.snapshot_peso_kg ?? ""), classe: i.snapshot_serie ?? "N", categoria: i.snapshot_categoria ?? "SENIOR", coach: i.snapshot_coach ?? "", match: String(i.snapshot_totale_match ?? 0), disciplina: i.disciplina ?? "" });
+  const [form, setForm] = useState({ peso: String(i.snapshot_peso_kg ?? ""), classe: i.snapshot_serie ?? "N", categoria: i.snapshot_categoria ?? "SENIOR", coach: i.snapshot_coach ?? "", match: String(i.snapshot_totale_match ?? 0), disciplina: i.disciplina ?? "", senior_17: i.senior_17 ?? false });
   const [roster, setRoster] = useState(false);
   const evento = i.eventi;
   const editable = !!evento && ["aperto", "iscrizioni aperte"].includes(evento.stato) && new Date(evento.fine_iscrizioni).getTime() > Date.now() && (!evento.apertura_iscrizioni || new Date(evento.apertura_iscrizioni).getTime() <= Date.now());
   const refresh = () => { qc.invalidateQueries({ queryKey: ["mie-iscrizioni"] }); qc.invalidateQueries({ queryKey: ["iscritti"] }); qc.invalidateQueries({ queryKey: ["iscrizioni-atleta"] }); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["conteggi-iscritti"] }); qc.invalidateQueries({ queryKey: ["public-pools"] }); };
   const save = useMutation({ mutationFn: async () => {
     if (!editable) throw new Error("Le iscrizioni sono chiuse.");
-    const values = { snapshot_peso_kg: form.peso ? Number(form.peso) : null, snapshot_serie: form.classe, snapshot_categoria: form.categoria, snapshot_coach: form.coach, snapshot_totale_match: Number(form.match), disciplina: form.disciplina };
+    const values = { snapshot_peso_kg: form.peso ? Number(form.peso) : null, snapshot_serie: form.classe, snapshot_categoria: form.senior_17 ? "SENIOR" : form.categoria, senior_17: form.senior_17, snapshot_coach: form.coach, snapshot_totale_match: Number(form.match), disciplina: form.disciplina };
     if (!categoriaPesoIfma(values.snapshot_peso_kg, i.snapshot_sesso ?? "", i.snapshot_data_nascita ?? null, evento?.data_evento ?? "")) throw new Error("Inserisci un peso valido per la categoria IFMA.");
     const { error } = await supabase.from("iscrizioni").update(values).eq("id", i.id).eq("societa_id", userId);
     if (error) throw error;
