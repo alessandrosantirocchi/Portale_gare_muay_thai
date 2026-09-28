@@ -15,6 +15,14 @@ export type Evento = {
   orario: string | null;
   programma: string | null;
   locandina_path: string | null;
+  organizzatore: string | null;
+  apertura_iscrizioni: string | null;
+  discipline_ammesse: string[] | null;
+  serie_ammesse: string[] | null;
+  categorie_ammesse: string[] | null;
+  limite_partecipanti: number | null;
+  blocca_certificato_scaduto: boolean | null;
+  originale_richiesto: boolean | null;
 };
 
 export type Atleta = {
@@ -31,6 +39,11 @@ export type Atleta = {
   vittorie: number;
   sconfitte: number;
   pareggi: number;
+  coach: string | null;
+  serie: string | null;
+  categoria: string | null;
+  totale_match: number | null;
+  certificato_scadenza: string | null;
 };
 
 export async function fetchEventi() {

@@ -43,4 +43,8 @@ export const DISCIPLINE = [
   "Muay Thai",
   "Kickboxing",
   "Light Contact",
+  "MUAY THAI",
+  "K1",
+  "FIGHT CODE",
+  "ALTRO",
 ];
