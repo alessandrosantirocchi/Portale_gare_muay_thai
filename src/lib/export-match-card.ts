@@ -72,9 +72,20 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
     cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FF172029" } };
     cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
   });
-  cards.forEach((c, index) => {
+  const righe = [
+    ...cards.map((c) => ({ etichetta: c.numero ?? "—", rosso_id: c.rosso_id, blu_id: c.blu_id })),
+    ...pools.flatMap((pool) => {
+      const membri = pool.iscrizione_ids.filter((id) => lookup.has(id));
+      return Array.from({ length: Math.ceil(membri.length / 2) }, (_, index) => ({
+        etichetta: `Pool #${pool.numero ?? "—"} · ${index + 1}`,
+        rosso_id: membri[index * 2],
+        blu_id: membri[index * 2 + 1],
+      }));
+    }),
+  ];
+  righe.forEach((c, index) => {
     const r = lookup.get(c.rosso_id), b = lookup.get(c.blu_id);
-    const row = sheet.addRow([c.numero, r?.nome, r?.cognome, r?.team, r?.disciplina, r?.serie, r?.categoria, b?.nome, b?.cognome, b?.team]);
+    const row = sheet.addRow([c.etichetta, r?.nome, r?.cognome, r?.team, r?.disciplina, r?.serie, r?.categoria, b?.nome, b?.cognome, b?.team]);
     row.height = 34;
     row.eachCell({ includeEmpty: true }, (cell, col) => {
       cell.fill = fill(index % 2 === 0 ? col >= 2 && col <= 4 ? "FFF8ECEC" : col >= 8 && col <= 10 ? "FFE8F2FB" : "FFE0E2E4" : col >= 2 && col <= 4 ? "FFFFF8F8" : col >= 8 && col <= 10 ? "FFF7FBFF" : "FFFFFFFF");
