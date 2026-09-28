@@ -8,6 +8,7 @@
 - [ ] Aggiornare le informazioni dell'evento secondo l'immagine inviata
 - [ ] Consentire più discipline nella creazione e modifica degli eventi
 - [ ] Completare l'intero Big Prompt e provarne il flusso reale fino all'export Excel
+- [ ] Unificare i filtri delle discipline duplicati per maiuscole/minuscole nel calendario
 - [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
 - [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
 - [x] Home: hero, top 3 ranking, prossimi eventi, calendario
