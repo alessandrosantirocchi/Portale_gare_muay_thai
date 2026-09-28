@@ -53,3 +53,4 @@
 - [ ] Caricare il logo della società nel profilo (bucket privato + anteprima)
 - [ ] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
 - [ ] Rendere obbligatori tutti i campi del form atleti e ripristinare l'etichetta "Cognome coach"
+- [ ] Pool e abbinamenti in pagina evento: atleti in orizzontale come screenshot + icona lampeggiante con numero pool
