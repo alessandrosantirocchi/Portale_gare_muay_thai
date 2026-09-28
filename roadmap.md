@@ -1,6 +1,7 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
+- [ ] Generare automaticamente pool pubblici da iscrizioni confermate compatibili per classe, peso ed età, senza intervento admin
 - [x] Rendere visibili senza accesso i pool pubblicati e gli abbinamenti evento, inclusi pool da 2 o 3 atleti
 - [x] Rinominare nell'Excel della Match Card le colonne Rosso/Blu in Angolo 1/2 e i team senza colore
 - [x] Normalizzare nome e cognome con iniziali maiuscole, anche per dati inseriti in minuscolo
