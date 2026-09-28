@@ -29,6 +29,10 @@ export function iniziali(nome: string, cognome: string) {
   return `${nome.charAt(0)}${cognome.charAt(0)}`.toUpperCase();
 }
 
+export function nomeProprio(value: string) {
+  return value.trim().toLocaleLowerCase("it-IT").replace(/(^|[\s'’\-])([^\s'’\-])/gu, (_, separator: string, initial: string) => separator + initial.toLocaleUpperCase("it-IT"));
+}
+
 export function contoAllaRovescia(fine: string) {
   const diff = new Date(fine).getTime() - Date.now();
   if (diff <= 0) return null;

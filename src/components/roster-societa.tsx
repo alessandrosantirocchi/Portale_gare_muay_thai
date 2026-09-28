@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DISCIPLINE_GARA, CLASSI, CATEGORIE, etaAllaData } from "@/lib/fight-hub";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { Button } from "@/components/ui/button";
+import { nomeProprio } from "@/lib/format";
 
 const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: "", disciplina: "MUAY THAI", serie: "N", categoria: "SENIOR", coach: "", totale_match: "0", certificato_rilascio: "", certificato_scadenza: "", certificato_tipo: "", certificato_disciplina: "" };
 type Form = typeof empty;
@@ -24,7 +25,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
 
   const save = useMutation({
     mutationFn: async () => {
-      const values = { nome: form.nome.trim(), cognome: form.cognome.trim(), data_nascita: form.data_nascita || null, sesso: form.sesso, peso_kg: form.peso_kg ? Number(form.peso_kg) : null, disciplina: form.disciplina, serie: form.serie, categoria: form.categoria, coach: form.coach.trim() || null, totale_match: Number(form.totale_match) || 0, certificato_rilascio: form.certificato_rilascio || null, certificato_scadenza: form.certificato_scadenza || null, certificato_tipo: form.certificato_tipo || null, certificato_disciplina: form.certificato_disciplina || null };
+      const values = { nome: nomeProprio(form.nome), cognome: nomeProprio(form.cognome), data_nascita: form.data_nascita || null, sesso: form.sesso, peso_kg: form.peso_kg ? Number(form.peso_kg) : null, disciplina: form.disciplina, serie: form.serie, categoria: form.categoria, coach: form.coach.trim() || null, totale_match: Number(form.totale_match) || 0, certificato_rilascio: form.certificato_rilascio || null, certificato_scadenza: form.certificato_scadenza || null, certificato_tipo: form.certificato_tipo || null, certificato_disciplina: form.certificato_disciplina || null };
       const { error } = editId ? await supabase.from("atleti").update(values).eq("id", editId).eq("societa_id", userId) : await supabase.from("atleti").insert({ ...values, societa_id: userId, nome_societa: nomeSocieta });
       if (error) throw error;
     },

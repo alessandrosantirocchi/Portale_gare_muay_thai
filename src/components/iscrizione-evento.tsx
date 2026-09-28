@@ -7,13 +7,13 @@ import { disciplinaCanonica } from "@/lib/format";
 
 export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; atleti: Atleta[]; userId: string | null }) {
   const qc = useQueryClient();
-  const [existing, setExisting] = useState<string[]>([]);
+  const [existing, setExisting] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState("");
   useEffect(() => {
     if (!userId) return;
     let active = true;
-    supabase.from("iscrizioni").select("atleta_id").eq("evento_id", evento.id).eq("societa_id", userId).then(({ data }) => {
-      if (active) setExisting((data ?? []).map((i) => i.atleta_id));
+    supabase.from("iscrizioni").select("atleta_id, stato").eq("evento_id", evento.id).eq("societa_id", userId).then(({ data }) => {
+      if (active) setExisting(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.stato])));
     });
     return () => { active = false; };
   }, [userId, evento.id]);
@@ -35,7 +35,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       return a.id;
     },
     onSuccess: (id) => {
-      setExisting((ids) => [...ids, id]);
+      setExisting((ids) => ({ ...ids, [id]: "confermata" }));
       setMsg("Atleta iscritto e confermato.");
       for (const key of ["iscritti", "mie-iscrizioni", "conteggi-iscritti", "iscrizioni-atleta"]) qc.invalidateQueries({ queryKey: [key] });
     },
@@ -47,9 +47,9 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
     {!aperto ? <p className="mt-2 text-sm text-muted-foreground">Le iscrizioni per questo evento sono chiuse.</p> : !userId ? <p className="mt-2 text-sm"><Link to="/auth" className="text-primary underline">Accedi</Link> con la tua società per iscrivere gli atleti.</p> : <div className="mt-4 space-y-3">
       {atleti.length === 0 && <p className="text-sm text-muted-foreground">Nessun atleta nel roster. <Link to="/area" className="text-primary underline">Aggiungi un atleta</Link>.</p>}
       {atleti.map((a) => <label key={a.id} className="flex cursor-pointer items-center gap-2 border-b border-border py-2 text-sm font-semibold">
-        <input type="checkbox" checked={existing.includes(a.id)} disabled={existing.includes(a.id) || save.isPending} onChange={() => { setMsg(""); save.mutate(a); }} />
+        <input type="checkbox" checked={!!existing[a.id]} disabled={!!existing[a.id] || save.isPending} onChange={() => { setMsg(""); save.mutate(a); }} />
         {a.cognome} {a.nome}
-        {existing.includes(a.id) && <span className="text-xs font-normal text-muted-foreground">Iscritto · confermato</span>}
+        {existing[a.id] && <span className="text-xs font-normal text-muted-foreground">Iscritto · {existing[a.id]}</span>}
         {save.isPending && save.variables?.id === a.id && <span className="text-xs font-normal text-muted-foreground">Iscrizione…</span>}
       </label>)}
       {msg && <p role="status" className="text-xs text-muted-foreground">{msg}</p>}
