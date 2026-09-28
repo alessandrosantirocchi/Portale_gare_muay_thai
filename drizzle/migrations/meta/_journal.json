@@ -57,6 +57,13 @@
       "when": 1790631118942,
       "tag": "0007_normalize_athlete_names_and_auto_confirm",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790631309203,
+      "tag": "0008_show_published_pairings_on_open_events",
+      "breakpoints": true
     }
   ]
 }

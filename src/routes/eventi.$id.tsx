@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/eventi/$id")({
 function SchedaEvento() {
   const { id } = useParams({ from: "/eventi/$id" });
   const { session } = useSession();
+  const [cercaAbbinamento, setCercaAbbinamento] = useState("");
 
   const { data: evento, isLoading } = useQuery({
     queryKey: ["evento", id],
@@ -40,8 +42,8 @@ function SchedaEvento() {
     queryKey: ["iscritti", id],
     queryFn: () => fetchIscrittiEvento(id),
   });
-  const { data: matches = [] } = useQuery({ queryKey: ["public-matches", id], queryFn: async () => { const { data } = await supabase.from("match_cards").select("*").eq("evento_id", id).eq("stato", "pubblicato"); return data ?? []; } });
-  const { data: pools = [] } = useQuery({ queryKey: ["public-pools", id], queryFn: async () => { const { data } = await supabase.from("pools").select("*").eq("evento_id", id).eq("stato", "pubblicato"); return data ?? []; } });
+  const { data: matches = [] } = useQuery({ queryKey: ["public-matches", id], queryFn: async () => { const { data, error } = await supabase.from("match_cards").select("id, numero, rosso_id, blu_id").eq("evento_id", id).eq("stato", "pubblicato").order("numero"); if (error) throw error; return data ?? []; } });
+  const { data: pools = [] } = useQuery({ queryKey: ["public-pools", id], queryFn: async () => { const { data, error } = await supabase.from("pools").select("id, numero, iscrizione_ids").eq("evento_id", id).eq("stato", "pubblicato").order("numero"); if (error) throw error; return data ?? []; } });
   const { data: mieiAtleti = [] } = useQuery({
     queryKey: ["miei-atleti", session?.user.id],
     enabled: !!session,
@@ -155,7 +157,17 @@ function SchedaEvento() {
               </div>
             ))}
           </Pannello>
-          {(["pubblicato", "concluso"].includes(evento.stato)) && (matches.length > 0 || pools.length > 0) && <section className="mt-8"><h2 className="font-display text-xl uppercase">Abbinamenti pubblicati</h2>{matches.map((m) => { const a = iscritti.find((i) => i.id === m.rosso_id), b = iscritti.find((i) => i.id === m.blu_id); return <p key={m.id} className="border-b border-border py-2 text-sm">#{m.numero} · Rosso: {a ? `${a.nome} ${a.cognome}` : "—"} / Blu: {b ? `${b.nome} ${b.cognome}` : "—"}</p>; })}{pools.map((pool) => <p key={pool.id} className="border-b border-border py-2 text-sm">Pool #{pool.numero} · {pool.iscrizione_ids.map((id) => { const i = iscritti.find((v) => v.id === id); return i ? `${i.nome} ${i.cognome}` : "—"; }).join(" / ")}</p>)}</section>}
+           <section className="mt-9 border-t border-border pt-6" aria-label="Pool e abbinamenti">
+             <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-xl uppercase">Pool e abbinamenti</h2><p className="mt-1 text-xs text-muted-foreground">{pools.length} pool · {matches.length} match pubblicati</p></div><label className="grid gap-1 text-xs text-muted-foreground">Cerca atleta o società<input type="search" value={cercaAbbinamento} onChange={(e) => setCercaAbbinamento(e.target.value)} placeholder="Nome, cognome o società" className="w-full min-w-0 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground sm:w-64" /></label></div>
+             {(() => {
+               const atleta = (entryId: string) => iscritti.find((i) => i.id === entryId);
+               const corrisponde = (ids: string[]) => !cercaAbbinamento.trim() || ids.some((entryId) => { const i = atleta(entryId); return `${i?.nome ?? ""} ${i?.cognome ?? ""} ${i?.nome_societa ?? ""}`.toLocaleLowerCase("it-IT").includes(cercaAbbinamento.trim().toLocaleLowerCase("it-IT")); });
+               const poolVisibili = pools.filter((p) => corrisponde(p.iscrizione_ids));
+               const matchVisibili = matches.filter((m) => corrisponde([m.rosso_id, m.blu_id]));
+               const nome = (entryId: string) => { const i = atleta(entryId); return i ? <><strong className="text-sm text-foreground">{i.cognome} {i.nome}</strong><span className="text-xs text-muted-foreground">{i.nome_societa} · {i.peso_kg ?? "—"} kg</span></> : <span className="text-sm text-muted-foreground">Atleta non disponibile</span>; };
+               return <>{pools.length === 0 && matches.length === 0 ? <p className="mt-5 border-y border-border py-5 text-sm text-muted-foreground">Gli abbinamenti non sono ancora stati pubblicati.</p> : poolVisibili.length === 0 && matchVisibili.length === 0 ? <p className="mt-5 border-y border-border py-5 text-sm text-muted-foreground">Nessun abbinamento trovato.</p> : <div className="mt-5 space-y-6">{poolVisibili.length > 0 && <div><h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Pool</h3><div className="grid gap-3 sm:grid-cols-2">{poolVisibili.map((p) => <div key={p.id} className="rounded-md border border-border bg-card p-4"><div className="flex items-baseline justify-between gap-3 border-b border-border pb-3"><h4 className="font-display text-lg uppercase">Pool #{p.numero ?? "—"}</h4><span className="text-xs text-primary">{p.iscrizione_ids.length} atleti</span></div><ol className="divide-y divide-border">{p.iscrizione_ids.map((entryId, index) => <li key={`${entryId}-${index}`} className="flex items-center gap-3 py-2"><span className="w-5 shrink-0 text-center font-mono text-xs text-muted-foreground">{index + 1}</span><span className="flex min-w-0 flex-col">{nome(entryId)}</span></li>)}</ol></div>)}</div></div>}{matchVisibili.length > 0 && <div><h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Match</h3><div className="grid gap-3 sm:grid-cols-2">{matchVisibili.map((m) => <div key={m.id} className="rounded-md border border-border bg-card p-4"><h4 className="border-b border-border pb-3 font-display text-lg uppercase">Match #{m.numero ?? "—"}</h4><div className="divide-y divide-border">{[m.rosso_id, m.blu_id].map((entryId, index) => <div key={entryId} className="flex items-center gap-3 py-2"><span className="shrink-0 text-xs text-muted-foreground">Angolo {index + 1}</span><span className="flex min-w-0 flex-col">{nome(entryId)}</span></div>)}</div></div>)}</div></div>}</div>}</>;
+             })()}
+           </section>
         </div>
 
         <div className="lg:col-span-5">
