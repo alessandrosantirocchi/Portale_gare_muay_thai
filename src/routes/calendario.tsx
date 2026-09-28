@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchConteggiIscritti, fetchEventi } from "@/lib/queries";
-import { DISCIPLINE, disciplinaCanonica } from "@/lib/format";
+import { DISCIPLINE, disciplinaCanonica, disciplineEvento } from "@/lib/format";
 import { FiltriDisciplina, TabellaEventi } from "@/components/tabella-eventi";
 import { SezioneTitolo } from "@/components/ui-blocchi";
 
@@ -38,7 +38,7 @@ function Calendario() {
 
   const oggi = new Date().toISOString().slice(0, 10);
   const filtrati = eventi.filter((e) => {
-    if (disciplina !== "Tutti" && !(e.discipline_ammesse?.length ? e.discipline_ammesse.some((d) => disciplinaCanonica(d) === disciplinaCanonica(disciplina)) : disciplinaCanonica(e.disciplina) === disciplinaCanonica(disciplina))) return false;
+    if (disciplina !== "Tutti" && !disciplineEvento(e).some((d) => disciplinaCanonica(d) === disciplinaCanonica(disciplina))) return false;
     if (stato === "aperti") return e.data_evento >= oggi;
     if (stato === "conclusi") return e.data_evento < oggi;
     return true;

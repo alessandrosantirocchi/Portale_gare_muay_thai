@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchEvento, fetchIscrittiEvento, type Atleta } from "@/lib/queries";
-import { formatDataCompleta } from "@/lib/format";
+import { formatDataCompleta, disciplineEvento, type FormatiIncontro } from "@/lib/format";
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
 import { IscrizioneEvento } from "@/components/iscrizione-evento";
@@ -79,7 +79,8 @@ function SchedaEvento() {
 
       <div className="mt-4 grid gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7">
-          <Etichetta>{evento.discipline_ammesse?.length ? evento.discipline_ammesse.join(" · ") : evento.disciplina}</Etichetta>
+           <Etichetta>{disciplineEvento(evento).join(" · ")}</Etichetta>
+           {Object.entries((evento.formati_incontro ?? {}) as FormatiIncontro).filter(([, formats]) => formats.length).map(([discipline, formats]) => <p key={discipline} className="mt-2 text-xs text-muted-foreground">{discipline}: {formats.join(" · ")}</p>)}
           <h1 className="mt-2 font-display text-4xl font-semibold uppercase leading-none">
             {evento.nome}
           </h1>

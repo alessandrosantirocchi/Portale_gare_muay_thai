@@ -6,7 +6,7 @@ import {
   fetchEventi,
   type Evento,
 } from "@/lib/queries";
-import { contoAllaRovescia, formatDataBreve, DISCIPLINE, disciplinaCanonica } from "@/lib/format";
+import { contoAllaRovescia, formatDataBreve, DISCIPLINE, disciplinaCanonica, disciplineEvento } from "@/lib/format";
 import { useLocandina } from "@/lib/locandine";
 import { SezioneTitolo, Pannello, Etichetta } from "@/components/ui-blocchi";
 import { FiltriDisciplina, TabellaEventi } from "@/components/tabella-eventi";
@@ -45,7 +45,7 @@ function Home() {
   const oggi = new Date().toISOString().slice(0, 10);
   const prossimi = eventi.filter((e) => e.data_evento >= oggi).slice(0, 3);
   const filtrati =
-    filtro === "Tutti" ? eventi.slice(0, 6) : eventi.filter((e) => (e.discipline_ammesse?.length ? e.discipline_ammesse : [e.disciplina]).some((d) => disciplinaCanonica(d) === disciplinaCanonica(filtro)));
+    filtro === "Tutti" ? eventi.slice(0, 6) : eventi.filter((e) => disciplineEvento(e).some((d) => disciplinaCanonica(d) === disciplinaCanonica(filtro)));
 
   return (
     <div className="mx-auto max-w-[1200px] px-5">
@@ -90,7 +90,7 @@ function Home() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-display text-lg font-medium uppercase leading-tight transition-colors group-hover:text-primary">{e.nome}</span>
-                   <span className="mt-1 block text-xs text-muted-foreground">{e.luogo} · {e.discipline_ammesse?.length ? e.discipline_ammesse.join(" · ") : e.disciplina}</span>
+                   <span className="mt-1 block text-xs text-muted-foreground">{e.luogo} · {disciplineEvento(e).join(" · ")}</span>
                 </span>
                 <span className="text-primary" aria-hidden="true">↗</span>
               </Link>
@@ -133,7 +133,7 @@ function CardEvento({ evento, iscritti }: { evento: Evento; iscritti: number }) 
   return (
     <article className="flex flex-col gap-4 rounded-2xl bg-card p-5 ring-1 ring-black/5 transition-colors hover:ring-primary/30">
       <div className="flex items-center justify-between">
-        <Etichetta>{evento.disciplina}</Etichetta>
+        <Etichetta>{disciplineEvento(evento).join(" · ")}</Etichetta>
         <span className="font-mono text-[11px] text-muted-foreground">{iscritti} iscritti</span>
       </div>
       <div>
