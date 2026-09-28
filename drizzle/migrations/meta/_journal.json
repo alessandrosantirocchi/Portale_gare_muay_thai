@@ -148,6 +148,13 @@
       "when": 1790634429172,
       "tag": "0020_public_registrations_extended_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1790634673917,
+      "tag": "0021_grant_execute_has_role_for_storage",
+      "breakpoints": true
     }
   ]
 }
