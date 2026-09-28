@@ -84,7 +84,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
     }),
   ];
   righe.forEach((c, index) => {
-    const r = lookup.get(c.rosso_id), b = lookup.get(c.blu_id);
+    const r = c.rosso_id ? lookup.get(c.rosso_id) : undefined, b = c.blu_id ? lookup.get(c.blu_id) : undefined;
     const row = sheet.addRow([c.etichetta, r?.nome, r?.cognome, r?.team, r?.disciplina, r?.serie, r?.categoria, b?.nome, b?.cognome, b?.team]);
     row.height = 34;
     row.eachCell({ includeEmpty: true }, (cell, col) => {
