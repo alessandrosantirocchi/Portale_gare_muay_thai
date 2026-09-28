@@ -1,17 +1,17 @@
-# Fighting Spirit — portale iscrizione atleti
+# FIGHT HUB — portale iscrizione atleti
 
 ## Task
-- [ ] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
-- [ ] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
+- [x] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
+- [x] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
 - [ ] Fight Hub Big Prompt: partire dal punto 2 e realizzare le modifiche richieste in modo additivo e conservativo
-- [ ] Sostituire le serie con classi A, B, C, N nei dati atleta, iscrizione, matchmaking ed export
-- [ ] Aggiornare le informazioni dell'evento secondo l'immagine inviata
-- [ ] Consentire più discipline nella creazione e modifica degli eventi
+- [x] Sostituire le serie con classi A, B, C, N nei dati atleta, iscrizione, matchmaking ed export
+- [x] Aggiornare le informazioni dell'evento secondo l'immagine inviata
+- [x] Consentire più discipline nella creazione e modifica degli eventi
 - [ ] Completare l'intero Big Prompt e provarne il flusso reale fino all'export Excel
-- [ ] Unificare i filtri delle discipline duplicati per maiuscole/minuscole nel calendario
-- [ ] Centrare il sottotitolo sotto il logo grande e nascondere il logo piccolo solo in homepage
-- [ ] Audit generale di registrazioni, matchmaking e flussi collegati
-- [ ] Separare discipline (Kickboxing, K1, Muay Thai) dalle tipologie di incontro (Light, Contatto Pieno) nei form evento e filtri
+- [x] Unificare i filtri delle discipline duplicati per maiuscole/minuscole nel calendario
+- [x] Centrare il sottotitolo sotto il logo grande e nascondere il logo piccolo solo in homepage
+- [x] Audit generale di registrazioni, matchmaking e flussi collegati
+- [x] Separare discipline (Kickboxing, K1, Muay Thai) dalle tipologie di incontro (Light, Contatto Pieno) nei form evento e filtri
 - [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
 - [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
 - [x] Home: hero, top 3 ranking, prossimi eventi, calendario
@@ -26,7 +26,7 @@
 - [x] Evento di prova con iscritti e conferme, verifica su Le mie iscrizioni
 - [x] Calendario con eventi reali FIGHT1 Lazio 2026/27 (rimuovere eventi inventati)
 - [x] Caricamento locandina per evento (admin) e visualizzazione pubblica
-- [ ] Locandina Fighting Spirit New Warriors in evidenza in homepage
+- [x] Locandina Fighting Spirit New Warriors in evidenza in homepage
 - [x] Account admin reale + societa reale, verifica pagina Utenti e ruoli
 - [x] Test iscrizione dalla pagina pubblica evento -> area riservata -> Le mie iscrizioni
 - [x] Admin: gestione eventi completa (crea, modifica, elimina, locandina)
