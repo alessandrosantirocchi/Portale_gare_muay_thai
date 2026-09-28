@@ -29,6 +29,13 @@
       "when": 1790629784730,
       "tag": "0003_fight_hub_certificati_and_registration_security",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790629924923,
+      "tag": "0004_fight_hub_private_roster_and_registration_access",
+      "breakpoints": true
     }
   ]
 }
