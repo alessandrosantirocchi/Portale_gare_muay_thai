@@ -5,6 +5,7 @@
 - [ ] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
 - [ ] Fight Hub Big Prompt: partire dal punto 2 e realizzare le modifiche richieste in modo additivo e conservativo
 - [ ] Sostituire le serie con classi A, B, C, N nei dati atleta, iscrizione, matchmaking ed export
+- [ ] Aggiornare le informazioni dell'evento secondo l'immagine inviata
 - [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
 - [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
 - [x] Home: hero, top 3 ranking, prossimi eventi, calendario
