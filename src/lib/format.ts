@@ -43,8 +43,11 @@ export const DISCIPLINE = [
   "Muay Thai",
   "Kickboxing",
   "Light Contact",
-  "MUAY THAI",
   "K1",
   "FIGHT CODE",
   "ALTRO",
 ];
+
+export function disciplinaCanonica(value: string) {
+  return value.trim().toLocaleUpperCase("it-IT");
+}
