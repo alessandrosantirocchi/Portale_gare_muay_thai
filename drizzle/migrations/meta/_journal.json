@@ -85,6 +85,13 @@
       "when": 1790632007048,
       "tag": "0011_ifma_weight_class_assignment",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790632023461,
+      "tag": "0012_group_automatic_pools_by_ifma_class",
+      "breakpoints": true
     }
   ]
 }
