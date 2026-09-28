@@ -11,7 +11,7 @@ import { z } from "zod";
 const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: "", categoria_peso: "", disciplina: "MUAY THAI", serie: "N", categoria: "SENIOR", coach: "", totale_match: "0", certificato_rilascio: "", certificato_scadenza: "", certificato_tipo: "", certificato_disciplina: "" };
 type Form = typeof empty;
 
-const atletaSchema = z.object({ nome: z.string().trim().min(1).max(100), cognome: z.string().trim().min(1).max(100), data_nascita: z.iso.date(), sesso: z.enum(["M", "F"]), peso_kg: z.string(), categoria_peso: z.string() });
+const atletaSchema = z.object({ nome: z.string().trim().min(1).max(100), cognome: z.string().trim().min(1).max(100), data_nascita: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), sesso: z.enum(["M", "F"]), peso_kg: z.string(), categoria_peso: z.string() });
 function validaAtleta(row: Form) {
   const parsed = atletaSchema.safeParse(row);
   const birth = row.data_nascita;
