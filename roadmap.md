@@ -1,6 +1,7 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
+- [ ] Iscrivere automaticamente l'atleta appena viene selezionato, senza ulteriore conferma
 - [x] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
 - [x] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
 - [ ] Fight Hub Big Prompt: partire dal punto 2 e realizzare le modifiche richieste in modo additivo e conservativo
