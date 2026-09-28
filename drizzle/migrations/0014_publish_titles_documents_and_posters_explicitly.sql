@@ -1,0 +1,10 @@
+ALTER TABLE public.titoli ADD COLUMN IF NOT EXISTS pubblicato boolean NOT NULL DEFAULT true;
+ALTER TABLE public.titoli ALTER COLUMN pubblicato SET DEFAULT false;
+ALTER TABLE public.documenti ADD COLUMN IF NOT EXISTS pubblicato boolean NOT NULL DEFAULT true;
+ALTER TABLE public.documenti ALTER COLUMN pubblicato SET DEFAULT false;
+ALTER TABLE public.eventi ADD COLUMN IF NOT EXISTS locandina_pubblicata boolean NOT NULL DEFAULT true;
+ALTER TABLE public.eventi ALTER COLUMN locandina_pubblicata SET DEFAULT false;
+DROP POLICY IF EXISTS "titoli visibili a tutti" ON public.titoli;
+CREATE POLICY "titoli pubblicati visibili a tutti" ON public.titoli FOR SELECT TO anon, authenticated USING (pubblicato = true);
+DROP POLICY IF EXISTS "documenti visibili a tutti" ON public.documenti;
+CREATE POLICY "documenti pubblicati visibili a tutti" ON public.documenti FOR SELECT TO anon, authenticated USING (pubblicato = true);
