@@ -38,7 +38,7 @@ function Titoli() {
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {isLoading && <Vuoto testo="Caricamento…" />}
-        {!isLoading && titoli.length === 0 && <Vuoto testo="Nessun titolo pubblicato." />}
+        {!isLoading && titoli.length === 0 && <Vuoto testo="In aggiornamento" />}
         {titoli.map((t: any) => (
           <Pannello key={t.id} className="p-5">
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
