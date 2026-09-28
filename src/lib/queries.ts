@@ -18,6 +18,7 @@ export type Evento = {
   organizzatore: string | null;
   apertura_iscrizioni: string | null;
   discipline_ammesse: string[] | null;
+  formati_incontro: Record<string, string[]> | null;
   serie_ammesse: string[] | null;
   categorie_ammesse: string[] | null;
   limite_partecipanti: number | null;
