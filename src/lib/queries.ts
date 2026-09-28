@@ -79,6 +79,7 @@ export async function fetchConteggiIscritti() {
   if (error) throw error;
   const mappa: Record<string, number> = {};
   for (const riga of data ?? []) {
+    if (!riga.evento_id) continue;
     mappa[riga.evento_id] = (mappa[riga.evento_id] ?? 0) + 1;
   }
   return mappa;

@@ -31,7 +31,7 @@ export const Route = createFileRoute("/atleti")({
 type IscrizioneAtleta = {
   id: string;
   stato: string;
-  categoria_peso: string | null;
+  categoria: string | null;
   disciplina: string | null;
   created_at: string;
   eventi: {
