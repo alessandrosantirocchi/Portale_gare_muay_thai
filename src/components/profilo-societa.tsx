@@ -17,14 +17,14 @@ export function ProfiloSocieta({ profilo }: { profilo: Profilo | null | undefine
   const save = useMutation({
     mutationFn: async () => {
       if (!profilo) throw new Error("Profilo non disponibile.");
-      const nome = form.nome_societa?.trim().replace(/\s+/g, " ").replace(/\s+(ASD|A\.S\.D\.)$/i, "").trim();
+      const nome = form["nome_societa"]?.trim().replace(/\s+/g, " ").replace(/\s+(ASD|A\.S\.D\.)$/i, "").trim();
       if (!nome) throw new Error("Inserisci il nome della società.");
       const { error } = await supabase.from("profiles").update({
-        nome_societa: nome, codice_fiscale: form.codice_fiscale?.replace(/\s+/g, "").toUpperCase() || null,
-        nome_coach: form.nome_coach?.trim() || null, cognome_coach: form.cognome_coach?.trim() || null,
-        email: form.email?.trim() || null, telefono: form.telefono?.trim() || null, citta: form.citta?.trim() || null,
-        provincia: form.provincia?.trim() || null, partita_iva: form.partita_iva?.trim() || null,
-        codice_affiliazione: form.codice_affiliazione?.trim() || null,
+        nome_societa: nome, codice_fiscale: form["codice_fiscale"]?.replace(/\s+/g, "").toUpperCase() || null,
+        nome_coach: form["nome_coach"]?.trim() || null, cognome_coach: form["cognome_coach"]?.trim() || null,
+        email: form["email"]?.trim() || null, telefono: form["telefono"]?.trim() || null, citta: form["citta"]?.trim() || null,
+        provincia: form["provincia"]?.trim() || null, partita_iva: form["partita_iva"]?.trim() || null,
+        codice_affiliazione: form["codice_affiliazione"]?.trim() || null,
       }).eq("id", profilo.id);
       if (error) throw error;
     },

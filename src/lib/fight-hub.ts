@@ -9,8 +9,8 @@ export type Iscrizione = Database["public"]["Tables"]["iscrizioni"]["Row"] & { a
 
 export function etaAllaData(nascita: string | null, dataEvento: string) {
   if (!nascita) return null;
-  const [y, m, d] = nascita.split("-").map(Number);
-  const [ey, em, ed] = dataEvento.split("-").map(Number);
+  const y = Number(nascita.slice(0, 4)), m = Number(nascita.slice(5, 7)), d = Number(nascita.slice(8, 10));
+  const ey = Number(dataEvento.slice(0, 4)), em = Number(dataEvento.slice(5, 7)), ed = Number(dataEvento.slice(8, 10));
   return ey - y - (em < m || (em === m && ed < d) ? 1 : 0);
 }
 
