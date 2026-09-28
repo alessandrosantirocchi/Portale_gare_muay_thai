@@ -3,7 +3,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchEvento, fetchIscrittiEvento, type Atleta } from "@/lib/queries";
-import { formatDataCompleta, disciplineEvento, type FormatiIncontro } from "@/lib/format";
+import { formatDataCompleta, disciplineEvento, disciplinaCanonica, type FormatiIncontro } from "@/lib/format";
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
 import { IscrizioneEvento } from "@/components/iscrizione-evento";
