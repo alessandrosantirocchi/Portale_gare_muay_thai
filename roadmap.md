@@ -52,3 +52,4 @@
 - [x] Admin: gestione eventi completa (crea, modifica, elimina, locandina)
 - [ ] Caricare il logo della società nel profilo (bucket privato + anteprima)
 - [ ] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
+- [ ] Rendere obbligatori tutti i campi del form atleti e ripristinare l'etichetta "Cognome coach"
