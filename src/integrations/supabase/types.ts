@@ -106,6 +106,7 @@ export type Database = {
           created_at: string
           descrizione: string | null
           id: string
+          pubblicato: boolean
           titolo: string
           url: string | null
         }
@@ -114,6 +115,7 @@ export type Database = {
           created_at?: string
           descrizione?: string | null
           id?: string
+          pubblicato?: boolean
           titolo: string
           url?: string | null
         }
@@ -122,6 +124,7 @@ export type Database = {
           created_at?: string
           descrizione?: string | null
           id?: string
+          pubblicato?: boolean
           titolo?: string
           url?: string | null
         }
@@ -142,6 +145,7 @@ export type Database = {
           id: string
           limite_partecipanti: number | null
           locandina_path: string | null
+          locandina_pubblicata: boolean
           luogo: string
           nome: string
           orario: string | null
@@ -168,6 +172,7 @@ export type Database = {
           id?: string
           limite_partecipanti?: number | null
           locandina_path?: string | null
+          locandina_pubblicata?: boolean
           luogo: string
           nome: string
           orario?: string | null
@@ -194,6 +199,7 @@ export type Database = {
           id?: string
           limite_partecipanti?: number | null
           locandina_path?: string | null
+          locandina_pubblicata?: boolean
           luogo?: string
           nome?: string
           orario?: string | null
@@ -511,6 +517,7 @@ export type Database = {
           evento: string | null
           id: string
           luogo: string | null
+          pubblicato: boolean
           titolo: string
         }
         Insert: {
@@ -522,6 +529,7 @@ export type Database = {
           evento?: string | null
           id?: string
           luogo?: string | null
+          pubblicato?: boolean
           titolo: string
         }
         Update: {
@@ -533,6 +541,7 @@ export type Database = {
           evento?: string | null
           id?: string
           luogo?: string | null
+          pubblicato?: boolean
           titolo?: string
         }
         Relationships: []

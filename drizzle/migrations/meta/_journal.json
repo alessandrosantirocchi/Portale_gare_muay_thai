@@ -99,6 +99,13 @@
       "when": 1790632096426,
       "tag": "0013_show_weight_division_in_public_registrations",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1790632550947,
+      "tag": "0014_publish_titles_documents_and_posters_explicitly",
+      "breakpoints": true
     }
   ]
 }
