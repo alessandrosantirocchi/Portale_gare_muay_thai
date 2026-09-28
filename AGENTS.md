@@ -11,3 +11,5 @@
 
 Event disciplines and match formats are separate: `eventi.discipline_ammesse` lists sports, while `eventi.formati_incontro` maps each sport to Light/Contatto pieno; this prevents contact intensity from appearing as a sport or calendar filter.
 Public event pairing lists read only explicitly published pools and matches; event lifecycle state does not hide published pairings, so visitors can check assignments before an event is marked published.
+Automatic pools are refreshed by a database trigger after registration changes; this keeps published groups consistent across all registration screens without admin action or client-side seeding.
+The downloadable match-card workbook is built in the browser with ExcelJS; unlike the previous XLSX writer, it preserves red/blue cell fills in the downloaded file.
