@@ -7,6 +7,7 @@
 - [ ] Sostituire le serie con classi A, B, C, N nei dati atleta, iscrizione, matchmaking ed export
 - [ ] Aggiornare le informazioni dell'evento secondo l'immagine inviata
 - [ ] Consentire più discipline nella creazione e modifica degli eventi
+- [ ] Completare l'intero Big Prompt e provarne il flusso reale fino all'export Excel
 - [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
 - [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
 - [x] Home: hero, top 3 ranking, prossimi eventi, calendario
