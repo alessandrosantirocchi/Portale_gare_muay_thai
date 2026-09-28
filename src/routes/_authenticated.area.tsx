@@ -170,7 +170,7 @@ function MieIscrizioni({ userId }: { userId: string }) {
   );
 }
 
-function GestioneEventi() {
+function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     nome: "",
@@ -213,6 +213,7 @@ function GestioneEventi() {
         limite_partecipanti: form.limite_partecipanti ? Number(form.limite_partecipanti) : null,
         blocca_certificato_scaduto: form.blocca_certificato_scaduto,
         originale_richiesto: form.originale_richiesto,
+        organizzatore_id: userId,
         stato: "iscrizioni aperte",
       });
       if (error) throw error;
@@ -297,20 +298,20 @@ function GestioneEventi() {
         </form>
       </Pannello>
 
-      <ListaEventiAdmin />
+      <ListaEventiAdmin admin={admin} userId={userId} />
     </div>
   );
 }
 
-function ListaEventiAdmin() {
+function ListaEventiAdmin({ admin, userId }: { admin: boolean; userId: string }) {
   const queryClient = useQueryClient();
   const { data: eventi = [], isLoading } = useQuery({
     queryKey: ["eventi"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("eventi")
-        .select("*")
-        .order("data_evento", { ascending: false });
+      const richiesta = admin
+        ? supabase.from("eventi").select("*")
+        : supabase.from("eventi").select("*").eq("organizzatore_id", userId);
+      const { data, error } = await richiesta.order("data_evento", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
