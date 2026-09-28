@@ -2,11 +2,13 @@
 // https://muaythai.sport/wp-content/uploads/2026/05/IFMA-Rules-and-Regulations-v3.057_110526.pdf
 const elite = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75];
 
-// Full set of divisions accepted by the athlete roster, independent of age or gender.
-export const TUTTE_CATEGORIE_PESO = [
-  ...[30, 32, 34, 36, 38, 40, 42, 44, 45, 46, 48, 50, 51, 52, 54, 56, 57, 58, 60, 63.5, 67, 71, 75, 81, 86, 91].map((peso) => `-${peso} kg`),
-  ...[60, 63.5, 67, 71, 75, 81, 91].map((peso) => `+${peso} kg`),
-] as const;
+// Roster choices follow the supplied weight chart. Event registrations still use
+// the official weight calculation below, independently of this chosen roster value.
+const pesiUomini = [48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91];
+const pesiDonne = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75];
+export function categoriePesoRoster(sesso: string): string[] {
+  return (sesso === "F" ? pesiDonne : pesiUomini).map((peso) => `-${peso} kg`);
+}
 
 export function categoriePesoIfma(sesso: string, nascita: string, dataEvento: string): string[] {
   if (!nascita || !dataEvento || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(nascita) || !Number.isFinite(Date.parse(nascita)) || new Date(nascita).toISOString().slice(0, 10) !== nascita) return [];

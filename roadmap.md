@@ -1,6 +1,7 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
+- [x] Limitare il menu peso per genere secondo la tabella: uomini da -48 a -91 kg, donne da -45 a -75 kg, senza categorie +
 - [x] Togliere “IFMA” dal nome della categoria di peso e mostrare tutte le categorie nel menu atleta
 - [x] Match Card Excel: Nome, Cognome e Team per ogni angolo, Incontro al centro e angolo blu speculare al rosso
 - [x] Portare la simulazione del pool maschile classe A -71 kg a quattro atleti con nomi inventati
