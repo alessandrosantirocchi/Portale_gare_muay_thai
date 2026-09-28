@@ -160,12 +160,50 @@ function SchedaEvento() {
            <section className="mt-9 border-t border-border pt-6" aria-label="Pool e abbinamenti">
              <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-xl uppercase">Pool e abbinamenti</h2><p className="mt-1 text-xs text-muted-foreground">{pools.length} pool · {matches.length} match pubblicati</p></div><label className="grid gap-1 text-xs text-muted-foreground">Cerca atleta o società<input type="search" value={cercaAbbinamento} onChange={(e) => setCercaAbbinamento(e.target.value)} placeholder="Nome, cognome o società" className="w-full min-w-0 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground sm:w-64" /></label></div>
              {(() => {
-               const atleta = (entryId: string) => iscritti.find((i) => i.id === entryId);
-               const corrisponde = (ids: string[]) => !cercaAbbinamento.trim() || ids.some((entryId) => { const i = atleta(entryId); return `${i?.nome ?? ""} ${i?.cognome ?? ""} ${i?.nome_societa ?? ""}`.toLocaleLowerCase("it-IT").includes(cercaAbbinamento.trim().toLocaleLowerCase("it-IT")); });
-               const poolVisibili = pools.filter((p) => corrisponde(p.iscrizione_ids));
-               const matchVisibili = matches.filter((m) => corrisponde([m.rosso_id, m.blu_id]));
-               const nome = (entryId: string) => { const i = atleta(entryId); return i ? <><strong className="text-sm text-foreground">{i.cognome} {i.nome}</strong><span className="text-xs text-muted-foreground">{i.nome_societa} · {i.categoria ?? "—"} · {i.peso_kg ?? "—"} kg</span></> : <span className="text-sm text-muted-foreground">Atleta non disponibile</span>; };
-               return <>{pools.length === 0 && matches.length === 0 ? <p className="mt-5 border-y border-border py-5 text-sm text-muted-foreground">Gli abbinamenti non sono ancora stati pubblicati.</p> : poolVisibili.length === 0 && matchVisibili.length === 0 ? <p className="mt-5 border-y border-border py-5 text-sm text-muted-foreground">Nessun abbinamento trovato.</p> : <div className="mt-5 space-y-6">{poolVisibili.length > 0 && <div><h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Pool</h3><div className="grid gap-3 sm:grid-cols-2">{poolVisibili.map((p) => <div key={p.id} className="rounded-md border border-border bg-card p-4"><div className="flex items-baseline justify-between gap-3 border-b border-border pb-3"><h4 className="font-display text-lg uppercase">Pool #{p.numero ?? "—"}</h4><span className="text-xs text-primary">{p.iscrizione_ids.length} atleti</span></div><ol className="divide-y divide-border">{p.iscrizione_ids.map((entryId, index) => <li key={`${entryId}-${index}`} className="flex items-center gap-3 py-2"><span className="w-5 shrink-0 text-center font-mono text-xs text-muted-foreground">{index + 1}</span><span className="flex min-w-0 flex-col">{nome(entryId)}</span></li>)}</ol></div>)}</div></div>}{matchVisibili.length > 0 && <div><h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Match</h3><div className="grid gap-3 sm:grid-cols-2">{matchVisibili.map((m) => <div key={m.id} className="rounded-md border border-border bg-card p-4"><h4 className="border-b border-border pb-3 font-display text-lg uppercase">Match #{m.numero ?? "—"}</h4><div className="divide-y divide-border">{[m.rosso_id, m.blu_id].map((entryId, index) => <div key={entryId} className="flex items-center gap-3 py-2"><span className="shrink-0 text-xs text-muted-foreground">Angolo {index + 1}</span><span className="flex min-w-0 flex-col">{nome(entryId)}</span></div>)}</div></div>)}</div></div>}</div>}</>;
+               const testo = cercaAbbinamento.trim().toLocaleLowerCase("it-IT");
+               const corrisponde = (t: string) => !testo || t.includes(testo);
+               const poolDi = new Map<string, number>();
+               pools.forEach((p) => p.iscrizione_ids.forEach((entryId) => poolDi.set(entryId, p.iscrizione_ids.length)));
+               const matchDi = new Map<string, number>();
+               matches.forEach((m) => { if (m.numero != null) { matchDi.set(m.rosso_id, m.numero); matchDi.set(m.blu_id, m.numero); } });
+               const abbrDisciplina: Record<string, string> = { "MUAY THAI": "MT", KICKBOXING: "KICK", K1: "K1", "FIGHT CODE": "FC", ALTRO: "ALTRO" };
+               const righe = iscritti.filter((i: any) => corrisponde(`${i.nome} ${i.cognome} ${i.nome_societa}`.toLocaleLowerCase("it-IT")));
+               const nome = (entryId: string) => { const i = iscritti.find((x: any) => x.id === entryId); return i ? `${i.cognome} ${i.nome} · ${i.nome_societa}` : "Atleta non disponibile"; };
+               const matchVisibili = matches.filter((m) => corrisponde(`${nome(m.rosso_id)} ${nome(m.blu_id)}`.toLocaleLowerCase("it-IT")));
+               return <>
+                 {pools.length === 0 && matches.length === 0 && <p className="mt-5 border-y border-border py-5 text-sm text-muted-foreground">Gli abbinamenti non sono ancora stati pubblicati.</p>}
+                 <div className="mt-5 overflow-x-auto">
+                   <table className="w-full min-w-[820px] border-collapse text-sm">
+                     <thead>
+                       <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                         {["Cognome", "Nome", "Società", "Disc.", "Sesso", "Classe", "Cat. peso", "Peso (kg)", "Coach", "Pool"].map((h) => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}
+                       </tr>
+                     </thead>
+                     <tbody className="divide-y divide-border">
+                       {righe.length === 0 && <tr><td colSpan={10} className="px-2 py-4 text-sm text-muted-foreground">Nessun atleta trovato.</td></tr>}
+                       {righe.map((i: any) => {
+                         const pool = poolDi.get(i.id);
+                         const match = matchDi.get(i.id);
+                         return (
+                           <tr key={i.id} className="transition-colors hover:bg-muted/40">
+                             <td className="px-2 py-2 font-medium">{i.cognome}</td>
+                             <td className="px-2 py-2">{i.nome}</td>
+                             <td className="px-2 py-2 text-muted-foreground">{i.nome_societa}</td>
+                             <td className="px-2 py-2 font-semibold text-primary">{abbrDisciplina[disciplinaCanonica(i.disciplina ?? "")] ?? (i.disciplina ?? "—")}</td>
+                             <td className="px-2 py-2"><span className="rounded bg-muted px-2 py-0.5 text-xs font-semibold">{i.snapshot_sesso ?? "—"}</span></td>
+                             <td className="px-2 py-2 text-muted-foreground">{i.snapshot_serie ?? "—"}</td>
+                             <td className="px-2 py-2 text-muted-foreground">{i.categoria ?? "—"}</td>
+                             <td className="px-2 py-2">{i.peso_kg ?? "—"}</td>
+                             <td className="px-2 py-2 text-muted-foreground">{i.snapshot_coach ?? "—"}</td>
+                             <td className="px-2 py-2">{pool ? <span className="animate-pulse rounded-full bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground">Pool da {pool}</span> : match ? <span className="text-xs font-semibold text-primary">Match #{match}</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
+                           </tr>
+                         );
+                       })}
+                     </tbody>
+                   </table>
+                 </div>
+                 {matchVisibili.length > 0 && <div className="mt-6"><h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Match</h3><div className="grid gap-3 sm:grid-cols-2">{matchVisibili.map((m) => <div key={m.id} className="rounded-md border border-border bg-card p-4"><h4 className="border-b border-border pb-3 font-display text-lg uppercase">Match #{m.numero ?? "—"}</h4><div className="divide-y divide-border">{[m.rosso_id, m.blu_id].map((entryId, index) => <div key={`${entryId}-${index}`} className="flex items-center gap-3 py-2"><span className="shrink-0 text-xs text-muted-foreground">Angolo {index + 1}</span><span className="flex min-w-0 flex-col"><strong className="text-sm text-foreground">{nome(entryId)}</strong></span></div>)}</div></div>)}</div></div>}
+               </>;
              })()}
            </section>
         </div>
