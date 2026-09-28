@@ -484,12 +484,12 @@ function RigaEventoAdmin({
       if (error) throw error;
       const { error: e2 } = await supabase
         .from("eventi")
-        .update({ locandina_path: path })
+        .update({ locandina_path: path, locandina_pubblicata: false })
         .eq("id", evento.id);
       if (e2) throw e2;
     },
     onSuccess: () => {
-      setMsg("Locandina caricata.");
+      setMsg("Locandina caricata. Pubblicala quando è pronta.");
       queryClient.invalidateQueries({ queryKey: ["eventi"] });
       queryClient.invalidateQueries({ queryKey: ["locandina"] });
       queryClient.invalidateQueries({ queryKey: ["evento"] });
