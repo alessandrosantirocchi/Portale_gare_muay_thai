@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Atleta, Evento } from "@/lib/queries";
-import { CATEGORIE, DISCIPLINE_GARA, SERIE, etaAllaData } from "@/lib/fight-hub";
+import { CATEGORIE, DISCIPLINE_GARA, CLASSI, etaAllaData } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
 
 type Dati = { peso: string; disciplina: string; serie: string; categoria: string; coach: string; match: string; senior: boolean };
@@ -23,7 +23,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
   const aperto = ["aperto", "iscrizioni aperte"].includes(evento.stato) && new Date(evento.fine_iscrizioni).getTime() > Date.now() && (!evento.apertura_iscrizioni || new Date(evento.apertura_iscrizioni).getTime() <= Date.now());
   const toggle = (a: Atleta) => {
     setIds((current) => current.includes(a.id) ? current.filter((id) => id !== a.id) : [...current, a.id]);
-    setDati((current) => ({ ...current, [a.id]: current[a.id] ?? { peso: String(a.peso_kg ?? ""), disciplina: a.disciplina || evento.disciplina, serie: a.serie ?? "TERZA", categoria: a.categoria ?? "SENIOR", coach: a.coach ?? "", match: String(a.totale_match ?? a.vittorie + a.sconfitte + a.pareggi), senior: false } }));
+    setDati((current) => ({ ...current, [a.id]: current[a.id] ?? { peso: String(a.peso_kg ?? ""), disciplina: a.disciplina || evento.disciplina, serie: a.serie ?? "N", categoria: a.categoria ?? "SENIOR", coach: a.coach ?? "", match: String(a.totale_match ?? a.vittorie + a.sconfitte + a.pareggi), senior: false } }));
   };
   const set = (id: string, key: keyof Dati, val: string | boolean) => setDati((old) => ({ ...old, [id]: { ...(old[id] ?? vuoto), [key]: val } }));
   const save = useMutation({ mutationFn: async () => {
