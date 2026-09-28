@@ -34,8 +34,9 @@ export function MatchmakingAdmin() {
     if (!a || !b || !c || !d) return;
     const start = Math.max(0, ...cards.map((card) => card.numero ?? 0));
     const lookup = (id: string) => iscrizioni.find((i) => i.id === id);
-    const firstPair = lookup(a) && lookup(b) ? compatibilita(lookup(a)!, lookup(b)!, evento.data_evento)?.score ?? null : null;
-    const secondPair = lookup(c) && lookup(d) ? compatibilita(lookup(c)!, lookup(d)!, evento.data_evento)?.score ?? null : null;
+    const firstA = lookup(a), firstB = lookup(b), secondA = lookup(c), secondB = lookup(d);
+    const firstPair = firstA && firstB ? compatibilita(firstA, firstB, evento.data_evento)?.score ?? null : null;
+    const secondPair = secondA && secondB ? compatibilita(secondA, secondB, evento.data_evento)?.score ?? null : null;
     const { error: first } = await supabase.from("match_cards").insert([{ evento_id: evento.id, rosso_id: a, blu_id: b, numero: start + 1, score: firstPair }, { evento_id: evento.id, rosso_id: c, blu_id: d, numero: start + 2, score: secondPair }]);
     if (first) { setMsg(first.message); return; }
     await run(() => supabase.from("pools").delete().eq("id", id), "Pool trasformato in due match.");
