@@ -10,7 +10,7 @@ export function categoriaPesoIfma(peso: number | null, sesso: string, nascita: s
   let limiti: number[];
   if (eta >= 18) limiti = gender === "M" ? [...elite, 81, 86, 91] : elite;
   else if (eta >= 16) limiti = gender === "M" ? [...elite, 81, 86, 91] : [42, ...elite];
-  else if (eta >= 14) limiti = gender === "M" ? [38, 40, 42, ...elite.slice(0, 3), ...elite.slice(3), 81].filter((x, i, arr) => arr.indexOf(x) === i) : [36, 38, 40, 42, ...elite.slice(0, 3), ...elite.slice(3)].filter((x, i, arr) => arr.indexOf(x) === i);
+  else if (eta >= 14) limiti = gender === "M" ? [38, 40, 42, ...elite, 81] : [36, 38, 40, 42, ...elite.slice(0, 9)];
   else if (eta >= 12) limiti = gender === "M" ? [32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 63.5, 67, 71] : [32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 63.5];
   else if (eta >= 10) limiti = gender === "M" ? [30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 63.5, 67] : [30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60];
   else return null;

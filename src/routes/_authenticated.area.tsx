@@ -127,7 +127,7 @@ function MieIscrizioni({ userId }: { userId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("iscrizioni")
-        .select("id, stato, categoria_peso, atleta_id, evento_id, disciplina, snapshot_nome, snapshot_cognome, snapshot_peso_kg, snapshot_serie, snapshot_categoria, snapshot_coach, snapshot_totale_match, eventi(nome, data_evento, luogo, stato, fine_iscrizioni, apertura_iscrizioni, discipline_ammesse)")
+        .select("id, stato, categoria_peso, atleta_id, evento_id, disciplina, snapshot_nome, snapshot_cognome, snapshot_peso_kg, snapshot_sesso, snapshot_data_nascita, snapshot_serie, snapshot_categoria, snapshot_coach, snapshot_totale_match, eventi(nome, data_evento, luogo, stato, fine_iscrizioni, apertura_iscrizioni, discipline_ammesse)")
         .eq("societa_id", userId)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -152,7 +152,7 @@ function MieIscrizioni({ userId }: { userId: string }) {
           </div>
           <div className="text-right">
             <p className="text-[12px] text-muted-foreground">
-              {i.snapshot_categoria ?? i.categoria_peso ?? "—"} · {i.snapshot_peso_kg ?? "—"} kg
+              {i.snapshot_categoria ?? "—"} · {i.categoria_peso ?? "—"} · {i.snapshot_peso_kg ?? "—"} kg
             </p>
             <span className="text-[12px] font-medium capitalize">{i.stato}</span>
           </div>

@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Atleta, Evento } from "@/lib/queries";
 import { disciplinaCanonica } from "@/lib/format";
+import { categoriaPesoIfma } from "@/lib/pesi-ifma";
 
 export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; atleti: Atleta[]; userId: string | null }) {
   const qc = useQueryClient();
@@ -22,9 +23,12 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
   const save = useMutation({
     mutationFn: async (a: Atleta) => {
       if (!userId) throw new Error("Accedi per iscriverti.");
+      const categoriaPeso = categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento);
+      if (!categoriaPeso) throw new Error("Completa peso, data di nascita e genere dell'atleta prima di iscriverlo.");
       const disciplina = evento.discipline_ammesse?.find((v) => disciplinaCanonica(v) === disciplinaCanonica(a.disciplina)) ?? evento.discipline_ammesse?.[0] ?? evento.disciplina;
       const { error } = await supabase.from("iscrizioni").insert({
         evento_id: evento.id, atleta_id: a.id, societa_id: userId, stato: "confermata",
+        categoria_peso: categoriaPeso,
         disciplina, snapshot_nome: a.nome, snapshot_cognome: a.cognome,
         snapshot_sesso: a.sesso, snapshot_data_nascita: a.data_nascita,
         snapshot_team: a.nome_societa, snapshot_peso_kg: a.peso_kg,
@@ -48,7 +52,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       {atleti.length === 0 && <p className="text-sm text-muted-foreground">Nessun atleta nel roster. <Link to="/area" className="text-primary underline">Aggiungi un atleta</Link>.</p>}
       {atleti.map((a) => <label key={a.id} className="flex cursor-pointer items-center gap-2 border-b border-border py-2 text-sm font-semibold">
         <input type="checkbox" checked={!!existing[a.id]} disabled={!!existing[a.id] || save.isPending} onChange={() => { setMsg(""); save.mutate(a); }} />
-        {a.cognome} {a.nome}
+        {a.cognome} {a.nome} <span className="text-xs font-normal text-muted-foreground">{categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "Peso da completare"}</span>
         {existing[a.id] && <span className="text-xs font-normal text-muted-foreground">Iscritto · {existing[a.id]}</span>}
         {save.isPending && save.variables?.id === a.id && <span className="text-xs font-normal text-muted-foreground">Iscrizione…</span>}
       </label>)}
