@@ -1,7 +1,7 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
-- [ ] Togliere “IFMA” dal nome della categoria di peso e mostrare tutte le categorie nel menu atleta
+- [x] Togliere “IFMA” dal nome della categoria di peso e mostrare tutte le categorie nel menu atleta
 - [x] Match Card Excel: Nome, Cognome e Team per ogni angolo, Incontro al centro e angolo blu speculare al rosso
 - [x] Portare la simulazione del pool maschile classe A -71 kg a quattro atleti con nomi inventati
 - [x] Pulire i titoli con nomi inventati e mostrare “In aggiornamento”
