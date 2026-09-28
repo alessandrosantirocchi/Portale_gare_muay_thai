@@ -1,3 +1,6 @@
+// ============= Full file contents =============
+
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDocumenti } from "@/lib/queries";
@@ -23,32 +26,75 @@ export const Route = createFileRoute("/documenti")({
   component: Documenti,
 });
 
+function GuidaSezione({
+  titolo,
+  aperto,
+  onToggle,
+  children,
+}: {
+  titolo: string;
+  aperto: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-border last:border-b-0">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={aperto}
+        className="flex w-full items-center justify-between gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/30"
+      >
+        <span className="font-display text-sm font-semibold uppercase tracking-wide text-primary">
+          {titolo}
+        </span>
+        <span
+          className="shrink-0 text-muted-foreground transition-transform duration-200"
+          style={{ transform: aperto ? "rotate(180deg)" : "rotate(0deg)" }}
+          aria-hidden
+        >
+          ▼
+        </span>
+      </button>
+      {aperto && (
+        <div className="px-5 pb-5 text-sm leading-relaxed">{children}</div>
+      )}
+    </div>
+  );
+}
+
 function GuidaIscrizioni() {
+  const [aperte, setAperte] = useState<Record<number, boolean>>({});
+  const toggle = (i: number) =>
+    setAperte((p) => ({ ...p, [i]: !p[i] }));
+
   return (
     <div>
       <h2 className="mb-3 font-display text-lg font-semibold uppercase tracking-wide">
         Guida rapida — Registrare la società e iscrivere gli atleti
       </h2>
-      <Pannello className="flex flex-col gap-6 px-5 py-5 text-sm leading-relaxed">
-        <section>
-          <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-primary">
-            1. Registrazione della società
-          </h3>
+      <Pannello className="overflow-hidden p-0">
+        <GuidaSezione
+          titolo="1. Registrazione della società"
+          aperto={!!aperte[1]}
+          onToggle={() => toggle(1)}
+        >
           <ol className="list-decimal space-y-1 pl-5">
             <li>Apri FIGHT HUB e clicca <strong>Accedi</strong> in alto a destra.</li>
             <li>Scegli <strong>Registrati</strong> e accedi con il tuo account Google, oppure con email e password.</li>
-            <li>Al primo accesso inserisci il <strong>nome della società</strong> con le iniziali maiuscole (es. NKT Muay Thai).</li>
+            <li>Al primo accesso inserisci il <strong>nome della società</strong> così come è stato registrato all'albo (es. NKT Muay Thai).</li>
             <li>Dal profilo puoi caricare il <strong>logo della società</strong> (PNG o JPG, max 2 MB).</li>
           </ol>
           <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
             Un account gestisce una sola società: se ne gestisci più di una, registrati con account diversi.
           </p>
-        </section>
+        </GuidaSezione>
 
-        <section>
-          <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-primary">
-            2. Inserimento degli atleti (roster)
-          </h3>
+        <GuidaSezione
+          titolo="2. Inserimento degli atleti (roster)"
+          aperto={!!aperte[2]}
+          onToggle={() => toggle(2)}
+        >
           <ol className="list-decimal space-y-1 pl-5">
             <li>Entra nell'<strong>Area riservata</strong> e apri la scheda <strong>Atleti</strong>.</li>
             <li>Nel modulo <strong>Nuovi atleti</strong> ogni atleta occupa una riga: con <strong>+ Aggiungi atleta</strong> li inserisci tutti insieme.</li>
@@ -79,39 +125,42 @@ function GuidaIscrizioni() {
             <li>Clicca <strong>Salva atleti</strong>: il roster resta permanente e riutilizzabile per ogni evento.</li>
             <li>Dalla scheda del singolo atleta puoi caricare il <strong>certificato medico</strong> e modificare i dati.</li>
           </ol>
-        </section>
+        </GuidaSezione>
 
-        <section>
-          <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-primary">
-            3. Iscrizione a un evento
-          </h3>
+        <GuidaSezione
+          titolo="3. Iscrizione a un evento"
+          aperto={!!aperte[3]}
+          onToggle={() => toggle(3)}
+        >
           <ol className="list-decimal space-y-1 pl-5">
             <li>Apri la pagina dell'evento dal <strong>Calendario</strong>.</li>
             <li><strong>Spunta la casella</strong> accanto all'atleta: l'iscrizione è subito confermata, senza altre conferme.</li>
             <li>Il sistema assegna automaticamente la <strong>categoria di peso ufficiale</strong> da peso reale, sesso ed età alla data dell'evento (es. 72 kg → −75 kg).</li>
-            <li>Per un atleta di 17 anni puoi scegliere <strong>“Iscrivi nella categoria Senior”</strong> per la singola gara.</li>
+            <li>Per un atleta di 17 anni puoi scegliere <strong>"Iscrivi nella categoria Senior"</strong> per la singola gara.</li>
             <li>Controlla tutte le iscrizioni nella scheda <strong>Le mie iscrizioni</strong> dell'area riservata.</li>
           </ol>
           <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
             Attenzione: un atleta con certificato medico scaduto non può essere iscritto. Verifica la scadenza prima dell'evento.
           </p>
-        </section>
+        </GuidaSezione>
 
-        <section>
-          <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-primary">
-            4. Pool e abbinamenti
-          </h3>
+        <GuidaSezione
+          titolo="4. Pool e abbinamenti"
+          aperto={!!aperte[4]}
+          onToggle={() => toggle(4)}
+        >
           <ul className="list-disc space-y-1 pl-5">
             <li>I <strong>pool si creano in automatico</strong> quando ci sono atleti compatibili per classe, categoria di peso ed età: non devi fare nulla.</li>
-            <li>Chiunque può vedere pool e abbinamenti pubblicati nella pagina dell'evento, sezione <strong>Atleti iscritti e abbinamenti</strong>: il badge lampeggiante <strong>“Pool da N”</strong> indica l'atleta abbinato.</li>
+            <li>Chiunque può vedere pool e abbinamenti pubblicati nella pagina dell'evento, sezione <strong>Atleti iscritti e abbinamenti</strong>: il badge lampeggiante <strong>"Pool da N"</strong> indica l'atleta abbinato.</li>
             <li>L'organizzatore gestisce matchmaking ed export Excel dalla propria area riservata.</li>
           </ul>
-        </section>
+        </GuidaSezione>
 
-        <section>
-          <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-primary">
-            5. Problemi frequenti
-          </h3>
+        <GuidaSezione
+          titolo="5. Problemi frequenti"
+          aperto={!!aperte[5]}
+          onToggle={() => toggle(5)}
+        >
           <div className="overflow-x-auto">
             <table className="w-full text-[12px]">
               <thead>
@@ -128,7 +177,7 @@ function GuidaIscrizioni() {
               </tbody>
             </table>
           </div>
-        </section>
+        </GuidaSezione>
       </Pannello>
     </div>
   );
