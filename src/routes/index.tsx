@@ -179,7 +179,7 @@ function CardEvento({ evento, iscritti }: { evento: Evento; iscritti: number }) 
 }
 
 function LocandinaInEvidenza({ evento }: { evento: Evento }) {
-  const { data: url } = useLocandina(evento.locandina_path);
+  const { data: url } = useLocandina(evento.locandina_pubblicata ? evento.locandina_path : null);
   if (!url) return null;
   return (
     <section className="py-8">
