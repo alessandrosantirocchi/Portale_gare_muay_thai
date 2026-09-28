@@ -8,17 +8,17 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
   const { default: ExcelJS } = await import("exceljs");
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "FIGHT HUB";
-  const lookup = new Map(iscrizioni.map((i) => [i.id, datiGara(i, evento.data_evento)]));
+  const lookup = new Map(iscrizioni.map((i) => [i.id, { ...datiGara(i, evento.data_evento), categoriaPeso: i.categoria_peso ?? "—" }]));
   const roster = workbook.addWorksheet("Iscritti", { views: [{ state: "frozen", ySplit: 1 }] });
   roster.columns = [
     { header: "Nome", key: "nome", width: 22 }, { header: "Cognome", key: "cognome", width: 25 },
     { header: "Data nascita", key: "data_nascita", width: 17 }, { header: "Età", key: "eta", width: 10 },
     { header: "Genere", key: "sesso", width: 12 }, { header: "Team", key: "team", width: 30 },
     { header: "Coach", key: "coach", width: 25 }, { header: "Disciplina", key: "disciplina", width: 20 },
-    { header: "Classe", key: "serie", width: 12 }, { header: "Categoria", key: "categoria", width: 24 },
+    { header: "Classe", key: "serie", width: 12 }, { header: "Categoria di peso IFMA", key: "categoriaPeso", width: 24 },
     { header: "Peso kg", key: "peso", width: 13 }, { header: "Totale match", key: "match", width: 15 },
   ];
-  iscrizioni.forEach((i) => roster.addRow(datiGara(i, evento.data_evento)));
+  iscrizioni.forEach((i) => roster.addRow(lookup.get(i.id)));
 
   const poolSheet = workbook.addWorksheet("Pool", { views: [{ state: "frozen", ySplit: 1 }] });
   poolSheet.columns = [
@@ -26,7 +26,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
     { header: "Cognome", key: "cognome", width: 25 }, { header: "Team", key: "team", width: 30 },
     { header: "Coach", key: "coach", width: 25 }, { header: "Peso kg", key: "peso", width: 13 },
     { header: "Disciplina", key: "disciplina", width: 20 }, { header: "Classe", key: "serie", width: 12 },
-    { header: "Categoria", key: "categoria", width: 24 }, { header: "Totale match", key: "match", width: 15 },
+    { header: "Categoria di peso IFMA", key: "categoriaPeso", width: 24 }, { header: "Totale match", key: "match", width: 15 },
   ];
   pools.forEach((p) => p.iscrizione_ids.forEach((id) => poolSheet.addRow({ numero: p.numero, ...lookup.get(id) })));
 
@@ -47,7 +47,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
   sheet.getCell("B3").value = "ANGOLO ROSSO";
   sheet.getCell("E3").value = "INCONTRO";
   sheet.getCell("H3").value = "ANGOLO BLU";
-  sheet.getRow(4).values = ["Numero match", "Nome", "Cognome", "Team", "Disciplina", "Classe", "Categoria", "Nome", "Cognome", "Team"];
+  sheet.getRow(4).values = ["Numero match", "Nome", "Cognome", "Team", "Disciplina", "Classe", "Categoria di peso IFMA", "Nome", "Cognome", "Team"];
 
   const red = "FFCF1D26", blue = "FF116CB7", green = "FF8AC54A", yellow = "FFFFED38";
   const fill = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
@@ -85,7 +85,7 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
   ];
   righe.forEach((c, index) => {
     const r = c.rosso_id ? lookup.get(c.rosso_id) : undefined, b = c.blu_id ? lookup.get(c.blu_id) : undefined;
-    const row = sheet.addRow([c.etichetta, r?.nome, r?.cognome, r?.team, r?.disciplina, r?.serie, r?.categoria, b?.nome, b?.cognome, b?.team]);
+    const row = sheet.addRow([c.etichetta, r?.nome, r?.cognome, r?.team, r?.disciplina, r?.serie, r?.categoriaPeso ?? b?.categoriaPeso ?? "—", b?.nome, b?.cognome, b?.team]);
     row.height = 34;
     row.eachCell({ includeEmpty: true }, (cell, col) => {
       cell.fill = fill(index % 2 === 0 ? col >= 2 && col <= 4 ? "FFF8ECEC" : col >= 8 && col <= 10 ? "FFE8F2FB" : "FFE0E2E4" : col >= 2 && col <= 4 ? "FFFFF8F8" : col >= 8 && col <= 10 ? "FFF7FBFF" : "FFFFFFFF");
