@@ -38,7 +38,7 @@ function Calendario() {
 
   const oggi = new Date().toISOString().slice(0, 10);
   const filtrati = eventi.filter((e) => {
-    if (disciplina !== "Tutti" && e.disciplina !== disciplina) return false;
+    if (disciplina !== "Tutti" && !(e.discipline_ammesse?.length ? e.discipline_ammesse.includes(disciplina) : e.disciplina === disciplina)) return false;
     if (stato === "aperti") return e.data_evento >= oggi;
     if (stato === "conclusi") return e.data_evento < oggi;
     return true;
