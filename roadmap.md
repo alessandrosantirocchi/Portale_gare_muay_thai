@@ -1,12 +1,12 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
-- [ ] Match Card Excel: Nome, Cognome e Team per ogni angolo, Incontro al centro e angolo blu speculare al rosso
-- [ ] Portare la simulazione del pool maschile classe A -71 kg a quattro atleti con nomi inventati
+- [x] Match Card Excel: Nome, Cognome e Team per ogni angolo, Incontro al centro e angolo blu speculare al rosso
+- [x] Portare la simulazione del pool maschile classe A -71 kg a quattro atleti con nomi inventati
 - [x] Pulire i titoli con nomi inventati e mostrare “In aggiornamento”
-- [ ] Aggiungere Light tra le classi dell'atleta e consentire inserimento orizzontale di più atleti contemporaneamente
-- [ ] Nascondere temporaneamente la sezione News dalle pagine e dalla navigazione
-- [ ] Visualizzare ogni atleta in una singola riga orizzontale come nel portale gare di riferimento
+- [x] Aggiungere Light tra le classi dell'atleta e consentire inserimento orizzontale di più atleti contemporaneamente
+- [x] Nascondere temporaneamente la sezione News dalle pagine e dalla navigazione
+- [x] Visualizzare ogni atleta in una singola riga orizzontale come nel portale gare di riferimento
 - [x] Rimuovere gli atleti e le classifiche fittizie e ripulire iscrizioni, pool e match collegati
 - [x] Assegnare automaticamente la categoria di peso IFMA all'iscrizione in base al peso reale dell'atleta (es. 72 kg → -75 kg)
 - [x] Simulare un pool maschile classe A -71 kg per Fighting Spirit e verificare la vista pubblica

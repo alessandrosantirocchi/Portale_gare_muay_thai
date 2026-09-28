@@ -4,15 +4,15 @@ import { Navigate } from "@tanstack/react-router";
 export const Route = createFileRoute("/news")({
   head: () => ({
     meta: [
-      { title: "News e comunicati — FIGHT HUB" },
+      { title: "News sospese — FIGHT HUB" },
       {
         name: "description",
-        content: "Comunicati ufficiali, aperture iscrizioni e aggiornamenti sui regolamenti.",
+        content: "La sezione News è temporaneamente non disponibile.",
       },
-      { property: "og:title", content: "News e comunicati — FIGHT HUB" },
+      { property: "og:title", content: "News sospese — FIGHT HUB" },
       {
         property: "og:description",
-        content: "Tutti gli aggiornamenti per le società affiliate.",
+        content: "La sezione News è temporaneamente non disponibile.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
