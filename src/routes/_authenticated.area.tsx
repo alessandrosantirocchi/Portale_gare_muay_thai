@@ -7,7 +7,7 @@ import { useIsAdmin, useProfilo, useSession } from "@/lib/auth";
 import { formatDataBreve, formatDataCompleta, DISCIPLINE } from "@/lib/format";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { RosterSocieta } from "@/components/roster-societa";
-import { ProfiloSocieta } from "@/components/profilo-societa";
+import { ProfiloSocieta, useLogoUrl } from "@/components/profilo-societa";
 import { MatchmakingAdmin } from "@/components/matchmaking-admin";
 import { STATI_EVENTO } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,13 @@ function AreaSocieta() {
   return (
     <div className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+        <div className="flex min-w-0 items-center gap-4">
+          {profilo?.logo_path && (
+            <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-lg font-bold text-muted-foreground">
+              {logoUrl ? <img src={logoUrl} alt={`Logo ${profilo.nome_societa}`} className="h-full w-full object-contain" /> : profilo.nome_societa?.[0]?.toUpperCase() ?? "?"}
+            </div>
+          )}
+          <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Area società
           </p>
