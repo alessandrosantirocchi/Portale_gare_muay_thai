@@ -138,6 +138,7 @@ export type Database = {
           disciplina: string
           discipline_ammesse: string[] | null
           fine_iscrizioni: string
+          formati_incontro: Json
           id: string
           limite_partecipanti: number | null
           locandina_path: string | null
@@ -163,6 +164,7 @@ export type Database = {
           disciplina?: string
           discipline_ammesse?: string[] | null
           fine_iscrizioni: string
+          formati_incontro?: Json
           id?: string
           limite_partecipanti?: number | null
           locandina_path?: string | null
@@ -188,6 +190,7 @@ export type Database = {
           disciplina?: string
           discipline_ammesse?: string[] | null
           fine_iscrizioni?: string
+          formati_incontro?: Json
           id?: string
           limite_partecipanti?: number | null
           locandina_path?: string | null
