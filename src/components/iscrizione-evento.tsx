@@ -5,11 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Atleta, Evento } from "@/lib/queries";
 import { disciplinaCanonica } from "@/lib/format";
 import { categoriaPesoIfma } from "@/lib/pesi-ifma";
+import { etaAllaData } from "@/lib/fight-hub";
 
 export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; atleti: Atleta[]; userId: string | null }) {
   const qc = useQueryClient();
   const [existing, setExisting] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState("");
+  const [senior, setSenior] = useState<Record<string, boolean>>({});
   useEffect(() => {
     if (!userId) return;
     let active = true;
@@ -32,7 +34,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         disciplina, snapshot_nome: a.nome, snapshot_cognome: a.cognome,
         snapshot_sesso: a.sesso, snapshot_data_nascita: a.data_nascita,
         snapshot_team: a.nome_societa, snapshot_peso_kg: a.peso_kg,
-        snapshot_serie: a.serie ?? "N", snapshot_categoria: a.categoria ?? "SENIOR",
+        snapshot_serie: a.serie ?? "N", snapshot_categoria: senior[a.id] ? "SENIOR" : a.categoria ?? "SENIOR", senior_17: senior[a.id] ?? false,
         snapshot_coach: a.coach, snapshot_totale_match: a.totale_match ?? a.vittorie + a.sconfitte + a.pareggi,
       });
       if (error) throw error;
@@ -50,12 +52,12 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
     <h2 className="font-display text-xl uppercase">Iscrivi atleti</h2>
     {!aperto ? <p className="mt-2 text-sm text-muted-foreground">Le iscrizioni per questo evento sono chiuse.</p> : !userId ? <p className="mt-2 text-sm"><Link to="/auth" className="text-primary underline">Accedi</Link> con la tua società per iscrivere gli atleti.</p> : <div className="mt-4 space-y-3">
       {atleti.length === 0 && <p className="text-sm text-muted-foreground">Nessun atleta nel roster. <Link to="/area" className="text-primary underline">Aggiungi un atleta</Link>.</p>}
-      {atleti.map((a) => <label key={a.id} className="flex cursor-pointer items-center gap-2 border-b border-border py-2 text-sm font-semibold">
+      {atleti.map((a) => <div key={a.id} className="border-b border-border py-2 text-sm"><label className="flex cursor-pointer items-center gap-2 font-semibold">
         <input type="checkbox" checked={!!existing[a.id]} disabled={!!existing[a.id] || save.isPending} onChange={() => { setMsg(""); save.mutate(a); }} />
         {a.cognome} {a.nome} <span className="text-xs font-normal text-muted-foreground">{categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "Peso da completare"}</span>
         {existing[a.id] && <span className="text-xs font-normal text-muted-foreground">Iscritto · {existing[a.id]}</span>}
         {save.isPending && save.variables?.id === a.id && <span className="text-xs font-normal text-muted-foreground">Iscrizione…</span>}
-      </label>)}
+      </label>{etaAllaData(a.data_nascita, evento.data_evento) === 17 && !existing[a.id] && <label className="ml-5 mt-2 flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" checked={senior[a.id] ?? false} onChange={(e) => setSenior((prev) => ({ ...prev, [a.id]: e.target.checked }))} />Iscrivi questo atleta nella categoria Senior</label>}</div>)}
       {msg && <p role="status" className="text-xs text-muted-foreground">{msg}</p>}
     </div>}
   </section>;
