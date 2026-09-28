@@ -1,6 +1,7 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
+- [ ] Normalizzare nome e cognome con iniziali maiuscole, anche per dati inseriti in minuscolo
 - [x] Iscrivere automaticamente l'atleta appena viene selezionato, senza ulteriore conferma
 - [x] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
 - [x] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
