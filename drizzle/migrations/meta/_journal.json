@@ -127,6 +127,13 @@
       "when": 1790633984306,
       "tag": "0017_company_logo_upload",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1790634035437,
+      "tag": "0018_event_organizer_access",
+      "breakpoints": true
     }
   ]
 }

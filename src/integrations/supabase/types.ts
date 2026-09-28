@@ -153,6 +153,7 @@ export type Database = {
           nome: string
           orario: string | null
           organizzatore: string | null
+          organizzatore_id: string | null
           originale_richiesto: boolean | null
           programma: string | null
           regione: string | null
@@ -180,6 +181,7 @@ export type Database = {
           nome: string
           orario?: string | null
           organizzatore?: string | null
+          organizzatore_id?: string | null
           originale_richiesto?: boolean | null
           programma?: string | null
           regione?: string | null
@@ -207,6 +209,7 @@ export type Database = {
           nome?: string
           orario?: string | null
           organizzatore?: string | null
+          organizzatore_id?: string | null
           originale_richiesto?: boolean | null
           programma?: string | null
           regione?: string | null
