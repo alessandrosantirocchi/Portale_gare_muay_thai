@@ -82,7 +82,7 @@ function GuidaIscrizioni() {
           <ol className="list-decimal space-y-1 pl-5">
             <li>Apri FIGHT HUB e clicca <strong>Accedi</strong> in alto a destra.</li>
             <li>Scegli <strong>Registrati</strong> e accedi con il tuo account Google, oppure con email e password.</li>
-            <li>Al primo accesso inserisci il <strong>nome della società</strong> così come è stato registrato all'albo (es. NKT Muay Thai).</li>
+            <li>Al primo accesso inserisci il <strong>nome della società</strong> così come è stato registrato all'albo.</li>
             <li>Dal profilo puoi caricare il <strong>logo della società</strong> (PNG o JPG, max 2 MB).</li>
           </ol>
           <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
