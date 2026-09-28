@@ -5,9 +5,21 @@ import { DISCIPLINE_GARA, CLASSI, CATEGORIE, etaAllaData } from "@/lib/fight-hub
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { Button } from "@/components/ui/button";
 import { nomeProprio } from "@/lib/format";
+import { categoriePesoIfma } from "@/lib/pesi-ifma";
+import { z } from "zod";
 
-const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: "", disciplina: "MUAY THAI", serie: "N", categoria: "SENIOR", coach: "", totale_match: "0", certificato_rilascio: "", certificato_scadenza: "", certificato_tipo: "", certificato_disciplina: "" };
+const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: "", categoria_peso: "", disciplina: "MUAY THAI", serie: "N", categoria: "SENIOR", coach: "", totale_match: "0", certificato_rilascio: "", certificato_scadenza: "", certificato_tipo: "", certificato_disciplina: "" };
 type Form = typeof empty;
+
+const atletaSchema = z.object({ nome: z.string().trim().min(1).max(100), cognome: z.string().trim().min(1).max(100), data_nascita: z.iso.date(), sesso: z.enum(["M", "F"]), peso_kg: z.string(), categoria_peso: z.string() });
+function validaAtleta(row: Form) {
+  const parsed = atletaSchema.safeParse(row);
+  const birth = row.data_nascita;
+  if (!parsed.success || !birth || !Number.isFinite(Date.parse(birth)) || birth > new Date().toISOString().slice(0, 10) || birth <= "1900-01-01") throw new Error("Compila nome, cognome e una data di nascita valida per ogni atleta.");
+  const options = categoriePesoIfma(row.sesso, birth, new Date().toISOString().slice(0, 10));
+  if (!options.includes(row.categoria_peso)) throw new Error("Seleziona una categoria di peso IFMA valida per sesso ed età.");
+  if (row.peso_kg && (!Number.isFinite(Number(row.peso_kg)) || Number(row.peso_kg) <= 0)) throw new Error("Inserisci un peso reale valido.");
+}
 
 export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSocieta: string }) {
   const qc = useQueryClient();
@@ -26,7 +38,8 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
 
   const save = useMutation({
     mutationFn: async () => {
-      const values = { nome: nomeProprio(form.nome), cognome: nomeProprio(form.cognome), data_nascita: form.data_nascita || null, sesso: form.sesso, peso_kg: form.peso_kg ? Number(form.peso_kg) : null, disciplina: form.disciplina, serie: form.serie, categoria: form.categoria, coach: form.coach.trim() || null, totale_match: Number(form.totale_match) || 0, certificato_rilascio: form.certificato_rilascio || null, certificato_scadenza: form.certificato_scadenza || null, certificato_tipo: form.certificato_tipo || null, certificato_disciplina: form.certificato_disciplina || null };
+      validaAtleta(form);
+      const values = { nome: nomeProprio(form.nome), cognome: nomeProprio(form.cognome), data_nascita: form.data_nascita, sesso: form.sesso, peso_kg: form.peso_kg ? Number(form.peso_kg) : null, categoria_peso: form.categoria_peso, disciplina: form.disciplina, serie: form.serie, categoria: form.categoria, coach: form.coach.trim() || null, totale_match: Number(form.totale_match) || 0, certificato_rilascio: form.certificato_rilascio || null, certificato_scadenza: form.certificato_scadenza || null, certificato_tipo: form.certificato_tipo || null, certificato_disciplina: form.certificato_disciplina || null };
       const { error } = editId ? await supabase.from("atleti").update(values).eq("id", editId).eq("societa_id", userId) : await supabase.from("atleti").insert({ ...values, societa_id: userId, nome_societa: nomeSocieta });
       if (error) throw error;
     },
@@ -40,18 +53,19 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   });
   const saveMany = useMutation({
     mutationFn: async () => {
-      const validi = nuovi.filter((r) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim());
-      if (!validi.length || validi.some((r) => !r.nome.trim() || !r.cognome.trim())) throw new Error("Compila nome e cognome per ogni atleta inserito.");
-      const { error } = await supabase.from("atleti").insert(validi.map((r) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita || null, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, disciplina: r.disciplina, serie: r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, societa_id: userId, nome_societa: nomeSocieta })));
+      const validi = nuovi.filter((r) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim() || r.categoria_peso);
+      if (!validi.length) throw new Error("Compila almeno un atleta.");
+      validi.forEach(validaAtleta);
+      const { error } = await supabase.from("atleti").insert(validi.map((r) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, categoria_peso: r.categoria_peso, disciplina: r.disciplina, serie: r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, societa_id: userId, nome_societa: nomeSocieta })));
       if (error) throw error;
       return validi.length;
     },
     onSuccess: (count) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.`); setNuovi([{ ...empty }]); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
     onError: (e) => setMessage(e.message),
   });
-  const batchField = (index: number, key: keyof Form, label: string, type = "text") => <label className="min-w-0 text-xs text-muted-foreground">{label}<input aria-label={`${label} atleta ${index + 1}`} type={type} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={nuovi[index]?.[key] ?? ""} onChange={(e) => setNuovi((rows) => rows.map((r, n) => n === index ? { ...r, [key]: e.target.value } : r))} className="mt-1 block w-full min-w-0 rounded-md border border-input bg-background p-2 text-sm text-foreground" /></label>;
+  const batchField = (index: number, key: keyof Form, label: string, type = "text") => <label className="min-w-0 text-xs text-muted-foreground">{label}<input aria-label={`${label} atleta ${index + 1}`} type={type} required={key === "data_nascita" && !!(nuovi[index]?.nome || nuovi[index]?.cognome)} max={type === "date" ? new Date().toISOString().slice(0, 10) : undefined} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={nuovi[index]?.[key] ?? ""} onChange={(e) => setNuovi((rows) => rows.map((r, n) => n === index ? { ...r, [key]: e.target.value, ...(key === "data_nascita" ? { categoria_peso: "" } : {}) } : r))} className="mt-1 block w-full min-w-0 rounded-md border border-input bg-background p-2 text-sm text-foreground" /></label>;
   const batchSelect = (index: number, key: keyof Form, label: string, values: readonly string[]) => <label className="min-w-0 text-xs text-muted-foreground">{label}<select aria-label={`${label} atleta ${index + 1}`} value={nuovi[index]?.[key] ?? ""} onChange={(e) => setNuovi((rows) => rows.map((r, n) => n === index ? { ...r, [key]: e.target.value } : r))} className="mt-1 block w-full min-w-0 rounded-md border border-input bg-background p-2 text-sm text-foreground">{values.map((v) => <option key={v}>{v}</option>)}</select></label>;
-  const field = (key: keyof Form, label: string, type = "text") => <label className="text-xs text-muted-foreground">{label}<input type={type} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="mt-1 block w-full rounded-md border border-input bg-background p-2 text-sm text-foreground" /></label>;
+  const field = (key: keyof Form, label: string, type = "text") => <label className="text-xs text-muted-foreground">{label}<input type={type} required={key === "data_nascita"} max={type === "date" ? new Date().toISOString().slice(0, 10) : undefined} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value, ...(key === "data_nascita" ? { categoria_peso: "" } : {}) }))} className="mt-1 block w-full rounded-md border border-input bg-background p-2 text-sm text-foreground" /></label>;
   const select = (key: keyof Form, label: string, values: readonly string[]) => <label className="text-xs text-muted-foreground">{label}<select value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="mt-1 block w-full rounded-md border border-input bg-background p-2 text-sm text-foreground">{values.map((v) => <option key={v}>{v}</option>)}</select></label>;
   return <div className="grid min-w-0 gap-6">
     {!editId && <form onSubmit={(e) => { e.preventDefault(); setMessage(""); saveMany.mutate(); }} className="min-w-0 max-w-full border-y border-border py-5">

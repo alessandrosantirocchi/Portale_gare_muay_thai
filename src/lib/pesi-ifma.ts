@@ -3,7 +3,7 @@
 const elite = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75];
 
 export function categoriePesoIfma(sesso: string, nascita: string, dataEvento: string): string[] {
-  if (!nascita || !dataEvento || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(nascita) || new Date(nascita).toISOString().slice(0, 10) !== nascita) return [];
+  if (!nascita || !dataEvento || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(nascita) || !Number.isFinite(Date.parse(nascita)) || new Date(nascita).toISOString().slice(0, 10) !== nascita) return [];
   const gender = sesso.trim().toUpperCase();
   if (gender !== "M" && gender !== "F") return [];
   const eta = Number(dataEvento.slice(0, 4)) - Number(nascita.slice(0, 4));
