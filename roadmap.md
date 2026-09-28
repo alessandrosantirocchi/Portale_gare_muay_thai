@@ -8,6 +8,8 @@
 - [x] Nascondere temporaneamente la sezione News dalle pagine e dalla navigazione
 - [x] Visualizzare ogni atleta in una singola riga orizzontale come nel portale gare di riferimento
 - [x] Compilare il foglio Excel con i nomi degli atleti dei pool anche quando non ci sono match singoli
+- [x] Rendere obbligatoria la data di nascita e aggiungere la categoria di peso IFMA selezionabile nella scheda atleta
+- [x] Sostituire il campo Categoria mostrato come Senior con la categoria di peso IFMA nella registrazione atleta e nell’Excel
 - [x] Rimuovere gli atleti e le classifiche fittizie e ripulire iscrizioni, pool e match collegati
 - [x] Assegnare automaticamente la categoria di peso IFMA all'iscrizione in base al peso reale dell'atleta (es. 72 kg → -75 kg)
 - [x] Simulare un pool maschile classe A -71 kg per Fighting Spirit e verificare la vista pubblica

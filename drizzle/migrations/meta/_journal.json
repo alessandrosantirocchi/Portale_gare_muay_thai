@@ -113,6 +113,13 @@
       "when": 1790632724211,
       "tag": "0015_restrict_poster_downloads_to_published_event_or_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1790633285690,
+      "tag": "0016_athlete_ifma_division_and_required_birth_date",
+      "breakpoints": true
     }
   ]
 }
