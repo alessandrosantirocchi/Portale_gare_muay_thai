@@ -281,6 +281,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "iscrizioni_atleta_id_fkey"
+            columns: ["atleta_id"]
+            isOneToOne: false
+            referencedRelation: "classifica_pubblica"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "iscrizioni_evento_id_fkey"
             columns: ["evento_id"]
             isOneToOne: false
@@ -339,6 +346,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "match_cards_blu_id_fkey"
+            columns: ["blu_id"]
+            isOneToOne: false
+            referencedRelation: "iscrizioni_pubbliche"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "match_cards_evento_id_fkey"
             columns: ["evento_id"]
             isOneToOne: false
@@ -357,6 +371,13 @@ export type Database = {
             columns: ["rosso_id"]
             isOneToOne: false
             referencedRelation: "iscrizioni"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_cards_rosso_id_fkey"
+            columns: ["rosso_id"]
+            isOneToOne: false
+            referencedRelation: "iscrizioni_pubbliche"
             referencedColumns: ["id"]
           },
         ]
@@ -530,7 +551,83 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      classifica_pubblica: {
+        Row: {
+          cognome: string | null
+          disciplina: string | null
+          id: string | null
+          nome: string | null
+          nome_societa: string | null
+          pareggi: number | null
+          peso_kg: number | null
+          punti: number | null
+          sconfitte: number | null
+          vittorie: number | null
+        }
+        Insert: {
+          cognome?: string | null
+          disciplina?: string | null
+          id?: string | null
+          nome?: string | null
+          nome_societa?: string | null
+          pareggi?: number | null
+          peso_kg?: number | null
+          punti?: number | null
+          sconfitte?: number | null
+          vittorie?: number | null
+        }
+        Update: {
+          cognome?: string | null
+          disciplina?: string | null
+          id?: string | null
+          nome?: string | null
+          nome_societa?: string | null
+          pareggi?: number | null
+          peso_kg?: number | null
+          punti?: number | null
+          sconfitte?: number | null
+          vittorie?: number | null
+        }
+        Relationships: []
+      }
+      iscrizioni_pubbliche: {
+        Row: {
+          atleta_id: string | null
+          categoria: string | null
+          cognome: string | null
+          created_at: string | null
+          disciplina: string | null
+          evento_id: string | null
+          id: string | null
+          nome: string | null
+          nome_societa: string | null
+          peso_kg: number | null
+          stato: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iscrizioni_atleta_id_fkey"
+            columns: ["atleta_id"]
+            isOneToOne: false
+            referencedRelation: "atleti"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "iscrizioni_atleta_id_fkey"
+            columns: ["atleta_id"]
+            isOneToOne: false
+            referencedRelation: "classifica_pubblica"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "iscrizioni_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventi"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
