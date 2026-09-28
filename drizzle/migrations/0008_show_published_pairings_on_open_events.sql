@@ -1,0 +1,2 @@
+ALTER POLICY "match pubblicati visibili" ON public.match_cards USING (stato = 'pubblicato' AND EXISTS (SELECT 1 FROM public.eventi e WHERE e.id = evento_id));
+ALTER POLICY "pool pubblicati visibili" ON public.pools USING (stato = 'pubblicato' AND EXISTS (SELECT 1 FROM public.eventi e WHERE e.id = evento_id));
