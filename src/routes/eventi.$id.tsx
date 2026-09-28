@@ -6,7 +6,6 @@ import { formatDataCompleta } from "@/lib/format";
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
 import { IscrizioneEvento } from "@/components/iscrizione-evento";
-import { datiGara, type Iscrizione } from "@/lib/fight-hub";
 import { useLocandina } from "@/lib/locandine";
 
 export const Route = createFileRoute("/eventi/$id")({
@@ -145,17 +144,17 @@ function SchedaEvento() {
               <div key={i.id} className="flex items-center justify-between gap-3 px-5 py-3">
                 <div>
                   <p className="text-sm font-medium">
-                    {i.snapshot_nome ?? i.atleti?.nome} {i.snapshot_cognome ?? i.atleti?.cognome}
+                    {i.nome} {i.cognome}
                   </p>
-                  <p className="text-[12px] text-muted-foreground">{i.snapshot_team ?? i.atleti?.nome_societa}</p>
+                  <p className="text-[12px] text-muted-foreground">{i.nome_societa}</p>
                 </div>
                 <span className="font-mono text-[12px] text-muted-foreground">
-                  {i.snapshot_categoria ?? i.categoria_peso ?? `${i.snapshot_peso_kg ?? i.atleti?.peso_kg ?? "—"} kg`} · {i.stato}
+                  {i.categoria ?? `${i.peso_kg ?? "—"} kg`} · {i.stato}
                 </span>
               </div>
             ))}
           </Pannello>
-          {(["pubblicato", "concluso"].includes(evento.stato)) && (matches.length > 0 || pools.length > 0) && <section className="mt-8"><h2 className="font-display text-xl uppercase">Abbinamenti pubblicati</h2>{matches.map((m) => { const a = (iscritti as Iscrizione[]).find((i) => i.id === m.rosso_id), b = (iscritti as Iscrizione[]).find((i) => i.id === m.blu_id); return <p key={m.id} className="border-b border-border py-2 text-sm">#{m.numero} · Rosso: {a ? `${datiGara(a, evento.data_evento).nome} ${datiGara(a, evento.data_evento).cognome}` : "—"} / Blu: {b ? `${datiGara(b, evento.data_evento).nome} ${datiGara(b, evento.data_evento).cognome}` : "—"}</p>; })}{pools.map((pool) => <p key={pool.id} className="border-b border-border py-2 text-sm">Pool #{pool.numero} · {pool.iscrizione_ids.map((id) => { const i = (iscritti as Iscrizione[]).find((v) => v.id === id); return i ? `${datiGara(i, evento.data_evento).nome} ${datiGara(i, evento.data_evento).cognome}` : "—"; }).join(" / ")}</p>)}</section>}
+          {(["pubblicato", "concluso"].includes(evento.stato)) && (matches.length > 0 || pools.length > 0) && <section className="mt-8"><h2 className="font-display text-xl uppercase">Abbinamenti pubblicati</h2>{matches.map((m) => { const a = iscritti.find((i) => i.id === m.rosso_id), b = iscritti.find((i) => i.id === m.blu_id); return <p key={m.id} className="border-b border-border py-2 text-sm">#{m.numero} · Rosso: {a ? `${a.nome} ${a.cognome}` : "—"} / Blu: {b ? `${b.nome} ${b.cognome}` : "—"}</p>; })}{pools.map((pool) => <p key={pool.id} className="border-b border-border py-2 text-sm">Pool #{pool.numero} · {pool.iscrizione_ids.map((id) => { const i = iscritti.find((v) => v.id === id); return i ? `${i.nome} ${i.cognome}` : "—"; }).join(" / ")}</p>)}</section>}
         </div>
 
         <div className="lg:col-span-5">
