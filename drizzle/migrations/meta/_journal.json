@@ -78,6 +78,13 @@
       "when": 1790631535552,
       "tag": "0010_correct_automatic_pool_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790632007048,
+      "tag": "0011_ifma_weight_class_assignment",
+      "breakpoints": true
     }
   ]
 }
