@@ -7,16 +7,18 @@ import { Pannello, Vuoto } from "@/components/ui-blocchi";
 export const Route = createFileRoute("/titoli")({
   head: () => ({
     meta: [
-      { title: "Incontri titolati — Fighting Spirit" },
+      { title: "Incontri titolati — FIGHT HUB" },
       {
         name: "description",
         content: "Gli ultimi titoli assegnati: sfidanti, esito, data ed evento di svolgimento.",
       },
-      { property: "og:title", content: "Incontri titolati — Fighting Spirit" },
+      { property: "og:title", content: "Incontri titolati — FIGHT HUB" },
       {
         property: "og:description",
         content: "Cinture e titoli assegnati negli eventi della federazione.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Titoli,

@@ -9,17 +9,17 @@ import { Pannello, SezioneTitolo, Vuoto } from "@/components/ui-blocchi";
 export const Route = createFileRoute("/atleti")({
   head: () => ({
     meta: [
-      { title: "Le mie iscrizioni — Fighting Spirit" },
+      { title: "Le mie iscrizioni — FIGHT HUB" },
       {
         name: "description",
         content:
           "Cerca il tuo nome e controlla tutte le iscrizioni agli eventi con lo stato: confermata, in attesa o respinta.",
       },
-      { property: "og:title", content: "Le mie iscrizioni — Fighting Spirit" },
+      { property: "og:title", content: "Le mie iscrizioni — FIGHT HUB" },
       {
         property: "og:description",
         content:
-          "Ogni atleta può verificare lo stato delle proprie iscrizioni agli eventi Fighting Spirit.",
+          "Ogni atleta può verificare lo stato delle proprie iscrizioni agli eventi FIGHT HUB.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

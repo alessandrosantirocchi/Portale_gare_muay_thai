@@ -11,16 +11,18 @@ import { useLocandina } from "@/lib/locandine";
 export const Route = createFileRoute("/eventi/$id")({
   head: () => ({
     meta: [
-      { title: "Scheda evento — Fighting Spirit" },
+      { title: "Scheda evento — FIGHT HUB" },
       {
         name: "description",
         content: "Dettagli dell'evento, chiusura iscrizioni ed elenco degli atleti iscritti.",
       },
-      { property: "og:title", content: "Scheda evento — Fighting Spirit" },
+      { property: "og:title", content: "Scheda evento — FIGHT HUB" },
       {
         property: "og:description",
         content: "Informazioni sull'evento e iscrizione degli atleti della tua società.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SchedaEvento,

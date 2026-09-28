@@ -6,16 +6,18 @@ import { Pannello, Vuoto } from "@/components/ui-blocchi";
 export const Route = createFileRoute("/documenti")({
   head: () => ({
     meta: [
-      { title: "Area documenti — Fighting Spirit" },
+      { title: "Area documenti — FIGHT HUB" },
       {
         name: "description",
         content: "Regolamenti di disciplina, guide alle iscrizioni e modulistica per le società.",
       },
-      { property: "og:title", content: "Area documenti — Fighting Spirit" },
+      { property: "og:title", content: "Area documenti — FIGHT HUB" },
       {
         property: "og:description",
         content: "Regolamenti, guide e moduli ufficiali da scaricare.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Documenti,

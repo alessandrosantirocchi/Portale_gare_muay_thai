@@ -9,17 +9,19 @@ import { SezioneTitolo } from "@/components/ui-blocchi";
 export const Route = createFileRoute("/calendario")({
   head: () => ({
     meta: [
-      { title: "Calendario gare — Fighting Spirit" },
+      { title: "Calendario gare — FIGHT HUB" },
       {
         name: "description",
         content:
           "Tutti gli eventi in programma: data, disciplina, sede, chiusura iscrizioni e numero di atleti iscritti.",
       },
-      { property: "og:title", content: "Calendario gare — Fighting Spirit" },
+      { property: "og:title", content: "Calendario gare — FIGHT HUB" },
       {
         property: "og:description",
         content: "Eventi in programma, chiusura iscrizioni e iscritti aggiornati.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Calendario,

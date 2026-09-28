@@ -12,8 +12,12 @@ import { listaUtenti, creaUtente, impostaRuolo } from "@/lib/admin.functions";
 export const Route = createFileRoute("/_authenticated/area")({
   head: () => ({
     meta: [
-      { title: "Area società — Fighting Spirit" },
+      { title: "Area società — FIGHT HUB" },
       { name: "description", content: "Gestisci i tuoi atleti e le iscrizioni agli eventi." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Area società — FIGHT HUB" },
+      { property: "og:description", content: "FIGHT HUB: eventi, atleti e iscrizioni agli sport da combattimento." },
     ],
   }),
   component: AreaSocieta,
