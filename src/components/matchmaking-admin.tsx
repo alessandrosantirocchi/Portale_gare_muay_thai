@@ -26,13 +26,17 @@ export function MatchmakingAdmin() {
   const name = (id: string) => { const i = iscrizioni.find((v) => v.id === id); if (!i || !evento) return "—"; const d = datiGara(i, evento.data_evento); return `${d.cognome} ${d.nome} · ${d.team} · ${d.peso ?? "—"} kg`; };
   const refresh = () => { qc.invalidateQueries({ queryKey: ["match-cards", eventoId] }); qc.invalidateQueries({ queryKey: ["match-pools", eventoId] }); };
   async function run(action: () => PromiseLike<{ error: { message: string } | null }>, success = "Salvato.") { setMsg(""); try { const { error } = await action(); if (error) throw error; setMsg(success); refresh(); } catch (e) { setMsg(e instanceof Error ? e.message : "Operazione non riuscita."); } }
-  async function addMatch(a: string, b: string) { if (!evento || a === b) return; const ai = iscrizioni.find((i) => i.id === a), bi = iscrizioni.find((i) => i.id === b); const score = ai && bi ? compatibilita(ai, bi, evento.data_evento)?.score ?? null : null; await run(() => supabase.from("match_cards").insert({ evento_id: evento.id, rosso_id: a, blu_id: b, numero: cards.length + 1, score }), "Match creato."); setRosso(""); setBlu(""); }
-  async function addPool(ids: string[]) { if (!evento || ids.length !== 4) return; await run(() => supabase.from("pools").insert({ evento_id: evento.id, iscrizione_ids: ids, numero: pools.length + 1 }), "Pool creato."); setPoolIds([]); }
+  async function addMatch(a: string, b: string) { if (!evento || a === b || occupati.has(a) || occupati.has(b)) return; const ai = iscrizioni.find((i) => i.id === a), bi = iscrizioni.find((i) => i.id === b); const score = ai && bi ? compatibilita(ai, bi, evento.data_evento)?.score ?? null : null; await run(() => supabase.from("match_cards").insert({ evento_id: evento.id, rosso_id: a, blu_id: b, numero: Math.max(0, ...cards.map((c) => c.numero ?? 0)) + 1, score }), "Match creato."); setRosso(""); setBlu(""); }
+  async function addPool(ids: string[]) { if (!evento || ids.length !== 4 || new Set(ids).size !== 4 || ids.some((id) => occupati.has(id))) return; await run(() => supabase.from("pools").insert({ evento_id: evento.id, iscrizione_ids: ids, numero: Math.max(0, ...pools.map((p) => p.numero ?? 0)) + 1 }), "Pool creato."); setPoolIds([]); }
   async function splitPool(id: string, ids: string[]) {
     if (!evento || ids.length !== 4 || ids.some((id) => !id)) return;
     const [a, b, c, d] = ids;
     if (!a || !b || !c || !d) return;
-    const { error: first } = await supabase.from("match_cards").insert([{ evento_id: evento.id, rosso_id: a, blu_id: b, numero: cards.length + 1 }, { evento_id: evento.id, rosso_id: c, blu_id: d, numero: cards.length + 2 }]);
+    const start = Math.max(0, ...cards.map((card) => card.numero ?? 0));
+    const lookup = (id: string) => iscrizioni.find((i) => i.id === id);
+    const firstPair = lookup(a) && lookup(b) ? compatibilita(lookup(a)!, lookup(b)!, evento.data_evento)?.score ?? null : null;
+    const secondPair = lookup(c) && lookup(d) ? compatibilita(lookup(c)!, lookup(d)!, evento.data_evento)?.score ?? null : null;
+    const { error: first } = await supabase.from("match_cards").insert([{ evento_id: evento.id, rosso_id: a, blu_id: b, numero: start + 1, score: firstPair }, { evento_id: evento.id, rosso_id: c, blu_id: d, numero: start + 2, score: secondPair }]);
     if (first) { setMsg(first.message); return; }
     await run(() => supabase.from("pools").delete().eq("id", id), "Pool trasformato in due match.");
   }

@@ -72,7 +72,8 @@ export function proponiAbbinamenti(iscrizioni: Iscrizione[], dataEvento: string)
 
 export function proponiPool(iscrizioni: Iscrizione[], dataEvento: string) {
   const gruppi: { ids: string[]; score: number }[] = [];
-  const candidati = [...iscrizioni];
+  // Evaluate manageable groups independently; large event rosters must not freeze the browser.
+  const candidati = [...iscrizioni].slice(0, 36);
   while (candidati.length >= 4) {
     let migliore: { ids: string[]; score: number } | null = null;
     for (let a = 0; a < candidati.length - 3; a++) for (let b = a + 1; b < candidati.length - 2; b++) for (let c = b + 1; c < candidati.length - 1; c++) for (let d = c + 1; d < candidati.length; d++) {
