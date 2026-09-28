@@ -411,6 +411,7 @@ export type Database = {
       }
       pools: {
         Row: {
+          auto_generato: boolean
           created_at: string
           evento_id: string
           id: string
@@ -420,6 +421,7 @@ export type Database = {
           stato: string
         }
         Insert: {
+          auto_generato?: boolean
           created_at?: string
           evento_id: string
           id?: string
@@ -429,6 +431,7 @@ export type Database = {
           stato?: string
         }
         Update: {
+          auto_generato?: boolean
           created_at?: string
           evento_id?: string
           id?: string
@@ -639,6 +642,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      refresh_automatic_pools: {
+        Args: { p_evento_id: string }
+        Returns: undefined
       }
     }
     Enums: {
