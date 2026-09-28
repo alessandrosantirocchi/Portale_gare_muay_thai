@@ -42,7 +42,10 @@ export function MatchmakingAdmin() {
     setMsg("");
     const numero = Math.max(0, ...cards.map((c) => c.numero ?? 0));
     const pairs = [[ids[0], ids[1]], [ids[2], ids[3]]];
-    const rows = pairs.map(([a, b], index) => ({ evento_id: evento.id, rosso_id: a ?? "", blu_id: b ?? "", numero: numero + index + 1, score: iscrizioni.find((i) => i.id === a) && iscrizioni.find((i) => i.id === b) ? compatibilita(iscrizioni.find((i) => i.id === a)!, iscrizioni.find((i) => i.id === b)!, evento.data_evento)?.score ?? null : null }));
+    const rows = pairs.map(([a, b], index) => {
+      const first = iscrizioni.find((i) => i.id === a), second = iscrizioni.find((i) => i.id === b);
+      return { evento_id: evento.id, rosso_id: a ?? "", blu_id: b ?? "", numero: numero + index + 1, score: first && second ? compatibilita(first, second, evento.data_evento)?.score ?? null : null };
+    });
     const removed = await supabase.from("pools").delete().eq("id", id);
     if (removed.error) { setMsg(removed.error.message); return; }
     const inserted = await supabase.from("match_cards").insert(rows);
