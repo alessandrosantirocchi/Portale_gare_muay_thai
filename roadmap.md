@@ -3,7 +3,7 @@
 ## Task
 - [ ] Match Card Excel: Nome, Cognome e Team per ogni angolo, Incontro al centro e angolo blu speculare al rosso
 - [ ] Portare la simulazione del pool maschile classe A -71 kg a quattro atleti con nomi inventati
-- [ ] Pulire i titoli con nomi inventati e mostrare “In aggiornamento”
+- [x] Pulire i titoli con nomi inventati e mostrare “In aggiornamento”
 - [x] Rimuovere gli atleti e le classifiche fittizie e ripulire iscrizioni, pool e match collegati
 - [x] Assegnare automaticamente la categoria di peso IFMA all'iscrizione in base al peso reale dell'atleta (es. 72 kg → -75 kg)
 - [x] Simulare un pool maschile classe A -71 kg per Fighting Spirit e verificare la vista pubblica
