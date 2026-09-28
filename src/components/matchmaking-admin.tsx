@@ -17,7 +17,7 @@ export function MatchmakingAdmin() {
   const evento = eventi.find((e) => e.id === eventoId);
   const { data: iscrizioni = [] } = useQuery({ queryKey: ["match-iscrizioni", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("iscrizioni").select("*, atleti(nome,cognome,nome_societa,sesso,data_nascita,peso_kg,disciplina,serie,categoria,totale_match)").eq("evento_id", eventoId).eq("stato", "confermata"); if (error) throw error; return data as Iscrizione[]; } });
   const { data: cards = [] } = useQuery({ queryKey: ["match-cards", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("match_cards").select("*").eq("evento_id", eventoId).order("numero"); if (error) throw error; return data ?? []; } });
-  const { data: pools = [] } = useQuery({ queryKey: ["match-pools", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("pools").select("*").eq("evento_id", eventoId).order("numero"); if (error) throw error; return data ?? []; } });
+  const { data: pools = [] } = useQuery({ queryKey: ["match-pools", eventoId], enabled: !!eventoId, refetchInterval: 30000, queryFn: async () => { const { data, error } = await supabase.from("pools").select("*").eq("evento_id", eventoId).order("numero"); if (error) throw error; return data ?? []; } });
   const occupati = new Set([...cards.flatMap((c) => [c.rosso_id, c.blu_id]), ...pools.flatMap((p) => p.iscrizione_ids)]);
   const liberi = iscrizioni.filter((i) => !occupati.has(i.id));
   const proposta = evento ? proponiAbbinamenti(liberi, evento.data_evento) : { coppie: [], senzaMatch: [] };

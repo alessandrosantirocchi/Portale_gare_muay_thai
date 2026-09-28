@@ -43,7 +43,7 @@ function SchedaEvento() {
     queryFn: () => fetchIscrittiEvento(id),
   });
   const { data: matches = [] } = useQuery({ queryKey: ["public-matches", id], queryFn: async () => { const { data, error } = await supabase.from("match_cards").select("id, numero, rosso_id, blu_id").eq("evento_id", id).eq("stato", "pubblicato").order("numero"); if (error) throw error; return data ?? []; } });
-  const { data: pools = [] } = useQuery({ queryKey: ["public-pools", id], queryFn: async () => { const { data, error } = await supabase.from("pools").select("id, numero, iscrizione_ids").eq("evento_id", id).eq("stato", "pubblicato").order("numero"); if (error) throw error; return data ?? []; } });
+  const { data: pools = [] } = useQuery({ queryKey: ["public-pools", id], refetchInterval: 30000, queryFn: async () => { const { data, error } = await supabase.from("pools").select("id, numero, iscrizione_ids").eq("evento_id", id).eq("stato", "pubblicato").order("numero"); if (error) throw error; return data ?? []; } });
   const { data: mieiAtleti = [] } = useQuery({
     queryKey: ["miei-atleti", session?.user.id],
     enabled: !!session,

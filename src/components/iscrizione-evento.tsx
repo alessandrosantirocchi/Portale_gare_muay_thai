@@ -37,7 +37,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
     onSuccess: (id) => {
       setExisting((ids) => ({ ...ids, [id]: "confermata" }));
       setMsg("Atleta iscritto e confermato.");
-      for (const key of ["iscritti", "mie-iscrizioni", "conteggi-iscritti", "iscrizioni-atleta"]) qc.invalidateQueries({ queryKey: [key] });
+      for (const key of ["iscritti", "mie-iscrizioni", "conteggi-iscritti", "iscrizioni-atleta", "public-pools"]) qc.invalidateQueries({ queryKey: [key] });
     },
     onError: (error) => setMsg(error.message),
   });
