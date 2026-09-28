@@ -1,11 +1,12 @@
-import { useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchEvento, fetchIscrittiEvento, type Atleta } from "@/lib/queries";
-import { contoAllaRovescia, formatDataCompleta } from "@/lib/format";
+import { formatDataCompleta } from "@/lib/format";
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
+import { IscrizioneEvento } from "@/components/iscrizione-evento";
+import { datiGara, type Iscrizione } from "@/lib/fight-hub";
 import { useLocandina } from "@/lib/locandine";
 
 export const Route = createFileRoute("/eventi/$id")({
@@ -31,10 +32,6 @@ export const Route = createFileRoute("/eventi/$id")({
 function SchedaEvento() {
   const { id } = useParams({ from: "/eventi/$id" });
   const { session } = useSession();
-  const queryClient = useQueryClient();
-  const [atletaId, setAtletaId] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [messaggio, setMessaggio] = useState<string | null>(null);
 
   const { data: evento, isLoading } = useQuery({
     queryKey: ["evento", id],
@@ -44,6 +41,8 @@ function SchedaEvento() {
     queryKey: ["iscritti", id],
     queryFn: () => fetchIscrittiEvento(id),
   });
+  const { data: matches = [] } = useQuery({ queryKey: ["public-matches", id], queryFn: async () => { const { data } = await supabase.from("match_cards").select("*").eq("evento_id", id).eq("stato", "pubblicato"); return data ?? []; } });
+  const { data: pools = [] } = useQuery({ queryKey: ["public-pools", id], queryFn: async () => { const { data } = await supabase.from("pools").select("*").eq("evento_id", id).eq("stato", "pubblicato"); return data ?? []; } });
   const { data: mieiAtleti = [] } = useQuery({
     queryKey: ["miei-atleti", session?.user.id],
     enabled: !!session,
@@ -51,35 +50,11 @@ function SchedaEvento() {
       const { data, error } = await supabase
         .from("atleti")
         .select("*")
-        .eq("societa_id", session!.user.id)
+        .eq("societa_id", session?.user.id ?? "")
         .order("cognome");
       if (error) throw error;
       return (data ?? []) as Atleta[];
     },
-  });
-
-  const iscrivi = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("iscrizioni").insert({
-        evento_id: id,
-        atleta_id: atletaId,
-        societa_id: session!.user.id,
-        categoria_peso: categoria || null,
-        disciplina: evento?.disciplina ?? null,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setMessaggio("Atleta iscritto correttamente.");
-      setAtletaId("");
-      setCategoria("");
-      queryClient.invalidateQueries({ queryKey: ["iscritti", id] });
-      queryClient.invalidateQueries({ queryKey: ["conteggi-iscritti"] });
-    },
-    onError: (e: any) =>
-      setMessaggio(
-        e?.code === "23505" ? "Questo atleta è già iscritto." : "Non è stato possibile iscrivere l'atleta.",
-      ),
   });
 
   if (isLoading) {
@@ -96,8 +71,6 @@ function SchedaEvento() {
     );
   }
 
-  const countdown = contoAllaRovescia(evento.fine_iscrizioni);
-  const aperto = !!countdown;
 
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-10">
@@ -172,92 +145,22 @@ function SchedaEvento() {
               <div key={i.id} className="flex items-center justify-between gap-3 px-5 py-3">
                 <div>
                   <p className="text-sm font-medium">
-                    {i.atleti?.nome} {i.atleti?.cognome}
+                    {i.snapshot_nome ?? i.atleti?.nome} {i.snapshot_cognome ?? i.atleti?.cognome}
                   </p>
-                  <p className="text-[12px] text-muted-foreground">{i.atleti?.nome_societa}</p>
+                  <p className="text-[12px] text-muted-foreground">{i.snapshot_team ?? i.atleti?.nome_societa}</p>
                 </div>
                 <span className="font-mono text-[12px] text-muted-foreground">
-                  {i.categoria_peso ?? `${i.atleti?.peso_kg ?? "—"} kg`} · {i.stato}
+                  {i.snapshot_categoria ?? i.categoria_peso ?? `${i.snapshot_peso_kg ?? i.atleti?.peso_kg ?? "—"} kg`} · {i.stato}
                 </span>
               </div>
             ))}
           </Pannello>
+          {(["pubblicato", "concluso"].includes(evento.stato)) && (matches.length > 0 || pools.length > 0) && <section className="mt-8"><h2 className="font-display text-xl uppercase">Abbinamenti pubblicati</h2>{matches.map((m) => { const a = (iscritti as Iscrizione[]).find((i) => i.id === m.rosso_id), b = (iscritti as Iscrizione[]).find((i) => i.id === m.blu_id); return <p key={m.id} className="border-b border-border py-2 text-sm">#{m.numero} · Rosso: {a ? `${datiGara(a, evento.data_evento).nome} ${datiGara(a, evento.data_evento).cognome}` : "—"} / Blu: {b ? `${datiGara(b, evento.data_evento).nome} ${datiGara(b, evento.data_evento).cognome}` : "—"}</p>; })}{pools.map((pool) => <p key={pool.id} className="border-b border-border py-2 text-sm">Pool #{pool.numero} · {pool.iscrizione_ids.map((id) => { const i = (iscritti as Iscrizione[]).find((v) => v.id === id); return i ? `${datiGara(i, evento.data_evento).nome} ${datiGara(i, evento.data_evento).cognome}` : "—"; }).join(" / ")}</p>)}</section>}
         </div>
 
         <div className="lg:col-span-5">
           <LocandinaEvento path={evento.locandina_path} nome={evento.nome} />
-          <Pannello className="p-5">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
-              Iscrivi un atleta
-            </h2>
-            {!aperto && (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Le iscrizioni per questo evento sono chiuse.
-              </p>
-            )}
-            {aperto && !session && (
-              <div className="mt-3">
-                <p className="text-sm text-muted-foreground">
-                  Accedi con le credenziali della tua società per iscrivere gli atleti.
-                </p>
-                <Link
-                  to="/auth"
-                  className="mt-4 inline-flex rounded-[10px] bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground"
-                >
-                  Accedi all'area società
-                </Link>
-              </div>
-            )}
-            {aperto && session && (
-              <form
-                className="mt-4 flex flex-col gap-3"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setMessaggio(null);
-                  if (atletaId) iscrivi.mutate();
-                }}
-              >
-                <label className="text-[12px] font-medium text-muted-foreground">
-                  Atleta
-                  <select
-                    required
-                    value={atletaId}
-                    onChange={(e) => setAtletaId(e.target.value)}
-                    className="mt-1 w-full rounded-[10px] border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  >
-                    <option value="">Seleziona un atleta…</option>
-                    {mieiAtleti.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.cognome} {a.nome} · {a.peso_kg ?? "—"} kg
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="text-[12px] font-medium text-muted-foreground">
-                  Categoria di peso
-                  <input
-                    value={categoria}
-                    onChange={(e) => setCategoria(e.target.value)}
-                    placeholder="es. -71 kg senior"
-                    className="mt-1 w-full rounded-[10px] border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                </label>
-                {mieiAtleti.length === 0 && (
-                  <p className="text-[12px] text-muted-foreground">
-                    Non hai ancora atleti: aggiungili dalla tua area società.
-                  </p>
-                )}
-                <button
-                  type="submit"
-                  disabled={iscrivi.isPending}
-                  className="rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
-                >
-                  {iscrivi.isPending ? "Invio…" : "Conferma iscrizione"}
-                </button>
-                {messaggio && <p className="text-[12px]">{messaggio}</p>}
-              </form>
-            )}
-          </Pannello>
+          <IscrizioneEvento evento={evento} atleti={mieiAtleti} userId={session?.user.id ?? null} />
         </div>
       </div>
     </div>
