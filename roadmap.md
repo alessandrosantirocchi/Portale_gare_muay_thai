@@ -1,9 +1,9 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
-- [ ] Rimuovere gli atleti e le classifiche fittizie preservando quelli reali, e ripulire dati collegati
-- [ ] Assegnare automaticamente la categoria di peso all'iscrizione in base al peso reale dell'atleta (es. 72 kg → -75 kg)
-- [ ] Simulare un pool maschile classe A -71 kg per Fighting Spirit e verificare la vista pubblica
+- [x] Rimuovere gli atleti e le classifiche fittizie e ripulire iscrizioni, pool e match collegati
+- [x] Assegnare automaticamente la categoria di peso IFMA all'iscrizione in base al peso reale dell'atleta (es. 72 kg → -75 kg)
+- [x] Simulare un pool maschile classe A -71 kg per Fighting Spirit e verificare la vista pubblica
 - [x] Generare automaticamente pool pubblici da iscrizioni confermate compatibili per classe, peso ed età, senza intervento admin
 - [x] Formattare l'Excel scaricato con intestazioni e celle rosse/blu per i due angoli, seguendo la foto di riferimento
 - [x] Rendere visibili senza accesso i pool pubblicati e gli abbinamenti evento, inclusi pool da 2 o 3 atleti

@@ -643,6 +643,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      ifma_weight_class: {
+        Args: {
+          p_birth: string
+          p_event: string
+          p_sex: string
+          p_weight: number
+        }
+        Returns: string
+      }
       refresh_automatic_pools: {
         Args: { p_evento_id: string }
         Returns: undefined
