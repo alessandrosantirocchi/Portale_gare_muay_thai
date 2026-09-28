@@ -51,7 +51,7 @@ export function motivoSenzaMatch(i: Iscrizione, altri: Iscrizione[], dataEvento:
   if (!disponibili.some((a) => datiGara(a, dataEvento).sesso === d.sesso && datiGara(a, dataEvento).disciplina.toUpperCase() === d.disciplina.toUpperCase())) return "Disciplina non compatibile";
   const candidati = disponibili.map((a) => compatibilita(i, a, dataEvento)).filter((c) => c !== null);
   if (candidati.every((c) => c.categoriaDiversa)) return "Nessun atleta compatibile nella stessa categoria";
-  if (candidati.every((c) => c.serieDiversa)) return "Serie non compatibile";
+  if (candidati.every((c) => c.serieDiversa)) return "Classe non compatibile";
   if (candidati.every((c) => c.peso !== null && c.peso > 5)) return "Differenza peso elevata";
   if (candidati.every((c) => c.esperienza > 5)) return "Differenza esperienza elevata";
   return "Nessun abbinamento confermato";
