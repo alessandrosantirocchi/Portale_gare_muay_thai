@@ -50,3 +50,5 @@
 - [x] Account admin reale + societa reale, verifica pagina Utenti e ruoli
 - [x] Test iscrizione dalla pagina pubblica evento -> area riservata -> Le mie iscrizioni
 - [x] Admin: gestione eventi completa (crea, modifica, elimina, locandina)
+- [ ] Caricare il logo della società nel profilo (bucket privato + anteprima)
+- [ ] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
