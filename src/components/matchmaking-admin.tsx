@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { compatibilita, datiGara, motivoSenzaMatch, proponiAbbinamenti, type Iscrizione } from "@/lib/fight-hub";
 import type { Evento } from "@/lib/queries";
 import { Pannello } from "@/components/ui-blocchi";
+import { esportaMatchCard } from "@/lib/export-match-card";
 
 export function MatchmakingAdmin() {
   const qc = useQueryClient();
@@ -26,13 +27,9 @@ export function MatchmakingAdmin() {
   async function addMatch(a: string, b: string) { if (!evento || a === b || occupati.has(a) || occupati.has(b)) return; const ai = iscrizioni.find((i) => i.id === a), bi = iscrizioni.find((i) => i.id === b); const score = ai && bi ? compatibilita(ai, bi, evento.data_evento)?.score ?? null : null; await run(() => supabase.from("match_cards").insert({ evento_id: evento.id, rosso_id: a, blu_id: b, numero: Math.max(0, ...cards.map((c) => c.numero ?? 0)) + 1, score }), "Match creato."); setRosso(""); setBlu(""); }
   async function esporta() {
     if (!evento) return;
-    const XLSX = await import("xlsx");
-    const book = XLSX.utils.book_new();
-    const anagrafica = (id: string) => { const i = iscrizioni.find((v) => v.id === id); return i ? datiGara(i, evento.data_evento) : null; };
-    XLSX.utils.book_append_sheet(book, XLSX.utils.json_to_sheet(iscrizioni.map((i) => { const d = datiGara(i, evento.data_evento); return { Nome: d.nome, Cognome: d.cognome, "Data nascita": d.data_nascita, "Età": d.eta, Genere: d.sesso, Team: d.team, Coach: d.coach, Disciplina: d.disciplina, Classe: d.serie, Categoria: d.categoria, "Peso kg": d.peso, "Totale match": d.match }; })), "Iscritti");
-    XLSX.utils.book_append_sheet(book, XLSX.utils.json_to_sheet(pools.flatMap((p) => p.iscrizione_ids.map((id) => { const d = anagrafica(id); return { "Numero pool": p.numero, Nome: d?.nome, Cognome: d?.cognome, Team: d?.team, Coach: d?.coach, Peso: d?.peso, Disciplina: d?.disciplina, Classe: d?.serie, Categoria: d?.categoria, "Totale match": d?.match }; }))), "Pool");
-    XLSX.utils.book_append_sheet(book, XLSX.utils.json_to_sheet(cards.map((c) => { const r = anagrafica(c.rosso_id), b = anagrafica(c.blu_id); return { "Numero match": c.numero, "Angolo 1 nome": r?.nome, "Angolo 1 cognome": r?.cognome, "Team 1": r?.team, "Angolo 1 peso": r?.peso, "Angolo 2 nome": b?.nome, "Angolo 2 cognome": b?.cognome, "Team 2": b?.team, "Angolo 2 peso": b?.peso, Disciplina: r?.disciplina, Classe: r?.serie, Categoria: r?.categoria }; })), "Match Card");
-    XLSX.writeFile(book, `fight-hub-${evento.nome.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.xlsx`);
+    setMsg("");
+    try { await esportaMatchCard(evento, iscrizioni, cards, pools); }
+    catch (error) { setMsg(error instanceof Error ? error.message : "Impossibile esportare l'Excel."); }
   }
   const selectClass = "rounded-md border border-input bg-background p-2 text-sm text-foreground";
   return <div className="space-y-6"><div className="flex flex-wrap items-end justify-between gap-4"><label className="grid gap-1 text-xs text-muted-foreground">Evento<select className={selectClass} value={eventoId} onChange={(e) => { setEventoId(e.target.value); }}><option value="">Seleziona evento…</option>{eventi.map((e) => <option key={e.id} value={e.id}>{e.nome} · {e.data_evento}</option>)}</select></label>{evento && <Button variant="outline" onClick={esporta}>Esporta Excel</Button>}</div>
