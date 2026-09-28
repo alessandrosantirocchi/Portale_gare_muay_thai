@@ -12,6 +12,7 @@ import { MatchmakingAdmin } from "@/components/matchmaking-admin";
 import { STATI_EVENTO } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
 import { DisciplineEvento } from "@/components/discipline-evento";
+import { ModificaIscrizione } from "@/components/modifica-iscrizione";
 import { BUCKET_LOCANDINE, useLocandina } from "@/lib/locandine";
 import { listaUtenti, creaUtente, impostaRuolo } from "@/lib/admin.functions";
 
@@ -126,7 +127,7 @@ function MieIscrizioni({ userId }: { userId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("iscrizioni")
-        .select("id, stato, categoria_peso, evento_id, snapshot_nome, snapshot_cognome, snapshot_peso_kg, snapshot_serie, snapshot_categoria, eventi(nome, data_evento, luogo, stato, fine_iscrizioni)")
+        .select("id, stato, categoria_peso, atleta_id, evento_id, disciplina, snapshot_nome, snapshot_cognome, snapshot_peso_kg, snapshot_serie, snapshot_categoria, snapshot_coach, snapshot_totale_match, eventi(nome, data_evento, luogo, stato, fine_iscrizioni, apertura_iscrizioni, discipline_ammesse)")
         .eq("societa_id", userId)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -141,12 +142,13 @@ function MieIscrizioni({ userId }: { userId: string }) {
         <Vuoto testo="Nessuna iscrizione effettuata. Apri un evento dal calendario." />
       )}
       {iscrizioni.map((i: any) => (
-        <div key={i.id} className="flex items-center justify-between gap-3 px-5 py-4">
+        <div key={i.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
           <div>
             <p className="text-sm font-medium">{i.snapshot_cognome} {i.snapshot_nome} · {i.eventi?.nome}</p>
             <p className="text-[12px] text-muted-foreground">
               {formatDataCompleta(i.eventi?.data_evento)} · {i.eventi?.luogo}
             </p>
+            <ModificaIscrizione iscrizione={i} userId={userId} />
           </div>
           <div className="text-right">
             <p className="text-[12px] text-muted-foreground">
