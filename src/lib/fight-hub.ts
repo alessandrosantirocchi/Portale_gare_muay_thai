@@ -76,7 +76,8 @@ export function proponiPool(iscrizioni: Iscrizione[], dataEvento: string) {
   while (candidati.length >= 4) {
     let migliore: { ids: string[]; score: number } | null = null;
     for (let a = 0; a < candidati.length - 3; a++) for (let b = a + 1; b < candidati.length - 2; b++) for (let c = b + 1; c < candidati.length - 1; c++) for (let d = c + 1; d < candidati.length; d++) {
-      const gruppo = [candidati[a], candidati[b], candidati[c], candidati[d]];
+      const gruppo = [candidati[a], candidati[b], candidati[c], candidati[d]].filter((i): i is Iscrizione => i !== undefined);
+      if (gruppo.length !== 4) continue;
       const scores = gruppo.flatMap((x, ix) => gruppo.slice(ix + 1).map((y) => compatibilita(x, y, dataEvento)?.score ?? 0));
       const score = Math.round(scores.reduce((sum, n) => sum + n, 0) / 6);
       if (scores.every((n) => n >= 55) && (!migliore || score > migliore.score)) migliore = { ids: gruppo.map((i) => i.id), score };
