@@ -7,7 +7,8 @@ const elite = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75];
 const pesiUomini = [48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91];
 const pesiDonne = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75];
 export function categoriePesoRoster(sesso: string): string[] {
-  return (sesso === "F" ? pesiDonne : pesiUomini).map((peso) => `-${peso} kg`);
+  const base = (sesso === "F" ? pesiDonne : pesiUomini).map((peso) => `-${peso} kg`);
+  return sesso === "F" ? base : [...base, "+91 kg"];
 }
 
 export function categoriePesoIfma(sesso: string, nascita: string, dataEvento: string): string[] {

@@ -120,6 +120,41 @@
       "when": 1790633285690,
       "tag": "0016_athlete_ifma_division_and_required_birth_date",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1790633984306,
+      "tag": "0017_company_logo_upload",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1790634035437,
+      "tag": "0018_event_organizer_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790634071679,
+      "tag": "0019_organizer_registration_cleanup",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1790634429172,
+      "tag": "0020_public_registrations_extended_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1790634673917,
+      "tag": "0021_grant_execute_has_role_for_storage",
+      "breakpoints": true
     }
   ]
 }

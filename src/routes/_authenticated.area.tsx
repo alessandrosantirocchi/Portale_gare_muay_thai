@@ -7,7 +7,7 @@ import { useIsAdmin, useProfilo, useSession } from "@/lib/auth";
 import { formatDataBreve, formatDataCompleta, DISCIPLINE } from "@/lib/format";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { RosterSocieta } from "@/components/roster-societa";
-import { ProfiloSocieta } from "@/components/profilo-societa";
+import { ProfiloSocieta, useLogoUrl } from "@/components/profilo-societa";
 import { MatchmakingAdmin } from "@/components/matchmaking-admin";
 import { STATI_EVENTO } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/area")({
 function AreaSocieta() {
   const { user } = useSession();
   const { data: profilo } = useProfilo(user?.id);
+  const logoUrl = useLogoUrl(profilo?.logo_path);
   const { data: admin } = useIsAdmin(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
@@ -56,7 +57,13 @@ function AreaSocieta() {
   return (
     <div className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+        <div className="flex min-w-0 items-center gap-4">
+          {profilo?.logo_path && (
+            <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-lg font-bold text-muted-foreground">
+              {logoUrl ? <img src={logoUrl} alt={`Logo ${profilo.nome_societa}`} className="h-full w-full object-contain" /> : profilo.nome_societa?.[0]?.toUpperCase() ?? "?"}
+            </div>
+          )}
+          <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Area società
           </p>
@@ -69,6 +76,7 @@ function AreaSocieta() {
               {profilo?.citta ? ` · ${profilo.citta}` : ""}
             </p>
           )}
+          </div>
         </div>
         <button
           type="button"
@@ -84,11 +92,11 @@ function AreaSocieta() {
           ["atleti", "I miei atleti"],
           ["societa", "La mia società"],
           ["iscrizioni", "Iscrizioni"],
+          ["eventi", "Gestione eventi"],
+          ["matchmaking", "Matchmaking"],
           ...(admin
             ? ([
-                ["eventi", "Gestione eventi"],
                 ["conferme", "Tutte le iscrizioni"],
-                ["matchmaking", "Matchmaking"],
                 ["utenti", "Utenti e ruoli"],
               ] as const)
             : []),
@@ -112,9 +120,9 @@ function AreaSocieta() {
         {tab === "atleti" && <RosterSocieta userId={user.id} nomeSocieta={profilo?.nome_societa ?? ""} />}
         {tab === "societa" && <ProfiloSocieta profilo={profilo} />}
         {tab === "iscrizioni" && <MieIscrizioni userId={user.id} />}
-        {tab === "eventi" && admin && <GestioneEventi />}
+        {tab === "eventi" && <GestioneEventi admin={!!admin} userId={user.id} />}
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
-        {tab === "matchmaking" && admin && <MatchmakingAdmin />}
+        {tab === "matchmaking" && <MatchmakingAdmin admin={!!admin} userId={user.id} />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
       </div>
     </div>
@@ -162,7 +170,7 @@ function MieIscrizioni({ userId }: { userId: string }) {
   );
 }
 
-function GestioneEventi() {
+function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     nome: "",
@@ -205,6 +213,7 @@ function GestioneEventi() {
         limite_partecipanti: form.limite_partecipanti ? Number(form.limite_partecipanti) : null,
         blocca_certificato_scaduto: form.blocca_certificato_scaduto,
         originale_richiesto: form.originale_richiesto,
+        organizzatore_id: userId,
         stato: "iscrizioni aperte",
       });
       if (error) throw error;
@@ -289,20 +298,20 @@ function GestioneEventi() {
         </form>
       </Pannello>
 
-      <ListaEventiAdmin />
+      <ListaEventiAdmin admin={admin} userId={userId} />
     </div>
   );
 }
 
-function ListaEventiAdmin() {
+function ListaEventiAdmin({ admin, userId }: { admin: boolean; userId: string }) {
   const queryClient = useQueryClient();
   const { data: eventi = [], isLoading } = useQuery({
     queryKey: ["eventi"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("eventi")
-        .select("*")
-        .order("data_evento", { ascending: false });
+      const richiesta = admin
+        ? supabase.from("eventi").select("*")
+        : supabase.from("eventi").select("*").eq("organizzatore_id", userId);
+      const { data, error } = await richiesta.order("data_evento", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
