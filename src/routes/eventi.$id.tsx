@@ -79,7 +79,7 @@ function SchedaEvento() {
 
       <div className="mt-4 grid gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7">
-          <Etichetta>{evento.disciplina}</Etichetta>
+          <Etichetta>{evento.discipline_ammesse?.length ? evento.discipline_ammesse.join(" · ") : evento.disciplina}</Etichetta>
           <h1 className="mt-2 font-display text-4xl font-semibold uppercase leading-none">
             {evento.nome}
           </h1>

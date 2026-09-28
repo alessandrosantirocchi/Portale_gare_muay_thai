@@ -32,10 +32,10 @@ export function TabellaEventi({
             <span className="col-span-1 md:col-span-4">
               <span className="block text-sm font-medium">{e.nome}</span>
               <span className="block text-[11px] text-muted-foreground md:hidden">
-                {e.luogo} · {e.disciplina}
+                 {e.luogo} · {e.discipline_ammesse?.length ? e.discipline_ammesse.join(" · ") : e.disciplina}
               </span>
               <span className="hidden text-[11px] text-muted-foreground md:inline">
-                {e.disciplina} · {e.tipo}
+                 {(e.discipline_ammesse?.length ? e.discipline_ammesse.join(" · ") : e.disciplina)} · {e.tipo}
               </span>
             </span>
             <span className="col-span-3 hidden text-[13px] md:block">

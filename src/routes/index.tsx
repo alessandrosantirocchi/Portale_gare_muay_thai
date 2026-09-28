@@ -90,7 +90,7 @@ function Home() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-display text-lg font-medium uppercase leading-tight transition-colors group-hover:text-primary">{e.nome}</span>
-                  <span className="mt-1 block text-xs text-muted-foreground">{e.luogo} · {e.disciplina}</span>
+                   <span className="mt-1 block text-xs text-muted-foreground">{e.luogo} · {e.discipline_ammesse?.length ? e.discipline_ammesse.join(" · ") : e.disciplina}</span>
                 </span>
                 <span className="text-primary" aria-hidden="true">↗</span>
               </Link>
