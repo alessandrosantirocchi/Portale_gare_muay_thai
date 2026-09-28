@@ -7,14 +7,14 @@ import type { Evento } from "@/lib/queries";
 import { Pannello } from "@/components/ui-blocchi";
 import { esportaMatchCard } from "@/lib/export-match-card";
 
-export function MatchmakingAdmin() {
+export function MatchmakingAdmin({ admin, userId }: { admin: boolean; userId: string }) {
   const qc = useQueryClient();
   const [eventoId, setEventoId] = useState("");
   const [rosso, setRosso] = useState(""), [blu, setBlu] = useState("");
   const [editingPool, setEditingPool] = useState<string | null>(null);
   const [editingMatch, setEditingMatch] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
-  const { data: eventi = [] } = useQuery({ queryKey: ["eventi-admin-match"], queryFn: async () => { const { data, error } = await supabase.from("eventi").select("*").order("data_evento", { ascending: false }); if (error) throw error; return data as Evento[]; } });
+  const { data: eventi = [] } = useQuery({ queryKey: ["eventi-admin-match"], queryFn: async () => { let richiesta = supabase.from("eventi").select("*"); if (!admin) richiesta = richiesta.eq("organizzatore_id", userId); const { data, error } = await richiesta.order("data_evento", { ascending: false }); if (error) throw error; return data as Evento[]; } });
   const evento = eventi.find((e) => e.id === eventoId);
   const { data: iscrizioni = [] } = useQuery({ queryKey: ["match-iscrizioni", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("iscrizioni").select("*, atleti(nome,cognome,nome_societa,sesso,data_nascita,peso_kg,disciplina,serie,categoria,totale_match)").eq("evento_id", eventoId).eq("stato", "confermata"); if (error) throw error; return data as Iscrizione[]; } });
   const { data: cards = [] } = useQuery({ queryKey: ["match-cards", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("match_cards").select("*").eq("evento_id", eventoId).order("numero"); if (error) throw error; return data ?? []; } });
