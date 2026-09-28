@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useSession } from "@/lib/auth";
 import logo from "@/assets/fight-hub-cropped.png.asset.json";
@@ -16,6 +16,7 @@ const VOCI = [
 export function SiteHeader() {
   const { session } = useSession();
   const [aperto, setAperto] = useState(false);
+  const isHome = useLocation({ select: (location) => location.pathname === "/" });
 
   return (
     <header className="sticky top-0 z-40">
@@ -38,10 +39,10 @@ export function SiteHeader() {
       <div className="h-[3px] barra-tricolore" />
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex min-h-20 max-w-[1200px] items-center justify-between gap-3 px-5 py-2">
-          <Link to="/" className="flex min-w-0 shrink-0 flex-col items-start gap-0.5" aria-label="FIGHT HUB — Home">
+          {!isHome && <Link to="/" className="flex min-w-0 shrink-0 flex-col items-start gap-0.5" aria-label="FIGHT HUB — Home">
             <img src={logo.url} alt="FIGHT HUB" className="h-auto w-[136px] object-contain sm:w-[170px]" />
             <span className="text-[10px] italic leading-tight text-muted-foreground sm:text-[11px]">Il portale del fighiting italiano</span>
-          </Link>
+          </Link>}
 
           <nav className="hidden items-center gap-4 text-[12px] font-medium lg:flex xl:gap-6">
             {VOCI.map((v) => (

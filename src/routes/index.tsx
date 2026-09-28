@@ -6,7 +6,7 @@ import {
   fetchEventi,
   type Evento,
 } from "@/lib/queries";
-import { contoAllaRovescia, formatDataBreve, DISCIPLINE } from "@/lib/format";
+import { contoAllaRovescia, formatDataBreve, DISCIPLINE, disciplinaCanonica } from "@/lib/format";
 import { useLocandina } from "@/lib/locandine";
 import { SezioneTitolo, Pannello, Etichetta } from "@/components/ui-blocchi";
 import { FiltriDisciplina, TabellaEventi } from "@/components/tabella-eventi";
@@ -45,16 +45,16 @@ function Home() {
   const oggi = new Date().toISOString().slice(0, 10);
   const prossimi = eventi.filter((e) => e.data_evento >= oggi).slice(0, 3);
   const filtrati =
-    filtro === "Tutti" ? eventi.slice(0, 6) : eventi.filter((e) => e.disciplina === filtro);
+    filtro === "Tutti" ? eventi.slice(0, 6) : eventi.filter((e) => (e.discipline_ammesse?.length ? e.discipline_ammesse : [e.disciplina]).some((d) => disciplinaCanonica(d) === disciplinaCanonica(filtro)));
 
   return (
     <div className="mx-auto max-w-[1200px] px-5">
       <section className="grid gap-8 border-b border-border py-9 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-12 lg:py-12">
         <div className="flex flex-col justify-center">
-          <h1>
+          <h1 className="w-full max-w-[520px]">
             <img src={logo.url} alt="FIGHT HUB" className="h-auto w-full max-w-[520px]" />
+            <span className="mt-2 block text-center text-base font-normal italic text-foreground sm:text-lg">Il portale del fighiting italiano</span>
           </h1>
-          <p className="mt-2 text-base italic text-foreground sm:text-lg">Il portale del fighiting italiano</p>
           <p className="mt-5 max-w-[42ch] text-pretty text-sm text-muted-foreground sm:text-base">
             Iscrivi gli atleti della tua società, segui il calendario gare e tieni d'occhio le classifiche.
           </p>
