@@ -15,6 +15,7 @@ export type Evento = {
   orario: string | null;
   programma: string | null;
   locandina_path: string | null;
+  locandina_pubblicata: boolean;
   organizzatore: string | null;
   apertura_iscrizioni: string | null;
   discipline_ammesse: string[] | null;
@@ -100,6 +101,7 @@ export async function fetchTitoli() {
   const { data, error } = await supabase
     .from("titoli")
     .select("*")
+    .eq("pubblicato", true)
     .order("data_incontro", { ascending: false });
   if (error) throw error;
   return data ?? [];
@@ -118,6 +120,7 @@ export async function fetchDocumenti() {
   const { data, error } = await supabase
     .from("documenti")
     .select("*")
+    .eq("pubblicato", true)
     .order("categoria", { ascending: true });
   if (error) throw error;
   return data ?? [];

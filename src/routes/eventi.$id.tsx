@@ -171,7 +171,7 @@ function SchedaEvento() {
         </div>
 
         <div className="lg:col-span-5">
-          <LocandinaEvento path={evento.locandina_path} nome={evento.nome} />
+          {evento.locandina_pubblicata && <LocandinaEvento path={evento.locandina_path} nome={evento.nome} />}
           <IscrizioneEvento evento={evento} atleti={mieiAtleti} userId={session?.user.id ?? null} />
         </div>
       </div>

@@ -484,17 +484,31 @@ function RigaEventoAdmin({
       if (error) throw error;
       const { error: e2 } = await supabase
         .from("eventi")
-        .update({ locandina_path: path })
+        .update({ locandina_path: path, locandina_pubblicata: false })
         .eq("id", evento.id);
       if (e2) throw e2;
     },
     onSuccess: () => {
-      setMsg("Locandina caricata.");
+      setMsg("Locandina caricata. Pubblicala quando è pronta.");
       queryClient.invalidateQueries({ queryKey: ["eventi"] });
       queryClient.invalidateQueries({ queryKey: ["locandina"] });
       queryClient.invalidateQueries({ queryKey: ["evento"] });
     },
     onError: (e: any) => setMsg(e.message ?? "Caricamento non riuscito."),
+  });
+
+  const pubblicaLocandina = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("eventi").update({ locandina_pubblicata: !evento.locandina_pubblicata }).eq("id", evento.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["eventi"] });
+      queryClient.invalidateQueries({ queryKey: ["evento"] });
+      queryClient.invalidateQueries({ queryKey: ["locandina"] });
+      setMsg(evento.locandina_pubblicata ? "Locandina nascosta." : "Locandina pubblicata.");
+    },
+    onError: (e: any) => setMsg(e.message ?? "Operazione non riuscita."),
   });
 
   return (
@@ -534,6 +548,7 @@ function RigaEventoAdmin({
             }}
           />
         </label>
+        {evento.locandina_path && <button type="button" disabled={pubblicaLocandina.isPending} onClick={() => pubblicaLocandina.mutate()} className="text-[12px] font-medium text-primary hover:underline disabled:opacity-50">{evento.locandina_pubblicata ? "Nascondi locandina" : "Pubblica locandina"}</button>}
         <button
           type="button"
           onClick={() => setModifica((v) => !v)}

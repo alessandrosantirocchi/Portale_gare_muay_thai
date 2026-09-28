@@ -9,7 +9,6 @@ const VOCI = [
   { to: "/classifiche", label: "Classifiche" },
   { to: "/atleti", label: "Le mie iscrizioni" },
   { to: "/titoli", label: "Titoli" },
-  { to: "/news", label: "News" },
   { to: "/documenti", label: "Documenti" },
 ] as const;
 
@@ -29,9 +28,6 @@ export function SiteHeader() {
           <span className="hidden sm:flex items-center gap-5">
             <Link to="/documenti" className="transition-opacity hover:opacity-70">
               Documenti
-            </Link>
-            <Link to="/news" className="transition-opacity hover:opacity-70">
-              News
             </Link>
           </span>
         </div>
