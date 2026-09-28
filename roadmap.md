@@ -3,6 +3,7 @@
 ## Task
 - [ ] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
 - [ ] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
+- [ ] Fight Hub Big Prompt: partire dal punto 2 e realizzare le modifiche richieste in modo additivo e conservativo
 - [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
 - [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
 - [x] Home: hero, top 3 ranking, prossimi eventi, calendario
