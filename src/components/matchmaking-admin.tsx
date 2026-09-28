@@ -11,7 +11,6 @@ export function MatchmakingAdmin() {
   const qc = useQueryClient();
   const [eventoId, setEventoId] = useState("");
   const [rosso, setRosso] = useState(""), [blu, setBlu] = useState("");
-  const [sceltaPool, setSceltaPool] = useState<string[]>([]);
   const [editingPool, setEditingPool] = useState<string | null>(null);
   const [editingMatch, setEditingMatch] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
@@ -27,14 +26,9 @@ export function MatchmakingAdmin() {
   const refresh = () => { qc.invalidateQueries({ queryKey: ["match-cards", eventoId] }); qc.invalidateQueries({ queryKey: ["match-pools", eventoId] }); qc.invalidateQueries({ queryKey: ["public-pools", eventoId] }); qc.invalidateQueries({ queryKey: ["public-matches", eventoId] }); };
   async function run(action: () => PromiseLike<{ error: { message: string } | null }>, success = "Salvato.") { setMsg(""); try { const { error } = await action(); if (error) throw error; setMsg(success); refresh(); } catch (e) { setMsg(e instanceof Error ? e.message : "Operazione non riuscita."); } }
   async function addMatch(a: string, b: string) { if (!evento || a === b || occupati.has(a) || occupati.has(b)) return; const ai = iscrizioni.find((i) => i.id === a), bi = iscrizioni.find((i) => i.id === b); const score = ai && bi ? compatibilita(ai, bi, evento.data_evento)?.score ?? null : null; await run(() => supabase.from("match_cards").insert({ evento_id: evento.id, rosso_id: a, blu_id: b, numero: Math.max(0, ...cards.map((c) => c.numero ?? 0)) + 1, score }), "Match creato."); setRosso(""); setBlu(""); }
-  async function addPool() {
-    if (!evento || sceltaPool.length < 2 || sceltaPool.length > 4 || sceltaPool.some((id) => occupati.has(id))) return;
-    await run(() => supabase.from("pools").insert({ evento_id: evento.id, numero: Math.max(0, ...pools.map((p) => p.numero ?? 0)) + 1, iscrizione_ids: sceltaPool, stato: "confermato", auto_generato: false }), "Pool salvato.");
-    setSceltaPool([]);
-  }
   async function editPool(id: string, ids: string[], autoGenerato: boolean) {
     if (ids.length < 2 || ids.length > 4 || new Set(ids).size !== ids.length || ids.some((athlete) => occupati.has(athlete) && !pools.some((p) => p.id === id && p.iscrizione_ids.includes(athlete)))) return;
-    await run(() => supabase.from("pools").update({ iscrizione_ids: ids, auto_generato: false, stato: autoGenerato ? "confermato" : undefined }).eq("id", id), "Pool aggiornato.");
+    await run(() => supabase.from("pools").update({ iscrizione_ids: ids, auto_generato: false, ...(autoGenerato ? { stato: "confermato" } : {}) }).eq("id", id), "Pool aggiornato.");
     setEditingPool(null);
   }
   async function splitPool(id: string, ids: string[]) {
