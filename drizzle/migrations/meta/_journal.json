@@ -134,6 +134,13 @@
       "when": 1790634035437,
       "tag": "0018_event_organizer_access",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790634071679,
+      "tag": "0019_organizer_registration_cleanup",
+      "breakpoints": true
     }
   ]
 }
