@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "locandine lettura pubblica" ON storage.objects;
+CREATE POLICY "locandine pubblicate o admin" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'locandine' AND (EXISTS (SELECT 1 FROM public.eventi e WHERE e.locandina_path = storage.objects.name AND e.locandina_pubblicata = true) OR public.has_role(auth.uid(), 'admin'::public.app_role)));
