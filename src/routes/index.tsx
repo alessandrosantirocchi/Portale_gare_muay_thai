@@ -2,32 +2,33 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  fetchAtleti,
   fetchConteggiIscritti,
   fetchEventi,
-  type Atleta,
   type Evento,
 } from "@/lib/queries";
-import { contoAllaRovescia, formatDataBreve, iniziali, DISCIPLINE } from "@/lib/format";
+import { contoAllaRovescia, formatDataBreve, DISCIPLINE } from "@/lib/format";
 import { useLocandina } from "@/lib/locandine";
 import { SezioneTitolo, Pannello, Etichetta } from "@/components/ui-blocchi";
 import { FiltriDisciplina, TabellaEventi } from "@/components/tabella-eventi";
+import logo from "@/assets/fight-hub-cropped.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fighting Spirit — Iscrizioni, calendario gare e classifiche" },
+      { title: "FIGHT HUB — Iscrizioni, calendario gare e classifiche" },
       {
         name: "description",
         content:
           "Il portale delle società: iscrivi i tuoi atleti agli eventi, consulta il calendario gare, le classifiche ufficiali e gli incontri titolati.",
       },
-      { property: "og:title", content: "Fighting Spirit — Portale iscrizione atleti" },
+      { property: "og:title", content: "FIGHT HUB — Il portale del fighiting italiano" },
       {
         property: "og:description",
         content:
           "Calendario gare, iscrizioni online delle società e classifiche degli sport da combattimento.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,
@@ -36,7 +37,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const [filtro, setFiltro] = useState("Tutti");
   const { data: eventi = [] } = useQuery({ queryKey: ["eventi"], queryFn: fetchEventi });
-  const { data: atleti = [] } = useQuery({ queryKey: ["atleti"], queryFn: fetchAtleti });
   const { data: iscritti = {} } = useQuery({
     queryKey: ["conteggi-iscritti"],
     queryFn: fetchConteggiIscritti,
@@ -44,27 +44,21 @@ function Home() {
 
   const oggi = new Date().toISOString().slice(0, 10);
   const prossimi = eventi.filter((e) => e.data_evento >= oggi).slice(0, 3);
-  const podio = atleti.filter((a) => a.disciplina === "Contatto Pieno").slice(0, 3);
-  const ordinePodio = [podio[1], podio[0], podio[2]].filter((a): a is Atleta => !!a);
   const filtrati =
     filtro === "Tutti" ? eventi.slice(0, 6) : eventi.filter((e) => e.disciplina === filtro);
 
   return (
     <div className="mx-auto max-w-[1200px] px-5">
-      <section className="grid items-stretch gap-8 py-10 lg:grid-cols-12 lg:py-14">
-        <div className="flex flex-col justify-between lg:col-span-5">
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-            <span className="size-1.5 rounded-full bg-primary" />
-            Tabellone federale
-          </div>
-          <h1 className="mt-4 max-w-[20ch] font-display text-4xl font-semibold uppercase leading-none sm:text-5xl">
-            La piattaforma degli eventi sportivi
+      <section className="grid gap-8 border-b border-border py-9 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-12 lg:py-12">
+        <div className="flex flex-col justify-center">
+          <h1>
+            <img src={logo.url} alt="FIGHT HUB" className="h-auto w-full max-w-[520px]" />
           </h1>
-          <p className="mt-4 max-w-[42ch] text-pretty text-sm text-muted-foreground sm:text-base">
-            Iscrivi gli atleti della tua società, segui il calendario gare e tieni d'occhio le
-            classifiche ufficiali della federazione.
+          <p className="mt-2 text-base italic text-foreground sm:text-lg">Il portale del fighiting italiano</p>
+          <p className="mt-5 max-w-[42ch] text-pretty text-sm text-muted-foreground sm:text-base">
+            Iscrivi gli atleti della tua società, segui il calendario gare e tieni d'occhio le classifiche.
           </p>
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
               to="/calendario"
               className="inline-flex items-center gap-2 rounded-[10px] bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
@@ -81,63 +75,28 @@ function Home() {
           </div>
         </div>
 
-        <Pannello className="flex flex-col p-5 sm:p-6 lg:col-span-7">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold uppercase tracking-wide">
-              Top 3 · Contatto Pieno
-            </h2>
-            <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-              Punti W-L-D
-            </span>
+        <div className="border-t border-border pt-5 lg:border-t-0 lg:border-l lg:py-1 lg:pl-10">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-xl font-semibold uppercase">Eventi imminenti</h2>
+            <Link to="/calendario" className="shrink-0 text-xs font-medium text-primary hover:underline">Calendario →</Link>
           </div>
-          <div className="mt-5 flex flex-col gap-2">
-            {ordinePodio.map((a) => {
-              const posizione = podio.indexOf(a) + 1;
-              const primo = posizione === 1;
-              return (
-                <div
-                  key={a.id}
-                  className={
-                    primo
-                      ? "flex items-center gap-3 rounded-xl bg-oro/10 px-3 py-3 ring-1 ring-oro/30"
-                      : "flex items-center gap-3 rounded-xl bg-muted/70 px-3 py-3 transition-colors hover:bg-muted"
-                  }
-                >
-                  <span
-                    className={`w-6 text-center font-display text-lg font-semibold ${primo ? "text-oro" : "text-muted-foreground"}`}
-                  >
-                    {posizione}
-                  </span>
-                  <span
-                    className={`grid size-9 place-items-center rounded-full font-display text-sm font-semibold ${primo ? "bg-oro text-ink-foreground" : "bg-background ring-1 ring-border"}`}
-                  >
-                    {iniziali(a.nome, a.cognome)}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                      {a.nome} {a.cognome}
-                    </p>
-                    <p className="truncate text-[11px] text-muted-foreground">
-                      {a.nome_societa} · <span className="font-mono">{a.peso_kg ?? "—"} kg</span>
-                    </p>
-                  </div>
-                  <div className="ml-auto text-right">
-                    <p className="font-display text-lg font-semibold leading-none">{a.punti}</p>
-                    <p className="font-mono text-[11px] text-muted-foreground">
-                      {a.vittorie}-{a.sconfitte}-{a.pareggi}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="mt-3 divide-y divide-border">
+            {prossimi.length === 0 && <p className="py-5 text-sm text-muted-foreground">Nessun evento imminente.</p>}
+            {prossimi.map((e) => (
+              <Link key={e.id} to="/eventi/$id" params={{ id: e.id }} className="group flex items-center gap-4 py-4">
+                <span className="flex w-14 shrink-0 flex-col border-l-2 border-primary pl-2 font-display uppercase leading-none">
+                  <span className="text-2xl font-semibold">{e.data_evento.slice(8, 10)}</span>
+                  <span className="mt-1 text-xs text-muted-foreground">{formatDataBreve(e.data_evento).split(" ")[1]}</span>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-lg font-medium uppercase leading-tight transition-colors group-hover:text-primary">{e.nome}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">{e.luogo} · {e.disciplina}</span>
+                </span>
+                <span className="text-primary" aria-hidden="true">↗</span>
+              </Link>
+            ))}
           </div>
-          <Link
-            to="/classifiche"
-            className="mt-4 text-[13px] font-medium text-primary transition-colors hover:opacity-80"
-          >
-            Vedi classifica completa →
-          </Link>
-        </Pannello>
+        </div>
       </section>
 
       {prossimi[0] && <LocandinaInEvidenza evento={prossimi[0]} />}
