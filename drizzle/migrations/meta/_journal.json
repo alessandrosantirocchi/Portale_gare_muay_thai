@@ -92,6 +92,13 @@
       "when": 1790632023461,
       "tag": "0012_group_automatic_pools_by_ifma_class",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790632096426,
+      "tag": "0013_show_weight_division_in_public_registrations",
+      "breakpoints": true
     }
   ]
 }
