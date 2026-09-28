@@ -15,3 +15,4 @@ Automatic pools are refreshed by a database trigger after registration changes; 
 The downloadable match-card workbook is built in the browser with ExcelJS; unlike the previous XLSX writer, it preserves red/blue cell fills in the downloaded file.
 Registration weight divisions follow IFMA 2026 Rule 4 and are assigned by a database trigger using weight, gender and birth year at the event date; automatic pools require the same division so all registration entry points remain consistent.
 Athlete roster entry uses one row per athlete with multi-row bulk insert, while medical certificate uploads remain on individual edit; this keeps batch registration fast without weakening file ownership checks.
+Export pool athletes as separate, explicitly pool-labelled rows in Match Card even when no individual match cards exist; this makes the exported workbook usable before matchmaking is finalized.
