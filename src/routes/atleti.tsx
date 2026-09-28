@@ -9,17 +9,17 @@ import { Pannello, SezioneTitolo, Vuoto } from "@/components/ui-blocchi";
 export const Route = createFileRoute("/atleti")({
   head: () => ({
     meta: [
-      { title: "Le mie iscrizioni — Fighting Spirit" },
+      { title: "Le mie iscrizioni — FIGHT HUB" },
       {
         name: "description",
         content:
           "Cerca il tuo nome e controlla tutte le iscrizioni agli eventi con lo stato: confermata, in attesa o respinta.",
       },
-      { property: "og:title", content: "Le mie iscrizioni — Fighting Spirit" },
+      { property: "og:title", content: "Le mie iscrizioni — FIGHT HUB" },
       {
         property: "og:description",
         content:
-          "Ogni atleta può verificare lo stato delle proprie iscrizioni agli eventi Fighting Spirit.",
+          "Ogni atleta può verificare lo stato delle proprie iscrizioni agli eventi FIGHT HUB.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/atleti")({
 type IscrizioneAtleta = {
   id: string;
   stato: string;
-  categoria_peso: string | null;
+  categoria: string | null;
   disciplina: string | null;
   created_at: string;
   eventi: {
@@ -133,9 +133,9 @@ function IscrizioniAtleta({ atleta }: { atleta: Atleta }) {
     queryKey: ["iscrizioni-atleta", atleta.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("iscrizioni")
+        .from("iscrizioni_pubbliche")
         .select(
-          "id, stato, categoria_peso, disciplina, created_at, eventi(nome, data_evento, luogo, disciplina)",
+          "id, stato, categoria, disciplina, created_at, eventi(nome, data_evento, luogo, disciplina)",
         )
         .eq("atleta_id", atleta.id)
         .order("created_at", { ascending: false });
@@ -172,7 +172,7 @@ function IscrizioniAtleta({ atleta }: { atleta: Atleta }) {
                 {formatDataBreve(i.eventi?.data_evento)}
                 {i.eventi?.luogo ? ` · ${i.eventi.luogo}` : ""} ·{" "}
                 {i.disciplina || i.eventi?.disciplina || atleta.disciplina}
-                {i.categoria_peso ? ` · ${i.categoria_peso}` : ""}
+                {i.categoria ? ` · ${i.categoria}` : ""}
               </p>
             </div>
             <StatoIscrizione stato={i.stato} />

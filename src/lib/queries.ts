@@ -15,6 +15,15 @@ export type Evento = {
   orario: string | null;
   programma: string | null;
   locandina_path: string | null;
+  organizzatore: string | null;
+  apertura_iscrizioni: string | null;
+  discipline_ammesse: string[] | null;
+  formati_incontro: Record<string, string[]> | null;
+  serie_ammesse: string[] | null;
+  categorie_ammesse: string[] | null;
+  limite_partecipanti: number | null;
+  blocca_certificato_scaduto: boolean | null;
+  originale_richiesto: boolean | null;
 };
 
 export type Atleta = {
@@ -31,6 +40,11 @@ export type Atleta = {
   vittorie: number;
   sconfitte: number;
   pareggi: number;
+  coach: string | null;
+  serie: string | null;
+  categoria: string | null;
+  totale_match: number | null;
+  certificato_scadenza: string | null;
 };
 
 export async function fetchEventi() {
@@ -54,7 +68,7 @@ export async function fetchEvento(id: string) {
 
 export async function fetchAtleti() {
   const { data, error } = await supabase
-    .from("atleti")
+    .from("classifica_pubblica")
     .select("*")
     .order("punti", { ascending: false });
   if (error) throw error;
@@ -62,10 +76,11 @@ export async function fetchAtleti() {
 }
 
 export async function fetchConteggiIscritti() {
-  const { data, error } = await supabase.from("iscrizioni").select("evento_id");
+  const { data, error } = await supabase.from("iscrizioni_pubbliche").select("evento_id");
   if (error) throw error;
   const mappa: Record<string, number> = {};
   for (const riga of data ?? []) {
+    if (!riga.evento_id) continue;
     mappa[riga.evento_id] = (mappa[riga.evento_id] ?? 0) + 1;
   }
   return mappa;
@@ -73,10 +88,8 @@ export async function fetchConteggiIscritti() {
 
 export async function fetchIscrittiEvento(eventoId: string) {
   const { data, error } = await supabase
-    .from("iscrizioni")
-    .select(
-      "id, categoria_peso, stato, atleti(nome, cognome, nome_societa, peso_kg, disciplina)",
-    )
+    .from("iscrizioni_pubbliche")
+    .select("id, evento_id, atleta_id, stato, nome, cognome, nome_societa, peso_kg, categoria, disciplina, created_at")
     .eq("evento_id", eventoId)
     .order("created_at", { ascending: true });
   if (error) throw error;

@@ -1,0 +1,2 @@
+ALTER TABLE public.eventi ADD COLUMN IF NOT EXISTS formati_incontro jsonb NOT NULL DEFAULT '{}'::jsonb;
+COMMENT ON COLUMN public.eventi.formati_incontro IS 'Per ogni disciplina, elenco delle tipologie di incontro previste: Light e/o Contatto pieno';

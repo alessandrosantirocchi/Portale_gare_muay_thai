@@ -6,12 +6,16 @@ import { lovable } from "@/integrations/lovable/index";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Accedi — Fighting Spirit" },
+      { title: "Accedi — FIGHT HUB" },
       {
         name: "description",
         content:
           "Area riservata delle società: accedi con email e password o con Google per gestire le iscrizioni degli atleti.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Accedi — FIGHT HUB" },
+      { property: "og:description", content: "FIGHT HUB: eventi, atleti e iscrizioni agli sport da combattimento." },
     ],
   }),
   component: Auth,

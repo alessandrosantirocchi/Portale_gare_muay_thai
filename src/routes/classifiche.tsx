@@ -9,17 +9,19 @@ import { FiltriDisciplina } from "@/components/tabella-eventi";
 export const Route = createFileRoute("/classifiche")({
   head: () => ({
     meta: [
-      { title: "Classifiche atleti — Fighting Spirit" },
+      { title: "Classifiche atleti — FIGHT HUB" },
       {
         name: "description",
         content:
           "Ranking ufficiale degli atleti: punti, vittorie, sconfitte e pareggi per ogni disciplina.",
       },
-      { property: "og:title", content: "Classifiche atleti — Fighting Spirit" },
+      { property: "og:title", content: "Classifiche atleti — FIGHT HUB" },
       {
         property: "og:description",
         content: "Punteggi e record degli atleti per disciplina e categoria di peso.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Classifiche,

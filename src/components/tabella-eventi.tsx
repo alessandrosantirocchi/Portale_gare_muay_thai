@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { Evento } from "@/lib/queries";
-import { formatDataBreve } from "@/lib/format";
+import { formatDataBreve, disciplineEvento } from "@/lib/format";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 
 export function TabellaEventi({
@@ -32,10 +32,10 @@ export function TabellaEventi({
             <span className="col-span-1 md:col-span-4">
               <span className="block text-sm font-medium">{e.nome}</span>
               <span className="block text-[11px] text-muted-foreground md:hidden">
-                {e.luogo} · {e.disciplina}
+                  {e.luogo} · {disciplineEvento(e).join(" · ")}
               </span>
               <span className="hidden text-[11px] text-muted-foreground md:inline">
-                {e.disciplina} · {e.tipo}
+                  {disciplineEvento(e).join(" · ")} · {e.tipo}
               </span>
             </span>
             <span className="col-span-3 hidden text-[13px] md:block">

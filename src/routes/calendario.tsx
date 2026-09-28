@@ -2,24 +2,26 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchConteggiIscritti, fetchEventi } from "@/lib/queries";
-import { DISCIPLINE } from "@/lib/format";
+import { DISCIPLINE, disciplinaCanonica, disciplineEvento } from "@/lib/format";
 import { FiltriDisciplina, TabellaEventi } from "@/components/tabella-eventi";
 import { SezioneTitolo } from "@/components/ui-blocchi";
 
 export const Route = createFileRoute("/calendario")({
   head: () => ({
     meta: [
-      { title: "Calendario gare — Fighting Spirit" },
+      { title: "Calendario gare — FIGHT HUB" },
       {
         name: "description",
         content:
           "Tutti gli eventi in programma: data, disciplina, sede, chiusura iscrizioni e numero di atleti iscritti.",
       },
-      { property: "og:title", content: "Calendario gare — Fighting Spirit" },
+      { property: "og:title", content: "Calendario gare — FIGHT HUB" },
       {
         property: "og:description",
         content: "Eventi in programma, chiusura iscrizioni e iscritti aggiornati.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Calendario,
@@ -36,7 +38,7 @@ function Calendario() {
 
   const oggi = new Date().toISOString().slice(0, 10);
   const filtrati = eventi.filter((e) => {
-    if (disciplina !== "Tutti" && e.disciplina !== disciplina) return false;
+    if (disciplina !== "Tutti" && !disciplineEvento(e).some((d) => disciplinaCanonica(d) === disciplinaCanonica(disciplina))) return false;
     if (stato === "aperti") return e.data_evento >= oggi;
     if (stato === "conclusi") return e.data_evento < oggi;
     return true;

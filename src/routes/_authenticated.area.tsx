@@ -6,14 +6,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin, useProfilo, useSession } from "@/lib/auth";
 import { formatDataBreve, formatDataCompleta, DISCIPLINE } from "@/lib/format";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
+import { RosterSocieta } from "@/components/roster-societa";
+import { ProfiloSocieta } from "@/components/profilo-societa";
+import { MatchmakingAdmin } from "@/components/matchmaking-admin";
+import { STATI_EVENTO } from "@/lib/fight-hub";
+import { Button } from "@/components/ui/button";
+import { DisciplineEvento } from "@/components/discipline-evento";
+import { ModificaIscrizione } from "@/components/modifica-iscrizione";
 import { BUCKET_LOCANDINE, useLocandina } from "@/lib/locandine";
 import { listaUtenti, creaUtente, impostaRuolo } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/area")({
   head: () => ({
     meta: [
-      { title: "Area società — Fighting Spirit" },
+      { title: "Area società — FIGHT HUB" },
       { name: "description", content: "Gestisci i tuoi atleti e le iscrizioni agli eventi." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Area società — FIGHT HUB" },
+      { property: "og:description", content: "FIGHT HUB: eventi, atleti e iscrizioni agli sport da combattimento." },
     ],
   }),
   component: AreaSocieta,
@@ -25,7 +36,7 @@ function AreaSocieta() {
   const { data: admin } = useIsAdmin(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
-    "atleti" | "iscrizioni" | "eventi" | "conferme" | "utenti"
+    "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti"
   >("atleti");
 
   async function esci() {
@@ -71,11 +82,13 @@ function AreaSocieta() {
       <div className="mt-6 flex flex-wrap gap-2">
         {([
           ["atleti", "I miei atleti"],
+          ["societa", "La mia società"],
           ["iscrizioni", "Iscrizioni"],
           ...(admin
             ? ([
                 ["eventi", "Gestione eventi"],
                 ["conferme", "Tutte le iscrizioni"],
+                ["matchmaking", "Matchmaking"],
                 ["utenti", "Utenti e ruoli"],
               ] as const)
             : []),
@@ -96,140 +109,13 @@ function AreaSocieta() {
       </div>
 
       <div className="mt-6">
-        {tab === "atleti" && <MieiAtleti userId={user.id} />}
+        {tab === "atleti" && <RosterSocieta userId={user.id} nomeSocieta={profilo?.nome_societa ?? ""} />}
+        {tab === "societa" && <ProfiloSocieta profilo={profilo} />}
         {tab === "iscrizioni" && <MieIscrizioni userId={user.id} />}
         {tab === "eventi" && admin && <GestioneEventi />}
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
+        {tab === "matchmaking" && admin && <MatchmakingAdmin />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
-      </div>
-    </div>
-  );
-}
-
-function MieiAtleti({ userId }: { userId: string }) {
-  const queryClient = useQueryClient();
-  const [form, setForm] = useState({
-    nome: "",
-    cognome: "",
-    peso: "",
-    disciplina: "Contatto Pieno",
-    sesso: "M",
-  });
-  const [msg, setMsg] = useState<string | null>(null);
-
-  const { data: atleti = [], isLoading } = useQuery({
-    queryKey: ["miei-atleti", userId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("atleti")
-        .select("*")
-        .eq("societa_id", userId)
-        .order("cognome");
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
-  const aggiungi = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("atleti").insert({
-        societa_id: userId,
-        nome: form.nome,
-        cognome: form.cognome,
-        peso_kg: form.peso ? Number(form.peso) : null,
-        disciplina: form.disciplina,
-        sesso: form.sesso,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setForm({ nome: "", cognome: "", peso: "", disciplina: "Contatto Pieno", sesso: "M" });
-      setMsg("Atleta aggiunto.");
-      queryClient.invalidateQueries({ queryKey: ["miei-atleti", userId] });
-      queryClient.invalidateQueries({ queryKey: ["atleti"] });
-    },
-    onError: (e: any) => setMsg(e.message ?? "Errore."),
-  });
-
-  const elimina = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("atleti").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["miei-atleti", userId] });
-      queryClient.invalidateQueries({ queryKey: ["atleti"] });
-    },
-  });
-
-  return (
-    <div className="grid gap-6 lg:grid-cols-12">
-      <Pannello className="p-5 lg:col-span-5">
-        <h2 className="font-display text-lg font-semibold uppercase tracking-wide">
-          Aggiungi atleta
-        </h2>
-        <form
-          className="mt-4 flex flex-col gap-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setMsg(null);
-            aggiungi.mutate();
-          }}
-        >
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Nome" value={form.nome} onChange={(v) => setForm({ ...form, nome: v })} required />
-            <Input label="Cognome" value={form.cognome} onChange={(v) => setForm({ ...form, cognome: v })} required />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Peso (kg)" value={form.peso} onChange={(v) => setForm({ ...form, peso: v })} type="number" />
-            <Select
-              label="Disciplina"
-              value={form.disciplina}
-              onChange={(v) => setForm({ ...form, disciplina: v })}
-              options={DISCIPLINE}
-            />
-          </div>
-          <Select
-            label="Sesso"
-            value={form.sesso}
-            onChange={(v) => setForm({ ...form, sesso: v })}
-            options={["M", "F"]}
-          />
-          <button
-            type="submit"
-            disabled={aggiungi.isPending}
-            className="rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
-          >
-            {aggiungi.isPending ? "Salvataggio…" : "Aggiungi atleta"}
-          </button>
-          {msg && <p className="text-[12px]">{msg}</p>}
-        </form>
-      </Pannello>
-
-      <div className="lg:col-span-7">
-        <Pannello className="divide-y divide-border overflow-hidden">
-          {isLoading && <Vuoto testo="Caricamento…" />}
-          {!isLoading && atleti.length === 0 && <Vuoto testo="Nessun atleta inserito." />}
-          {atleti.map((a: any) => (
-            <div key={a.id} className="flex items-center justify-between gap-3 px-5 py-3">
-              <div>
-                <p className="text-sm font-medium">
-                  {a.cognome} {a.nome}
-                </p>
-                <p className="text-[12px] text-muted-foreground">
-                  {a.disciplina} · {a.peso_kg ?? "—"} kg
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => elimina.mutate(a.id)}
-                className="text-[12px] text-destructive hover:underline"
-              >
-                Elimina
-              </button>
-            </div>
-          ))}
-        </Pannello>
       </div>
     </div>
   );
@@ -241,7 +127,7 @@ function MieIscrizioni({ userId }: { userId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("iscrizioni")
-        .select("id, stato, categoria_peso, evento_id, eventi(nome, data_evento, luogo)")
+        .select("id, stato, categoria_peso, atleta_id, evento_id, disciplina, snapshot_nome, snapshot_cognome, snapshot_peso_kg, snapshot_serie, snapshot_categoria, snapshot_coach, snapshot_totale_match, eventi(nome, data_evento, luogo, stato, fine_iscrizioni, apertura_iscrizioni, discipline_ammesse)")
         .eq("societa_id", userId)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -256,16 +142,17 @@ function MieIscrizioni({ userId }: { userId: string }) {
         <Vuoto testo="Nessuna iscrizione effettuata. Apri un evento dal calendario." />
       )}
       {iscrizioni.map((i: any) => (
-        <div key={i.id} className="flex items-center justify-between gap-3 px-5 py-4">
+        <div key={i.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
           <div>
-            <p className="text-sm font-medium">{i.eventi?.nome}</p>
+            <p className="text-sm font-medium">{i.snapshot_cognome} {i.snapshot_nome} · {i.eventi?.nome}</p>
             <p className="text-[12px] text-muted-foreground">
               {formatDataCompleta(i.eventi?.data_evento)} · {i.eventi?.luogo}
             </p>
+            <ModificaIscrizione iscrizione={i} userId={userId} />
           </div>
           <div className="text-right">
             <p className="text-[12px] text-muted-foreground">
-              {i.categoria_peso ?? "—"}
+              {i.snapshot_categoria ?? i.categoria_peso ?? "—"} · {i.snapshot_peso_kg ?? "—"} kg
             </p>
             <span className="text-[12px] font-medium capitalize">{i.stato}</span>
           </div>
@@ -279,7 +166,9 @@ function GestioneEventi() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     nome: "",
-    disciplina: "Contatto Pieno",
+    disciplina: "Muay Thai",
+    discipline_ammesse: ["Muay Thai"] as string[],
+    formati_incontro: {} as Record<string, string[]>,
     tipo: "Istituzionale",
     data_evento: "",
     luogo: "",
@@ -288,6 +177,11 @@ function GestioneEventi() {
     descrizione: "",
     orario: "",
     programma: "",
+    organizzatore: "",
+    apertura_iscrizioni: "",
+    limite_partecipanti: "",
+    blocca_certificato_scaduto: false,
+    originale_richiesto: false,
   });
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -296,6 +190,8 @@ function GestioneEventi() {
       const { error } = await supabase.from("eventi").insert({
         nome: form.nome,
         disciplina: form.disciplina,
+        discipline_ammesse: form.discipline_ammesse,
+        formati_incontro: form.formati_incontro,
         tipo: form.tipo,
         data_evento: form.data_evento,
         luogo: form.luogo,
@@ -304,7 +200,12 @@ function GestioneEventi() {
         descrizione: form.descrizione || null,
         orario: form.orario || null,
         programma: form.programma || null,
-        stato: "aperto",
+        organizzatore: form.organizzatore || null,
+        apertura_iscrizioni: form.apertura_iscrizioni ? new Date(form.apertura_iscrizioni).toISOString() : null,
+        limite_partecipanti: form.limite_partecipanti ? Number(form.limite_partecipanti) : null,
+        blocca_certificato_scaduto: form.blocca_certificato_scaduto,
+        originale_richiesto: form.originale_richiesto,
+        stato: "iscrizioni aperte",
       });
       if (error) throw error;
     },
@@ -313,7 +214,9 @@ function GestioneEventi() {
       queryClient.invalidateQueries({ queryKey: ["eventi"] });
       setForm({
         nome: "",
-        disciplina: "Contatto Pieno",
+        disciplina: "Muay Thai",
+        discipline_ammesse: ["Muay Thai"],
+        formati_incontro: {},
         tipo: "Istituzionale",
         data_evento: "",
         luogo: "",
@@ -321,7 +224,7 @@ function GestioneEventi() {
         fine_iscrizioni: "",
         descrizione: "",
         orario: "",
-        programma: "",
+        programma: "", organizzatore: "", apertura_iscrizioni: "", limite_partecipanti: "", blocca_certificato_scaduto: false, originale_richiesto: false,
       });
     },
     onError: (e: any) => setMsg(e.message ?? "Errore."),
@@ -343,13 +246,18 @@ function GestioneEventi() {
         >
           <Input label="Nome evento" value={form.nome} onChange={(v) => setForm({ ...form, nome: v })} required />
           <div className="grid grid-cols-2 gap-3">
-            <Select label="Disciplina" value={form.disciplina} onChange={(v) => setForm({ ...form, disciplina: v })} options={DISCIPLINE} />
+            <DisciplineEvento value={form.discipline_ammesse} onChange={(v) => setForm({ ...form, discipline_ammesse: v, disciplina: v[0] ?? "" })} formati={form.formati_incontro} onFormatiChange={(v) => setForm({ ...form, formati_incontro: v })} />
             <Select label="Tipo" value={form.tipo} onChange={(v) => setForm({ ...form, tipo: v })} options={["Istituzionale", "Non Istituzionale"]} />
           </div>
           <Input label="Data evento" type="date" value={form.data_evento} onChange={(v) => setForm({ ...form, data_evento: v })} required />
           <Input label="Luogo (città)" value={form.luogo} onChange={(v) => setForm({ ...form, luogo: v })} required />
           <Input label="Sede / palazzetto" value={form.sede} onChange={(v) => setForm({ ...form, sede: v })} />
           <Input label="Fine iscrizioni (data-ora)" type="datetime-local" value={form.fine_iscrizioni} onChange={(v) => setForm({ ...form, fine_iscrizioni: v })} required />
+          <Input label="Organizzatore" value={form.organizzatore} onChange={(v) => setForm({ ...form, organizzatore: v })} />
+          <Input label="Apertura iscrizioni" type="datetime-local" value={form.apertura_iscrizioni} onChange={(v) => setForm({ ...form, apertura_iscrizioni: v })} />
+          <Input label="Limite partecipanti (opzionale)" type="number" value={form.limite_partecipanti} onChange={(v) => setForm({ ...form, limite_partecipanti: v })} />
+          <label className="flex gap-2 text-xs"><input type="checkbox" checked={form.blocca_certificato_scaduto} onChange={(e) => setForm({ ...form, blocca_certificato_scaduto: e.target.checked })} />Blocca iscrizioni senza certificato valido</label>
+          <label className="flex gap-2 text-xs"><input type="checkbox" checked={form.originale_richiesto} onChange={(e) => setForm({ ...form, originale_richiesto: e.target.checked })} />Originale richiesto al check-in</label>
           <Input label="Orario (es. Apertura 9:00 · Gare 10:30)" value={form.orario} onChange={(v) => setForm({ ...form, orario: v })} />
           <label className="text-[12px] font-medium text-muted-foreground">
             Programma della giornata (una voce per riga)
@@ -437,7 +345,9 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
   const queryClient = useQueryClient();
   const [f, setF] = useState({
     nome: evento.nome ?? "",
-    disciplina: evento.disciplina ?? "Contatto Pieno",
+    disciplina: evento.disciplina ?? "Muay Thai",
+    discipline_ammesse: (evento.discipline_ammesse?.length ? evento.discipline_ammesse as string[] : [evento.disciplina ?? "Muay Thai"]).map((v) => ["Contatto Pieno", "Light Contact"].includes(v) ? "Kickboxing" : v),
+    formati_incontro: (evento.formati_incontro ?? {}) as Record<string, string[]>,
     tipo: evento.tipo ?? "Istituzionale",
     data_evento: evento.data_evento ?? "",
     luogo: evento.luogo ?? "",
@@ -446,7 +356,12 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
     orario: evento.orario ?? "",
     programma: evento.programma ?? "",
     descrizione: evento.descrizione ?? "",
-    stato: evento.stato ?? "aperto",
+    stato: evento.stato === "aperto" ? "iscrizioni aperte" : evento.stato === "chiuso" ? "iscrizioni chiuse" : evento.stato ?? "bozza",
+    organizzatore: evento.organizzatore ?? "",
+    apertura_iscrizioni: evento.apertura_iscrizioni?.slice(0, 16) ?? "",
+    limite_partecipanti: String(evento.limite_partecipanti ?? ""),
+    blocca_certificato_scaduto: evento.blocca_certificato_scaduto ?? false,
+    originale_richiesto: evento.originale_richiesto ?? false,
   });
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -457,6 +372,8 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
         .update({
           nome: f.nome,
           disciplina: f.disciplina,
+          discipline_ammesse: f.discipline_ammesse,
+          formati_incontro: f.formati_incontro,
           tipo: f.tipo,
           data_evento: f.data_evento,
           luogo: f.luogo,
@@ -466,6 +383,11 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
           programma: f.programma || null,
           descrizione: f.descrizione || null,
           stato: f.stato,
+          organizzatore: f.organizzatore || null,
+          apertura_iscrizioni: f.apertura_iscrizioni ? new Date(f.apertura_iscrizioni).toISOString() : null,
+          limite_partecipanti: f.limite_partecipanti ? Number(f.limite_partecipanti) : null,
+          blocca_certificato_scaduto: f.blocca_certificato_scaduto,
+          originale_richiesto: f.originale_richiesto,
         })
         .eq("id", evento.id);
       if (error) throw error;
@@ -489,16 +411,21 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
     >
       <Input label="Nome evento" value={f.nome} onChange={(v) => setF({ ...f, nome: v })} required />
       <div className="grid grid-cols-2 gap-3">
-        <Select label="Disciplina" value={f.disciplina} onChange={(v) => setF({ ...f, disciplina: v })} options={DISCIPLINE} />
+        <DisciplineEvento value={f.discipline_ammesse} onChange={(v) => setF({ ...f, discipline_ammesse: v, disciplina: v[0] ?? "" })} formati={f.formati_incontro} onFormatiChange={(v) => setF({ ...f, formati_incontro: v })} />
         <Select label="Tipo" value={f.tipo} onChange={(v) => setF({ ...f, tipo: v })} options={["Istituzionale", "Non Istituzionale"]} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Input label="Data evento" type="date" value={f.data_evento} onChange={(v) => setF({ ...f, data_evento: v })} required />
-        <Select label="Stato" value={f.stato} onChange={(v) => setF({ ...f, stato: v })} options={["aperto", "chiuso"]} />
+        <Select label="Stato" value={f.stato} onChange={(v) => setF({ ...f, stato: v })} options={STATI_EVENTO} />
       </div>
       <Input label="Luogo (città)" value={f.luogo} onChange={(v) => setF({ ...f, luogo: v })} required />
       <Input label="Sede / palazzetto" value={f.sede} onChange={(v) => setF({ ...f, sede: v })} />
       <Input label="Fine iscrizioni" type="datetime-local" value={f.fine_iscrizioni} onChange={(v) => setF({ ...f, fine_iscrizioni: v })} required />
+      <Input label="Organizzatore" value={f.organizzatore} onChange={(v) => setF({ ...f, organizzatore: v })} />
+      <Input label="Apertura iscrizioni" type="datetime-local" value={f.apertura_iscrizioni} onChange={(v) => setF({ ...f, apertura_iscrizioni: v })} />
+      <Input label="Limite partecipanti" type="number" value={f.limite_partecipanti} onChange={(v) => setF({ ...f, limite_partecipanti: v })} />
+      <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.blocca_certificato_scaduto} onChange={(e) => setF({ ...f, blocca_certificato_scaduto: e.target.checked })} />Blocca iscrizioni senza certificato valido</label>
+      <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.originale_richiesto} onChange={(e) => setF({ ...f, originale_richiesto: e.target.checked })} />Originale richiesto al check-in</label>
       <Input label="Orario" value={f.orario} onChange={(v) => setF({ ...f, orario: v })} />
       <label className="text-[12px] font-medium text-muted-foreground">
         Programma (una voce per riga)
@@ -842,7 +769,7 @@ function ConfermaIscrizioni() {
       let q = supabase
         .from("iscrizioni")
         .select(
-          "id, stato, categoria_peso, disciplina, created_at, evento_id, atleti(nome, cognome, nome_societa, peso_kg, disciplina), eventi(nome, data_evento, luogo)",
+          "id, stato, categoria_peso, disciplina, created_at, evento_id, snapshot_nome, snapshot_cognome, snapshot_team, snapshot_peso_kg, snapshot_categoria, atleti(nome, cognome, nome_societa, peso_kg, disciplina), eventi(nome, data_evento, luogo)",
         )
         .order("created_at", { ascending: false });
       if (eventoId !== "tutti") q = q.eq("evento_id", eventoId);
@@ -880,8 +807,8 @@ function ConfermaIscrizioni() {
   const filtrate = (iscrizioni as any[]).filter((i) => {
     if (stato !== "tutti" && i.stato !== stato) return false;
     if (!testo) return true;
-    const blob = `${i.atleti?.nome ?? ""} ${i.atleti?.cognome ?? ""} ${
-      i.atleti?.nome_societa ?? ""
+    const blob = `${i.snapshot_nome ?? i.atleti?.nome ?? ""} ${i.snapshot_cognome ?? i.atleti?.cognome ?? ""} ${
+      i.snapshot_team ?? i.atleti?.nome_societa ?? ""
     } ${i.eventi?.nome ?? ""}`.toLowerCase();
     return blob.includes(testo);
   });
@@ -899,11 +826,11 @@ function ConfermaIscrizioni() {
       ...filtrate.map((i) => [
         i.eventi?.nome ?? "",
         i.eventi?.data_evento ?? "",
-        `${i.atleti?.cognome ?? ""} ${i.atleti?.nome ?? ""}`.trim(),
-        i.atleti?.nome_societa ?? "",
+        `${i.snapshot_cognome ?? i.atleti?.cognome ?? ""} ${i.snapshot_nome ?? i.atleti?.nome ?? ""}`.trim(),
+        i.snapshot_team ?? i.atleti?.nome_societa ?? "",
         i.disciplina || i.atleti?.disciplina || "",
-        i.atleti?.peso_kg ?? "",
-        i.categoria_peso ?? "",
+        i.snapshot_peso_kg ?? i.atleti?.peso_kg ?? "",
+        i.snapshot_categoria ?? i.categoria_peso ?? "",
         i.stato,
       ]),
     ];
@@ -973,11 +900,11 @@ function ConfermaIscrizioni() {
           >
             <div>
               <p className="text-sm font-medium">
-                {i.atleti?.cognome} {i.atleti?.nome}
+                {i.snapshot_cognome ?? i.atleti?.cognome} {i.snapshot_nome ?? i.atleti?.nome}
               </p>
               <p className="text-[12px] text-muted-foreground">
-                {i.atleti?.nome_societa} · {i.disciplina || i.atleti?.disciplina}
-                {i.atleti?.peso_kg ? ` · ${i.atleti.peso_kg} kg` : ""}
+                {i.snapshot_team ?? i.atleti?.nome_societa} · {i.disciplina || i.atleti?.disciplina}
+                {i.snapshot_peso_kg ?? i.atleti?.peso_kg ? ` · ${i.snapshot_peso_kg ?? i.atleti?.peso_kg} kg` : ""}
               </p>
               <p className="text-[12px] text-muted-foreground">
                 {i.eventi?.nome} · {formatDataBreve(i.eventi?.data_evento)}
