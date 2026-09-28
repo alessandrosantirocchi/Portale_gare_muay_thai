@@ -15,6 +15,13 @@
       "when": 1789399849967,
       "tag": "0001_locandine_storage_and_column",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790629691274,
+      "tag": "0002_fight_hub_roster_registrations_matchmaking",
+      "breakpoints": true
     }
   ]
 }
