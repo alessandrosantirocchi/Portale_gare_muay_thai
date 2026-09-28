@@ -50,9 +50,9 @@
 - [x] Account admin reale + societa reale, verifica pagina Utenti e ruoli
 - [x] Test iscrizione dalla pagina pubblica evento -> area riservata -> Le mie iscrizioni
 - [x] Admin: gestione eventi completa (crea, modifica, elimina, locandina)
-- [ ] Caricare il logo della società nel profilo (bucket privato + anteprima)
-- [ ] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
-- [ ] Rendere obbligatori tutti i campi del form atleti e ripristinare l'etichetta "Cognome coach"
+- [x] Caricare il logo della società nel profilo (bucket privato + anteprima)
+- [x] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
+- [x] Rendere obbligatori tutti i campi del form atleti e ripristinare l'etichetta "Cognome coach"
 - [x] Pool e abbinamenti in pagina evento: atleti in orizzontale come screenshot + icona lampeggiante con numero pool
 - [x] Unire "Atleti iscritti" e "Pool e abbinamenti" in un'unica sezione "Atleti iscritti e abbinamenti"
 - [x] 400 firma locandina: GRANT EXECUTE su has_role ad anon/authenticated (0021)
