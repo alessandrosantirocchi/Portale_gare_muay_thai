@@ -626,6 +626,10 @@ export type Database = {
           nome: string | null
           nome_societa: string | null
           peso_kg: number | null
+          snapshot_coach: string | null
+          snapshot_serie: string | null
+          snapshot_sesso: string | null
+          snapshot_totale_match: number | null
           stato: string | null
         }
         Relationships: [

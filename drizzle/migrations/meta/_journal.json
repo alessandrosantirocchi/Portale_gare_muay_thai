@@ -141,6 +141,13 @@
       "when": 1790634071679,
       "tag": "0019_organizer_registration_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1790634429172,
+      "tag": "0020_public_registrations_extended_columns",
+      "breakpoints": true
     }
   ]
 }
