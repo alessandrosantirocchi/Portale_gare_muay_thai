@@ -53,8 +53,9 @@ export const DISCIPLINE = [
 export const FORMATI_INCONTRO = ["Light", "Contatto pieno"] as const;
 export type FormatiIncontro = Record<string, string[]>;
 
-export function disciplineEvento(evento: { disciplina: string; discipline_ammesse?: string[] | null }) {
-  const values = evento.discipline_ammesse?.length ? evento.discipline_ammesse : [evento.disciplina];
+export function disciplineEvento(evento: { disciplina?: string | null; discipline_ammesse?: (string | null)[] | null }) {
+  const raw = evento.discipline_ammesse?.length ? evento.discipline_ammesse : [evento.disciplina];
+  const values = raw.filter((v): v is string => typeof v === "string" && v.trim() !== "");
   return [...new Map(values.map((v) => {
     const value = v.trim().toLocaleLowerCase("it-IT");
     const normalized = value === "contatto pieno" || value === "light contact" ? "Kickboxing" : v;
@@ -62,6 +63,6 @@ export function disciplineEvento(evento: { disciplina: string; discipline_ammess
   })).values()];
 }
 
-export function disciplinaCanonica(value: string) {
-  return value.trim().toLocaleUpperCase("it-IT");
+export function disciplinaCanonica(value: string | null | undefined) {
+  return (value ?? "").trim().toLocaleUpperCase("it-IT");
 }
