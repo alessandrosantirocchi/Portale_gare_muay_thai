@@ -40,7 +40,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   });
   const saveMany = useMutation({
     mutationFn: async () => {
-      const validi = nuovi.filter((r) => r.nome.trim() || r.cognome.trim());
+      const validi = nuovi.filter((r) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim());
       if (!validi.length || validi.some((r) => !r.nome.trim() || !r.cognome.trim())) throw new Error("Compila nome e cognome per ogni atleta inserito.");
       const { error } = await supabase.from("atleti").insert(validi.map((r) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita || null, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, disciplina: r.disciplina, serie: r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, societa_id: userId, nome_societa: nomeSocieta })));
       if (error) throw error;
@@ -56,7 +56,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   return <div className="grid gap-6">
     {!editId && <form onSubmit={(e) => { e.preventDefault(); setMessage(""); saveMany.mutate(); }} className="border-y border-border py-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl uppercase">Nuovi atleti</h2><Button type="button" variant="outline" onClick={() => setNuovi((rows) => [...rows, { ...empty }])}>Aggiungi atleta</Button></div>
-      <div className="space-y-3">{nuovi.map((r, index) => <div key={index} className="grid grid-cols-2 gap-3 border-b border-border pb-4 sm:grid-cols-3 lg:grid-cols-[repeat(6,minmax(0,1fr))]">
+      <div className="space-y-3 overflow-x-auto">{nuovi.map((r, index) => <div key={index} className="grid min-w-[1340px] grid-cols-[repeat(3,minmax(0,1fr))_80px_110px_145px_100px_160px_130px_100px_88px] gap-3 border-b border-border pb-4">
         {batchField(index, "nome", "Nome")}{batchField(index, "cognome", "Cognome")}{batchField(index, "data_nascita", "Data di nascita", "date")}{batchSelect(index, "sesso", "Genere", ["M", "F"])}{batchField(index, "peso_kg", "Peso reale (kg)", "number")}{batchSelect(index, "disciplina", "Disciplina", DISCIPLINE_GARA)}{batchSelect(index, "serie", "Classe", CLASSI)}{batchSelect(index, "categoria", "Categoria", CATEGORIE)}{batchField(index, "coach", "Coach")}{batchField(index, "totale_match", "Totale match", "number")}
         <div className="flex items-end">{nuovi.length > 1 && <Button type="button" variant="outline" onClick={() => setNuovi((rows) => rows.filter((_, n) => n !== index))}>Rimuovi</Button>}</div>
       </div>)}</div>
