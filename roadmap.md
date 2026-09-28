@@ -54,3 +54,5 @@
 - [ ] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
 - [ ] Rendere obbligatori tutti i campi del form atleti e ripristinare l'etichetta "Cognome coach"
 - [ ] Pool e abbinamenti in pagina evento: atleti in orizzontale come screenshot + icona lampeggiante con numero pool
+- [ ] Unire "Atleti iscritti" e "Pool e abbinamenti" in un'unica sezione "Atleti iscritti e abbinamenti"
+- [ ] Indagare 400 sulla firma locandina (oggetto esistente, flag pubblicato true)
