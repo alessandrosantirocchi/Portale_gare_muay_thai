@@ -11,6 +11,7 @@ import { ProfiloSocieta } from "@/components/profilo-societa";
 import { MatchmakingAdmin } from "@/components/matchmaking-admin";
 import { STATI_EVENTO } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
+import { DisciplineEvento } from "@/components/discipline-evento";
 import { BUCKET_LOCANDINE, useLocandina } from "@/lib/locandine";
 import { listaUtenti, creaUtente, impostaRuolo } from "@/lib/admin.functions";
 
@@ -164,6 +165,7 @@ function GestioneEventi() {
   const [form, setForm] = useState({
     nome: "",
     disciplina: "Contatto Pieno",
+    discipline_ammesse: ["Contatto Pieno"] as string[],
     tipo: "Istituzionale",
     data_evento: "",
     luogo: "",
@@ -185,6 +187,7 @@ function GestioneEventi() {
       const { error } = await supabase.from("eventi").insert({
         nome: form.nome,
         disciplina: form.disciplina,
+        discipline_ammesse: form.discipline_ammesse,
         tipo: form.tipo,
         data_evento: form.data_evento,
         luogo: form.luogo,
@@ -208,6 +211,7 @@ function GestioneEventi() {
       setForm({
         nome: "",
         disciplina: "Contatto Pieno",
+        discipline_ammesse: ["Contatto Pieno"],
         tipo: "Istituzionale",
         data_evento: "",
         luogo: "",
@@ -237,7 +241,7 @@ function GestioneEventi() {
         >
           <Input label="Nome evento" value={form.nome} onChange={(v) => setForm({ ...form, nome: v })} required />
           <div className="grid grid-cols-2 gap-3">
-            <Select label="Disciplina" value={form.disciplina} onChange={(v) => setForm({ ...form, disciplina: v })} options={DISCIPLINE} />
+            <DisciplineEvento value={form.discipline_ammesse} onChange={(v) => setForm({ ...form, discipline_ammesse: v, disciplina: v[0] ?? "" })} />
             <Select label="Tipo" value={form.tipo} onChange={(v) => setForm({ ...form, tipo: v })} options={["Istituzionale", "Non Istituzionale"]} />
           </div>
           <Input label="Data evento" type="date" value={form.data_evento} onChange={(v) => setForm({ ...form, data_evento: v })} required />
@@ -337,6 +341,7 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
   const [f, setF] = useState({
     nome: evento.nome ?? "",
     disciplina: evento.disciplina ?? "Contatto Pieno",
+    discipline_ammesse: evento.discipline_ammesse?.length ? evento.discipline_ammesse as string[] : [evento.disciplina ?? "Contatto Pieno"],
     tipo: evento.tipo ?? "Istituzionale",
     data_evento: evento.data_evento ?? "",
     luogo: evento.luogo ?? "",
@@ -361,6 +366,7 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
         .update({
           nome: f.nome,
           disciplina: f.disciplina,
+          discipline_ammesse: f.discipline_ammesse,
           tipo: f.tipo,
           data_evento: f.data_evento,
           luogo: f.luogo,
@@ -398,7 +404,7 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
     >
       <Input label="Nome evento" value={f.nome} onChange={(v) => setF({ ...f, nome: v })} required />
       <div className="grid grid-cols-2 gap-3">
-        <Select label="Disciplina" value={f.disciplina} onChange={(v) => setF({ ...f, disciplina: v })} options={DISCIPLINE} />
+        <DisciplineEvento value={f.discipline_ammesse} onChange={(v) => setF({ ...f, discipline_ammesse: v, disciplina: v[0] ?? "" })} />
         <Select label="Tipo" value={f.tipo} onChange={(v) => setF({ ...f, tipo: v })} options={["Istituzionale", "Non Istituzionale"]} />
       </div>
       <div className="grid grid-cols-2 gap-3">
