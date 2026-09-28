@@ -1,7 +1,7 @@
 # FIGHT HUB — portale iscrizione atleti
 
 ## Task
-- [ ] Rinominare nell'Excel della Match Card le colonne Rosso/Blu in Angolo 1/2 e i team senza colore
+- [x] Rinominare nell'Excel della Match Card le colonne Rosso/Blu in Angolo 1/2 e i team senza colore
 - [x] Normalizzare nome e cognome con iniziali maiuscole, anche per dati inseriti in minuscolo
 - [x] Iscrivere automaticamente l'atleta appena viene selezionato, senza ulteriore conferma
 - [x] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
