@@ -75,6 +75,7 @@ function AreaSocieta() {
               {profilo?.citta ? ` · ${profilo.citta}` : ""}
             </p>
           )}
+          </div>
         </div>
         <button
           type="button"
@@ -90,11 +91,11 @@ function AreaSocieta() {
           ["atleti", "I miei atleti"],
           ["societa", "La mia società"],
           ["iscrizioni", "Iscrizioni"],
+          ["eventi", "Gestione eventi"],
+          ["matchmaking", "Matchmaking"],
           ...(admin
             ? ([
-                ["eventi", "Gestione eventi"],
                 ["conferme", "Tutte le iscrizioni"],
-                ["matchmaking", "Matchmaking"],
                 ["utenti", "Utenti e ruoli"],
               ] as const)
             : []),
