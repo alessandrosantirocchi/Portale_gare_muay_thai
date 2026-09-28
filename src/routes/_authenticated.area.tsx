@@ -120,9 +120,9 @@ function AreaSocieta() {
         {tab === "atleti" && <RosterSocieta userId={user.id} nomeSocieta={profilo?.nome_societa ?? ""} />}
         {tab === "societa" && <ProfiloSocieta profilo={profilo} />}
         {tab === "iscrizioni" && <MieIscrizioni userId={user.id} />}
-        {tab === "eventi" && admin && <GestioneEventi />}
+        {tab === "eventi" && <GestioneEventi admin={!!admin} userId={user.id} />}
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
-        {tab === "matchmaking" && admin && <MatchmakingAdmin />}
+        {tab === "matchmaking" && <MatchmakingAdmin admin={!!admin} userId={user.id} />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
       </div>
     </div>
