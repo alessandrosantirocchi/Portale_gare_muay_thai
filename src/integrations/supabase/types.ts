@@ -469,6 +469,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          logo_path: string | null
           nome_coach: string | null
           nome_societa: string
           partita_iva: string | null
@@ -485,6 +486,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
+          logo_path?: string | null
           nome_coach?: string | null
           nome_societa?: string
           partita_iva?: string | null
@@ -501,6 +503,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          logo_path?: string | null
           nome_coach?: string | null
           nome_societa?: string
           partita_iva?: string | null
