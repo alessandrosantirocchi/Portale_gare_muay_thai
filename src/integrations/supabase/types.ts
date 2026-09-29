@@ -28,6 +28,7 @@ export type Database = {
           created_at: string
           data_nascita: string | null
           disciplina: string
+          formato: string
           id: string
           nome: string
           nome_societa: string
@@ -54,6 +55,7 @@ export type Database = {
           created_at?: string
           data_nascita?: string | null
           disciplina?: string
+          formato?: string
           id?: string
           nome: string
           nome_societa?: string
@@ -80,6 +82,7 @@ export type Database = {
           created_at?: string
           data_nascita?: string | null
           disciplina?: string
+          formato?: string
           id?: string
           nome?: string
           nome_societa?: string
