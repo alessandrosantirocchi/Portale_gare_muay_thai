@@ -155,6 +155,13 @@
       "when": 1790634673917,
       "tag": "0021_grant_execute_has_role_for_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1790669669407,
+      "tag": "0022_athlete_fight_format",
+      "breakpoints": true
     }
   ]
 }

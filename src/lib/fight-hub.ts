@@ -2,7 +2,14 @@ import type { Database } from "@/integrations/supabase/types";
 
 export const CLASSI = ["A", "B", "C", "N", "Light"] as const;
 export const CATEGORIE = ["SENIOR", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 ANNI", "YOUNG CADETTI 10–12 ANNI", "GIOCO SPORT FINO A 9 ANNI", "ALTRO"] as const;
-export const DISCIPLINE_GARA = ["MUAY THAI", "K1", "FIGHT CODE", "ALTRO"] as const;
+export const FORMATI_ATLETA = ["KO", "Light"] as const;
+export const DISCIPLINE_PER_FORMATO: Record<string, readonly string[]> = {
+  KO: ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA"],
+  Light: ["Muay Thai", "K1 Rules", "Kick Light", "A-MMA"],
+};
+const KO_DISCIPLINE: readonly string[] = ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA"];
+export const disciplinePerFormato = (formato: string): readonly string[] => DISCIPLINE_PER_FORMATO[formato] ?? KO_DISCIPLINE;
+export const DISCIPLINE_GARA = ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA", "Kick Light", "A-MMA"] as const;
 export const STATI_EVENTO = ["bozza", "iscrizioni aperte", "iscrizioni chiuse", "matchmaking", "pubblicato", "concluso"] as const;
 
 export type Iscrizione = Database["public"]["Tables"]["iscrizioni"]["Row"] & { atleti?: { nome: string; cognome: string; nome_societa: string; sesso: string; data_nascita: string | null; peso_kg: number | null; disciplina: string; serie: string | null; categoria: string | null; totale_match: number | null } | null };
