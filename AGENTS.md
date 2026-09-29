@@ -17,3 +17,4 @@ Registration weight divisions follow IFMA 2026 Rule 4 and are assigned by a data
 Athlete roster entry uses one row per athlete with multi-row bulk insert, while medical certificate uploads remain on individual edit; this keeps batch registration fast without weakening file ownership checks.
 Export pool athletes as separate, explicitly pool-labelled rows in Match Card even when no individual match cards exist; this makes the exported workbook usable before matchmaking is finalized.
 Keep roster weight choices gender-specific to the supplied chart (M -48 through -91, F -45 through -75, minus labels only) and separate from the age band; event registration independently recalculates its official division from measured weight and event date to preserve grouping rules.
+Roster age bands are selected by KO/Light and validated against the exact birth date; the roster preserves the chosen band so overlapping ages 18 and 40 can be assigned intentionally.

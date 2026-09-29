@@ -3,6 +3,21 @@ import type { Database } from "@/integrations/supabase/types";
 export const CLASSI = ["A", "B", "C", "N", "Light"] as const;
 export const CATEGORIE = ["SENIOR", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 ANNI", "YOUNG CADETTI 10–12 ANNI", "GIOCO SPORT FINO A 9 ANNI", "ALTRO"] as const;
 export const FORMATI_ATLETA = ["KO", "Light"] as const;
+export const CATEGORIE_ETA_PER_FORMATO: Record<string, readonly string[]> = {
+  KO: ["JUNIOR 16–18 ANNI", "SENIOR 18–40 ANNI"],
+  Light: ["YOUNG CADET 10–12 ANNI", "OLD CADET 13–15 ANNI", "JUNIOR 16–18 ANNI", "SENIOR 18–40 ANNI", "MASTER 40–55 ANNI"],
+};
+export function categorieEtaDisponibili(formato: string, nascita: string, oggi: string) {
+  const eta = etaAllaData(nascita, oggi);
+  if (eta === null || !Number.isFinite(eta)) return [];
+  return (CATEGORIE_ETA_PER_FORMATO[formato] ?? []).filter((categoria) => {
+    if (categoria.startsWith("YOUNG")) return eta >= 10 && eta <= 12;
+    if (categoria.startsWith("OLD")) return eta >= 13 && eta <= 15;
+    if (categoria.startsWith("JUNIOR")) return eta >= 16 && eta <= 18;
+    if (categoria.startsWith("SENIOR")) return eta >= 18 && eta <= 40;
+    return eta >= 40 && eta <= 55;
+  });
+}
 export const DISCIPLINE_PER_FORMATO: Record<string, readonly string[]> = {
   KO: ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA"],
   Light: ["Muay Thai", "K1 Rules", "Kick Light", "A-MMA"],
