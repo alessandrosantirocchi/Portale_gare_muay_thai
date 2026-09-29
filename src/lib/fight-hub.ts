@@ -7,7 +7,8 @@ export const DISCIPLINE_PER_FORMATO: Record<string, readonly string[]> = {
   KO: ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA"],
   Light: ["Muay Thai", "K1 Rules", "Kick Light", "A-MMA"],
 };
-export const disciplinePerFormato = (formato: string) => DISCIPLINE_PER_FORMATO[formato] ?? DISCIPLINE_PER_FORMATO.KO;
+const KO_DISCIPLINE: readonly string[] = ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA"];
+export const disciplinePerFormato = (formato: string): readonly string[] => DISCIPLINE_PER_FORMATO[formato] ?? KO_DISCIPLINE;
 export const DISCIPLINE_GARA = ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA", "Kick Light", "A-MMA"] as const;
 export const STATI_EVENTO = ["bozza", "iscrizioni aperte", "iscrizioni chiuse", "matchmaking", "pubblicato", "concluso"] as const;
 
