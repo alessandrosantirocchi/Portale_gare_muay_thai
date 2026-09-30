@@ -183,6 +183,13 @@
       "when": 1790763079550,
       "tag": "0025_ifma_weight_class_gioco_sport",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1790763124743,
+      "tag": "0026_ifma_weight_class_ycadet_plus60",
+      "breakpoints": true
     }
   ]
 }
