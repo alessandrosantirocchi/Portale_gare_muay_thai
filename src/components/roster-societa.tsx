@@ -23,7 +23,7 @@ function updateAgeCategory(row: Form, change: Partial<Form>): Form {
   const next = { ...row, ...change };
   const allowed = categorieEtaDisponibili(next.formato);
   const match = fasceCompatibili(allowed, next.data_nascita);
-  if (match.length) return { ...next, categoria: match.includes(row.categoria) ? row.categoria : match[match.length > 1 && /SENIOR/.test(match[1]) && !/MASTER/.test(match[1]) ? 1 : 0] };
+  if (match.length) { const second = match[1] ?? ""; return { ...next, categoria: match.includes(row.categoria) ? row.categoria : (match[/SENIOR/.test(second) ? 1 : 0] ?? "") }; }
   return { ...next, categoria: allowed.includes(row.categoria) ? row.categoria : (allowed[0] ?? "") };
 }
 
