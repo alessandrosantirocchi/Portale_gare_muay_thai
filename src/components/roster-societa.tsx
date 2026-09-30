@@ -25,6 +25,8 @@ function validaAtleta(row: Form) {
   if (!parsed.success || !birth || !Number.isFinite(Date.parse(birth)) || birth > new Date().toISOString().slice(0, 10) || birth <= "1900-01-01") throw new Error("Compila nome, cognome e una data di nascita valida per ogni atleta.");
   if (!categoriePesoRoster(row.sesso).includes(row.categoria_peso)) throw new Error("Seleziona una categoria di peso valida per il genere indicato.");
   if (!categorieEtaDisponibili(row.formato, birth, today()).includes(row.categoria)) throw new Error("Seleziona una categoria di età valida per il formato e la data di nascita.");
+  if (row.formato === "KO" && !CLASSI.includes(row.serie as (typeof CLASSI)[number])) throw new Error("Seleziona la classe (A, B, C o N) per gli atleti KO.");
+  if (row.formato === "Light" && row.serie) throw new Error("La classe si applica solo agli atleti KO: con Light va deselezionata.");
   if (row.peso_kg && (!Number.isFinite(Number(row.peso_kg)) || Number(row.peso_kg) <= 0)) throw new Error("Inserisci un peso reale valido.");
 }
 
