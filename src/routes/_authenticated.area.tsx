@@ -479,7 +479,6 @@ function RigaEventoAdmin({
   onElimina: () => void;
 }) {
   const queryClient = useQueryClient();
-  const queryClient = useQueryClient();
   const { data: anteprimaPubblica } = useLocandinaPubblica(evento.locandina_pubblicata ? evento.locandina_path : null);
   const { data: anteprimaPrivata } = useLocandina(evento.locandina_pubblicata ? null : evento.locandina_path);
   const anteprima = anteprimaPubblica ?? anteprimaPrivata;

@@ -31,6 +31,6 @@ export function useLocandinaPubblica(path: string | null | undefined) {
     queryKey: ["locandina-pubblica", path],
     enabled: !!path,
     staleTime: 1000 * 60 * 30,
-    queryFn: () => firma({ data: { path } }),
+    queryFn: () => firma({ data: { path: path as string } }),
   });
 }
