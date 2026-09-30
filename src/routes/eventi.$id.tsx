@@ -7,7 +7,7 @@ import { formatDataCompleta, disciplineEvento, disciplinaCanonica, type FormatiI
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
 import { IscrizioneEvento } from "@/components/iscrizione-evento";
-import { useLocandina } from "@/lib/locandine";
+import { useLocandinaPubblica } from "@/lib/locandine";
 
 export const Route = createFileRoute("/eventi/$id")({
   head: () => ({
@@ -199,7 +199,7 @@ function SchedaEvento() {
 }
 
 function LocandinaEvento({ path, nome }: { path: string | null; nome: string }) {
-  const { data: url } = useLocandina(path);
+  const { data: url } = useLocandinaPubblica(path);
   if (!path || !url) return null;
   return (
     <Pannello className="mb-6 overflow-hidden">

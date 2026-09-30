@@ -7,7 +7,7 @@ import {
   type Evento,
 } from "@/lib/queries";
 import { contoAllaRovescia, formatDataBreve, DISCIPLINE, disciplinaCanonica, disciplineEvento } from "@/lib/format";
-import { useLocandina } from "@/lib/locandine";
+import { useLocandinaPubblica } from "@/lib/locandine";
 import { SezioneTitolo, Pannello, Etichetta } from "@/components/ui-blocchi";
 import { FiltriDisciplina, TabellaEventi } from "@/components/tabella-eventi";
 import logo from "@/assets/fight-hub-cropped.png.asset.json";
@@ -179,7 +179,7 @@ function CardEvento({ evento, iscritti }: { evento: Evento; iscritti: number }) 
 }
 
 function LocandinaInEvidenza({ evento }: { evento: Evento }) {
-  const { data: url } = useLocandina(evento.locandina_pubblicata ? evento.locandina_path : null);
+  const { data: url } = useLocandinaPubblica(evento.locandina_pubblicata ? evento.locandina_path : null);
   if (!url) return null;
   return (
     <section className="py-8">
