@@ -1,6 +1,6 @@
 import type { Database } from "@/integrations/supabase/types";
 
-export const CLASSI = ["A", "B", "C", "N", "Light"] as const;
+export const CLASSI = ["A", "B", "C", "N"] as const;
 export const CATEGORIE = ["SENIOR", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 ANNI", "YOUNG CADETTI 10–12 ANNI", "GIOCO SPORT FINO A 9 ANNI", "ALTRO"] as const;
 export const FORMATI_ATLETA = ["KO", "Light"] as const;
 export const CATEGORIE_ETA_PER_FORMATO: Record<string, readonly string[]> = {
