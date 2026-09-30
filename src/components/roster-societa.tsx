@@ -5,7 +5,7 @@ import { FORMATI_ATLETA, disciplinePerFormato, CLASSI, categorieEtaDisponibili, 
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { Button } from "@/components/ui/button";
 import { nomeProprio } from "@/lib/format";
-import { categoriePesoRoster } from "@/lib/pesi-ifma";
+import { categoriePesoRoster, categoriePesoPerCategoria } from "@/lib/pesi-ifma";
 import { z } from "zod";
 
 const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: "", categoria_peso: "", formato: "KO", disciplina: "Muay Thai", serie: "N", categoria: "", coach: "", totale_match: "0", certificato_rilascio: "", certificato_scadenza: "", certificato_tipo: "", certificato_disciplina: "" };
@@ -42,7 +42,8 @@ function validaAtleta(row: Form) {
   const parsed = atletaSchema.safeParse(row);
   const birth = row.data_nascita;
   if (!parsed.success || !birth || !Number.isFinite(Date.parse(birth)) || birth > new Date().toISOString().slice(0, 10) || birth <= "1900-01-01") throw new Error("Compila nome, cognome e una data di nascita valida per ogni atleta.");
-  if (!categoriePesoRoster(row.sesso).includes(row.categoria_peso)) throw new Error("Seleziona una categoria di peso valida per il genere indicato.");
+  const opzioniPeso = (sesso: string, categoria: string) => categoria ? categoriePesoPerCategoria(sesso, categoria) : categoriePesoRoster(sesso);
+  if (!opzioniPeso(row.sesso, row.categoria).includes(row.categoria_peso)) throw new Error("Seleziona una categoria di peso valida per il genere e la fascia di età indicati.");
   if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).length) throw new Error(`${row.nome} ${row.cognome}: l'età non rientra in nessuna categoria ${row.formato} (${row.formato === "KO" ? "KO: 16–40 anni compiuti" : "Light: fino a 55 anni compiuti"}).`);
   if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).includes(row.categoria)) throw new Error("Seleziona una categoria di età valida per il formato indicato.");
   if (row.formato === "KO" && !CLASSI.includes(row.serie as (typeof CLASSI)[number])) throw new Error("Seleziona la classe (A, B, C o N) per gli atleti KO.");
