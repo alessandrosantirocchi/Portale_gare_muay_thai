@@ -43,7 +43,7 @@ function validaAtleta(row: Form) {
   const birth = row.data_nascita;
   if (!parsed.success || !birth || !Number.isFinite(Date.parse(birth)) || birth > new Date().toISOString().slice(0, 10) || birth <= "1900-01-01") throw new Error("Compila nome, cognome e una data di nascita valida per ogni atleta.");
   if (!categoriePesoRoster(row.sesso).includes(row.categoria_peso)) throw new Error("Seleziona una categoria di peso valida per il genere indicato.");
-  if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).length) throw new Error(`${row.nome} ${row.cognome}: l'età non rientra in nessuna categoria ${row.formato} (${row.formato === "KO" ? "KO: 16–40 anni compiuti" : "Light: 10–55 anni compiuti"}).`);
+  if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).length) throw new Error(`${row.nome} ${row.cognome}: l'età non rientra in nessuna categoria ${row.formato} (${row.formato === "KO" ? "KO: 16–40 anni compiuti" : "Light: fino a 55 anni compiuti"}).`);
   if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).includes(row.categoria)) throw new Error("Seleziona una categoria di età valida per il formato indicato.");
   if (row.formato === "KO" && !CLASSI.includes(row.serie as (typeof CLASSI)[number])) throw new Error("Seleziona la classe (A, B, C o N) per gli atleti KO.");
   if (row.formato === "Light" && row.serie) throw new Error("La classe si applica solo agli atleti KO: con Light va deselezionata.");
