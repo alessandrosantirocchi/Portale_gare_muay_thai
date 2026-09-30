@@ -17,7 +17,12 @@ function fasceCompatibili(allowed: string[], nascita: string) {
   const oggi = new Date().toISOString().slice(0, 10);
   const y = Number(nascita.slice(0, 4)), md = nascita.slice(5);
   const eta = Number(oggi.slice(0, 4)) - y - (oggi.slice(5) < md ? 1 : 0);
-  return allowed.filter((c) => { const m = c.match(/(\d+)\D+(\d+)/); return m ? eta >= Number(m[1]) && eta <= Number(m[2]) : false; });
+  return allowed.filter((c) => {
+    const range = c.match(/(\d+)\D+(\d+)/);
+    if (range) return eta >= Number(range[1]) && eta <= Number(range[2]);
+    const fino = c.match(/FINO A (\d+)/);
+    return fino ? eta <= Number(fino[1]) : false;
+  });
 }
 function updateAgeCategory(row: Form, change: Partial<Form>): Form {
   const next = { ...row, ...change };
@@ -94,7 +99,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   return <div className="grid min-w-0 gap-6">
     {!editId && <form onSubmit={(e) => { e.preventDefault(); setMessage(""); saveMany.mutate(); }} className="min-w-0 max-w-full border-y border-border py-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl uppercase">Nuovi atleti</h2><Button type="button" variant="outline" onClick={() => setNuovi((rows) => [...rows, { ...empty }])}>Aggiungi atleta</Button></div>
-      <div className="max-w-full space-y-3">{nuovi.map((r, index) => <div key={index} className="grid min-w-0 grid-cols-[1fr_1fr_1.05fr_1.25fr_0.6fr_0.55fr_0.55fr_0.85fr_0.55fr_0.75fr_0.5fr_0.8fr_auto] items-end gap-1.5 border-b border-border pb-4">
+      <div className="max-w-full space-y-3 overflow-x-auto">{nuovi.map((r, index) => <div key={index} className="grid min-w-[1180px] grid-cols-[0.9fr_0.9fr_1.05fr_0.8fr_0.6fr_1.55fr_0.6fr_0.85fr_0.5fr_0.8fr_0.5fr_0.8fr_auto] items-end gap-1.5 border-b border-border pb-4">
         {batchField(index, "nome", "Nome")}{batchField(index, "cognome", "Cognome")}{batchField(index, "data_nascita", "Data nascita", "date")}{batchSelect(index, "sesso", "Genere", ["M", "F"])}{batchSelect(index, "formato", "KO / Light", FORMATI_ATLETA)}{batchSelect(index, "categoria", "Categoria di età", opzioniEta(r.formato, r.data_nascita))}{batchField(index, "peso_kg", "Peso reale (kg)", "number")}{batchSelect(index, "disciplina", "Disciplina", disciplinePerFormato(r.formato))}{batchSelect(index, "serie", "Classe", CLASSI, r.formato === "Light")}{batchSelect(index, "categoria_peso", "Cat. di peso", categoriePesoRoster(r.sesso))}{batchField(index, "totale_match", "Match", "number")}{batchField(index, "coach", "Cognome coach")}
         <div className="flex items-end"><Button type="button" variant="outline" size="sm" className="px-2 text-xs" onClick={() => setNuovi((rows) => rows.length > 1 ? rows.filter((_, n) => n !== index) : [{ ...empty }])}>Rimuovi</Button></div>
       </div>)}</div>

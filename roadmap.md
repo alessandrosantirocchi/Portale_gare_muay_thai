@@ -1,62 +1,6 @@
-# FIGHT HUB — portale iscrizione atleti
+# Roadmap
 
-## Task
-- [x] Aggiungere selezione categoria di età per Light e KO nel roster, con fasce e controllo della data di nascita
-- [x] Limitare il menu peso per genere secondo la tabella: uomini da -48 a -91 kg, donne da -45 a -75 kg, senza categorie +
-- [x] Togliere “IFMA” dal nome della categoria di peso e mostrare tutte le categorie nel menu atleta
-- [x] Match Card Excel: Nome, Cognome e Team per ogni angolo, Incontro al centro e angolo blu speculare al rosso
-- [x] Portare la simulazione del pool maschile classe A -71 kg a quattro atleti con nomi inventati
-- [x] Pulire i titoli con nomi inventati e mostrare “In aggiornamento”
-- [x] Aggiungere Light tra le classi dell'atleta e consentire inserimento orizzontale di più atleti contemporaneamente
-- [x] Nascondere temporaneamente la sezione News dalle pagine e dalla navigazione
-- [x] Visualizzare ogni atleta in una singola riga orizzontale come nel portale gare di riferimento
-- [x] Compilare il foglio Excel con i nomi degli atleti dei pool anche quando non ci sono match singoli
-- [x] Rendere obbligatoria la data di nascita e aggiungere la categoria di peso IFMA selezionabile nella scheda atleta
-- [x] Sostituire il campo Categoria mostrato come Senior con la categoria di peso IFMA nella registrazione atleta e nell’Excel
-- [x] Rimuovere gli atleti e le classifiche fittizie e ripulire iscrizioni, pool e match collegati
-- [x] Assegnare automaticamente la categoria di peso IFMA all'iscrizione in base al peso reale dell'atleta (es. 72 kg → -75 kg)
-- [x] Simulare un pool maschile classe A -71 kg per Fighting Spirit e verificare la vista pubblica
-- [x] Generare automaticamente pool pubblici da iscrizioni confermate compatibili per classe, peso ed età, senza intervento admin
-- [x] Formattare l'Excel scaricato con intestazioni e celle rosse/blu per i due angoli, seguendo la foto di riferimento
-- [x] Rendere visibili senza accesso i pool pubblicati e gli abbinamenti evento, inclusi pool da 2 o 3 atleti
-- [x] Rinominare nell'Excel della Match Card le colonne Rosso/Blu in Angolo 1/2 e i team senza colore
-- [x] Normalizzare nome e cognome con iniziali maiuscole, anche per dati inseriti in minuscolo
-- [x] Iscrivere automaticamente l'atleta appena viene selezionato, senza ulteriore conferma
-- [x] Aggiornare il marchio del portale a FIGHT HUB con il logo fornito e il sottotitolo richiesto
-- [x] Mostrare gli eventi imminenti al posto della Top 3 nella prima schermata
-- [ ] Fight Hub Big Prompt: partire dal punto 2 e realizzare le modifiche richieste in modo additivo e conservativo
-- [x] Sostituire le serie con classi A, B, C, N nei dati atleta, iscrizione, matchmaking ed export
-- [x] Aggiornare le informazioni dell'evento secondo l'immagine inviata
-- [x] Consentire più discipline nella creazione e modifica degli eventi
-- [ ] Completare l'intero Big Prompt e provarne il flusso reale fino all'export Excel
-- [x] Unificare i filtri delle discipline duplicati per maiuscole/minuscole nel calendario
-- [x] Centrare il sottotitolo sotto il logo grande e nascondere il logo piccolo solo in homepage
-- [x] Audit generale di registrazioni, matchmaking e flussi collegati
-- [x] Separare discipline (Kickboxing, K1, Muay Thai) dalle tipologie di incontro (Light, Contatto Pieno) nei form evento e filtri
-- [x] Design system (palette FederKombat + richiami tricolore italiano) in src/styles.css
-- [x] Database: societa/profili, atleti, eventi, iscrizioni, titoli, news, documenti, ruoli + dati demo
-- [x] Home: hero, top 3 ranking, prossimi eventi, calendario
-- [x] Calendario eventi con filtri + dettaglio evento
-- [x] Classifiche atleti
-- [x] Titoli, News, Documenti
-- [x] Login/registrazione societa (email+password, Google)
-- [x] Area societa: gestione atleti e iscrizioni agli eventi
-- [x] Sfondo scuro stile FederKombat
-- [x] Area admin: gestione eventi e conferma iscrizioni
-- [x] Pagina evento pubblica: orario, programma, form iscrizione sincronizzato
-- [x] Evento di prova con iscritti e conferme, verifica su Le mie iscrizioni
-- [x] Calendario con eventi reali FIGHT1 Lazio 2026/27 (rimuovere eventi inventati)
-- [x] Caricamento locandina per evento (admin) e visualizzazione pubblica
-- [x] Locandina Fighting Spirit New Warriors in evidenza in homepage
-- [x] Account admin reale + societa reale, verifica pagina Utenti e ruoli
-- [x] Test iscrizione dalla pagina pubblica evento -> area riservata -> Le mie iscrizioni
-- [x] Admin: gestione eventi completa (crea, modifica, elimina, locandina)
-- [x] Caricare il logo della società nel profilo (bucket privato + anteprima)
-- [x] Matchmaking visibile solo agli organizzatori dell'evento; admin vede tutto
-- [x] Rendere obbligatori tutti i campi del form atleti e ripristinare l'etichetta "Cognome coach"
-- [x] Pool e abbinamenti in pagina evento: atleti in orizzontale come screenshot + icona lampeggiante con numero pool
-- [x] Unire "Atleti iscritti" e "Pool e abbinamenti" in un'unica sezione "Atleti iscritti e abbinamenti"
-- [x] 400 firma locandina: GRANT EXECUTE su has_role ad anon/authenticated (0021)
-- [x] Categoria di età per formato: KO → Junior/Senior, Light → Young/Old cadet, Junior, Senior, Master
-- [x] Rimozione sempre disponibile delle righe atleti non ancora salvate
-- [x] Sicurezza storage (0023): loghi leggibili solo dal proprietario o admin, locandine firmate dal server solo per eventi pubblicati
+- [x] Adeguare fasce di età e categorie di peso alla tabella IFMA (roster + DB, migrazione 0024)
+- [x] Aggiungere categoria "GIOCO SPORT FINO A 9 ANNI" solo per Light (selettore + validazione età)
+- [x] Verificare larghezza colonna "Categoria di età" nell'anteprima (164px, testo completo)
+- [x] Gioco Sport: limiti di peso -24 + limiti Young Cadet (TS + DB, migrazione 0025)
