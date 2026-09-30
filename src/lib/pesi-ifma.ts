@@ -3,8 +3,8 @@
 type Limiti = { M: number[]; F: number[] };
 
 // Gioco Sport (fino a 9 anni, solo Light): parte da -24 e riprende i limiti Young Cadet.
-const GIOCO_SPORT: Limiti = { M: [24, 28, 32, 37, 42, 47, 52, 57], F: [24, 28, 32, 37, 42, 47, 52, 57] };
-const YOUNG_CADET: Limiti = { M: [28, 32, 37, 42, 47, 52, 57], F: [28, 32, 37, 42, 47, 52, 57] };
+const GIOCO_SPORT: Limiti = { M: [24, 28, 32, 37, 42, 47, 52, 57, 60], F: [24, 28, 32, 37, 42, 47, 52, 57, 60] };
+const YOUNG_CADET: Limiti = { M: [28, 32, 37, 42, 47, 52, 57, 60], F: [28, 32, 37, 42, 47, 52, 57, 60] };
 const OLDER_CADET: Limiti = { M: [32, 37, 42, 47, 52, 57, 63, 69], F: [32, 37, 42, 46, 50, 55, 60, 65] };
 const JUNIOR: Limiti = { M: [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91], F: [42, 45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75] };
 const SENIOR: Limiti = { M: [48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91], F: [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75] };
