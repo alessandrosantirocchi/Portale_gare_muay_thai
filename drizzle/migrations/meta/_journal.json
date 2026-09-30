@@ -162,6 +162,13 @@
       "when": 1790669669407,
       "tag": "0022_athlete_fight_format",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1790757766034,
+      "tag": "0023_storage_select_owner_bound",
+      "breakpoints": true
     }
   ]
 }
