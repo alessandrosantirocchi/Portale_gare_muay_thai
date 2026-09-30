@@ -48,7 +48,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   const save = useMutation({
     mutationFn: async () => {
       validaAtleta(form);
-      const values = { nome: nomeProprio(form.nome), cognome: nomeProprio(form.cognome), data_nascita: form.data_nascita, sesso: form.sesso, peso_kg: form.peso_kg ? Number(form.peso_kg) : null, categoria_peso: form.categoria_peso, formato: form.formato, disciplina: form.disciplina, serie: form.serie, categoria: form.categoria, coach: form.coach.trim() || null, totale_match: Number(form.totale_match) || 0, certificato_rilascio: form.certificato_rilascio || null, certificato_scadenza: form.certificato_scadenza || null, certificato_tipo: form.certificato_tipo || null, certificato_disciplina: form.certificato_disciplina || null };
+      const values = { nome: nomeProprio(form.nome), cognome: nomeProprio(form.cognome), data_nascita: form.data_nascita, sesso: form.sesso, peso_kg: form.peso_kg ? Number(form.peso_kg) : null, categoria_peso: form.categoria_peso, formato: form.formato, disciplina: form.disciplina, serie: form.formato === "Light" ? null : form.serie, categoria: form.categoria, coach: form.coach.trim() || null, totale_match: Number(form.totale_match) || 0, certificato_rilascio: form.certificato_rilascio || null, certificato_scadenza: form.certificato_scadenza || null, certificato_tipo: form.certificato_tipo || null, certificato_disciplina: form.certificato_disciplina || null };
       const { error } = editId ? await supabase.from("atleti").update(values).eq("id", editId).eq("societa_id", userId) : await supabase.from("atleti").insert({ ...values, societa_id: userId, nome_societa: nomeSocieta });
       if (error) throw error;
     },
@@ -65,7 +65,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
       const validi = nuovi.filter((r) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim() || r.categoria_peso);
       if (!validi.length) throw new Error("Compila almeno un atleta.");
       validi.forEach(validaAtleta);
-      const { error } = await supabase.from("atleti").insert(validi.map((r) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, categoria_peso: r.categoria_peso, formato: r.formato, disciplina: r.disciplina, serie: r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, societa_id: userId, nome_societa: nomeSocieta })));
+      const { error } = await supabase.from("atleti").insert(validi.map((r) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, categoria_peso: r.categoria_peso, formato: r.formato, disciplina: r.disciplina, serie: r.formato === "Light" ? null : r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, societa_id: userId, nome_societa: nomeSocieta })));
       if (error) throw error;
       return validi.length;
     },
