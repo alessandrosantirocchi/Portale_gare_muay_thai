@@ -4,4 +4,4 @@
 - [x] Aggiungere categoria "GIOCO SPORT FINO A 9 ANNI" solo per Light (selettore + validazione età)
 - [x] Verificare larghezza colonna "Categoria di età" nell'anteprima (164px, testo completo)
 - [x] Gioco Sport: limiti di peso -24 + limiti Young Cadet (TS + DB, migrazione 0025)
-- [ ] Young Cadet: aggiungere categoria +60 nel roster
+- [x] Young Cadet: aggiungere categoria +60 nel roster
