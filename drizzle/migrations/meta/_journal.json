@@ -169,6 +169,13 @@
       "when": 1790757766034,
       "tag": "0023_storage_select_owner_bound",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1790762975960,
+      "tag": "0024_ifma_weight_class_new_bands",
+      "breakpoints": true
     }
   ]
 }
