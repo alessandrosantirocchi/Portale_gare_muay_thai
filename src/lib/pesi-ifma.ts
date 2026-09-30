@@ -18,6 +18,16 @@ export function categoriePesoRoster(sesso: string): string[] {
   return sesso === "F" ? base : [...base, "+91 kg"];
 }
 
+// Categorie di peso coerenti con la fascia di età scelta (es. Gioco Sport parte da -24).
+export function categoriePesoPerCategoria(sesso: string, categoria: string): string[] {
+  const gender = sesso === "F" ? "F" : "M";
+  const c = categoria.toUpperCase();
+  const fascia = c.includes("GIOCO SPORT") ? GIOCO_SPORT : c.includes("YOUNG") ? YOUNG_CADET : c.includes("OLD CADET") ? OLDER_CADET : c.includes("JUNIOR") ? JUNIOR : SENIOR;
+  const limiti = fascia[gender];
+  const base = limiti.map((peso) => `-${peso} kg`);
+  return gender === "M" ? [...base, `+${limiti[limiti.length - 1]} kg`] : base;
+}
+
 function etaCompiuta(nascita: string, data: string): number | null {
   if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(nascita) || Number.isNaN(Date.parse(nascita)) || new Date(nascita).toISOString().slice(0, 10) !== nascita) return null;
   const y = Number(nascita.slice(0, 4)), m = Number(nascita.slice(5, 7)), d = Number(nascita.slice(8, 10));
