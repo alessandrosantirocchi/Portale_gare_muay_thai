@@ -13,7 +13,7 @@ import { STATI_EVENTO } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
 import { DisciplineEvento } from "@/components/discipline-evento";
 import { ModificaIscrizione } from "@/components/modifica-iscrizione";
-import { BUCKET_LOCANDINE, useLocandina } from "@/lib/locandine";
+import { BUCKET_LOCANDINE, useLocandina, useLocandinaPubblica } from "@/lib/locandine";
 import { listaUtenti, creaUtente, impostaRuolo } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/area")({
@@ -479,7 +479,9 @@ function RigaEventoAdmin({
   onElimina: () => void;
 }) {
   const queryClient = useQueryClient();
-  const { data: anteprima } = useLocandina(evento.locandina_path);
+  const { data: anteprimaPubblica } = useLocandinaPubblica(evento.locandina_pubblicata ? evento.locandina_path : null);
+  const { data: anteprimaPrivata } = useLocandina(evento.locandina_pubblicata ? null : evento.locandina_path);
+  const anteprima = anteprimaPubblica ?? anteprimaPrivata;
   const [msg, setMsg] = useState<string | null>(null);
   const [modifica, setModifica] = useState(false);
 
