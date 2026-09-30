@@ -36,13 +36,15 @@ function opzioniEta(formato: string, nascita: string) {
   const allowed = categorieEtaDisponibili(formato);
   return /^\d{4}-\d{2}-\d{2}$/.test(nascita) ? fasceCompatibili(allowed, nascita) : allowed;
 }
+function opzioniPeso(sesso: string, categoria: string) {
+  return categoria ? categoriePesoPerCategoria(sesso, categoria) : categoriePesoRoster(sesso);
+}
 
 const atletaSchema = z.object({ nome: z.string().trim().min(1).max(100), cognome: z.string().trim().min(1).max(100), data_nascita: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), sesso: z.enum(["M", "F"]), peso_kg: z.string(), categoria_peso: z.string() });
 function validaAtleta(row: Form) {
   const parsed = atletaSchema.safeParse(row);
   const birth = row.data_nascita;
   if (!parsed.success || !birth || !Number.isFinite(Date.parse(birth)) || birth > new Date().toISOString().slice(0, 10) || birth <= "1900-01-01") throw new Error("Compila nome, cognome e una data di nascita valida per ogni atleta.");
-  const opzioniPeso = (sesso: string, categoria: string) => categoria ? categoriePesoPerCategoria(sesso, categoria) : categoriePesoRoster(sesso);
   if (!opzioniPeso(row.sesso, row.categoria).includes(row.categoria_peso)) throw new Error("Seleziona una categoria di peso valida per il genere e la fascia di età indicati.");
   if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).length) throw new Error(`${row.nome} ${row.cognome}: l'età non rientra in nessuna categoria ${row.formato} (${row.formato === "KO" ? "KO: 16–40 anni compiuti" : "Light: fino a 55 anni compiuti"}).`);
   if (!fasceCompatibili(categorieEtaDisponibili(row.formato), birth).includes(row.categoria)) throw new Error("Seleziona una categoria di età valida per il formato indicato.");
