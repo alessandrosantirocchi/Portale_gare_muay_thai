@@ -12,9 +12,18 @@ const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: ""
 type Form = typeof empty;
 
 const today = () => new Date().toLocaleDateString("en-CA");
+function fasceCompatibili(allowed: string[], nascita: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(nascita)) return [];
+  const oggi = new Date().toISOString().slice(0, 10);
+  const y = Number(nascita.slice(0, 4)), md = nascita.slice(5);
+  const eta = Number(oggi.slice(0, 4)) - y - (oggi.slice(5) < md ? 1 : 0);
+  return allowed.filter((c) => { const m = c.match(/(\d+)\D+(\d+)/); return m ? eta >= Number(m[1]) && eta <= Number(m[2]) : false; });
+}
 function updateAgeCategory(row: Form, change: Partial<Form>): Form {
   const next = { ...row, ...change };
   const allowed = categorieEtaDisponibili(next.formato);
+  const match = fasceCompatibili(allowed, next.data_nascita);
+  if (match.length) return { ...next, categoria: match.includes(row.categoria) ? row.categoria : match[match.length > 1 && /SENIOR/.test(match[1]) && !/MASTER/.test(match[1]) ? 1 : 0] };
   return { ...next, categoria: allowed.includes(row.categoria) ? row.categoria : (allowed[0] ?? "") };
 }
 
