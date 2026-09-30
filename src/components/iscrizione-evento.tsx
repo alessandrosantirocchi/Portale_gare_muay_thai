@@ -57,7 +57,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         {a.cognome} {a.nome} <span className="text-xs font-normal text-muted-foreground">{categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "Peso da completare"}</span>
         {existing[a.id] && <span className="text-xs font-normal text-muted-foreground">Iscritto · {existing[a.id]}</span>}
         {save.isPending && save.variables?.id === a.id && <span className="text-xs font-normal text-muted-foreground">Iscrizione…</span>}
-      </label>{etaAllaData(a.data_nascita, evento.data_evento) === 17 && !existing[a.id] && <label className="ml-5 mt-2 flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" checked={senior[a.id] ?? false} onChange={(e) => setSenior((prev) => ({ ...prev, [a.id]: e.target.checked }))} />Iscrivi questo atleta nella categoria Senior</label>}</div>)}
+      </label>{etaAllaData(a.data_nascita, evento.data_evento) !== null && [17, 18].includes(etaAllaData(a.data_nascita, evento.data_evento) ?? -1) && !existing[a.id] && <label className="ml-5 mt-2 flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" checked={senior[a.id] ?? false} onChange={(e) => setSenior((prev) => ({ ...prev, [a.id]: e.target.checked }))} />Iscrivi questo atleta nella categoria Senior</label>}</div>)}
       {msg && <p role="status" className="text-xs text-muted-foreground">{msg}</p>}
     </div>}
   </section>;
