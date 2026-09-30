@@ -57,3 +57,6 @@
 - [x] Pool e abbinamenti in pagina evento: atleti in orizzontale come screenshot + icona lampeggiante con numero pool
 - [x] Unire "Atleti iscritti" e "Pool e abbinamenti" in un'unica sezione "Atleti iscritti e abbinamenti"
 - [x] 400 firma locandina: GRANT EXECUTE su has_role ad anon/authenticated (0021)
+- [x] Categoria di età per formato: KO → Junior/Senior, Light → Young/Old cadet, Junior, Senior, Master
+- [x] Rimozione sempre disponibile delle righe atleti non ancora salvate
+- [x] Sicurezza storage (0023): loghi leggibili solo dal proprietario o admin, locandine firmate dal server solo per eventi pubblicati
