@@ -5,7 +5,7 @@ export const CATEGORIE = ["SENIOR", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 
 export const FORMATI_ATLETA = ["KO", "Light"] as const;
 export const CATEGORIE_ETA_PER_FORMATO: Record<string, readonly string[]> = {
   KO: ["JUNIOR 16–18 ANNI", "SENIOR 19–40 ANNI"],
-  Light: ["YOUNG CADET 10–12 ANNI", "OLD CADET 13–15 ANNI", "JUNIOR 16–18 ANNI", "SENIOR 19–40 ANNI", "MASTER 40–55 ANNI"],
+  Light: ["GIOCO SPORT FINO A 9 ANNI", "YOUNG CADET 10–12 ANNI", "OLD CADET 13–15 ANNI", "JUNIOR 16–18 ANNI", "SENIOR 19–40 ANNI", "MASTER 40–55 ANNI"],
 };
 export function categorieEtaDisponibili(formato: string) {
   return [...(CATEGORIE_ETA_PER_FORMATO[formato] ?? [])];

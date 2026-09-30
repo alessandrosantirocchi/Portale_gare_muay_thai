@@ -17,7 +17,12 @@ function fasceCompatibili(allowed: string[], nascita: string) {
   const oggi = new Date().toISOString().slice(0, 10);
   const y = Number(nascita.slice(0, 4)), md = nascita.slice(5);
   const eta = Number(oggi.slice(0, 4)) - y - (oggi.slice(5) < md ? 1 : 0);
-  return allowed.filter((c) => { const m = c.match(/(\d+)\D+(\d+)/); return m ? eta >= Number(m[1]) && eta <= Number(m[2]) : false; });
+  return allowed.filter((c) => {
+    const range = c.match(/(\d+)\D+(\d+)/);
+    if (range) return eta >= Number(range[1]) && eta <= Number(range[2]);
+    const fino = c.match(/FINO A (\d+)/);
+    return fino ? eta <= Number(fino[1]) : false;
+  });
 }
 function updateAgeCategory(row: Form, change: Partial<Form>): Form {
   const next = { ...row, ...change };
