@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
         content:
           "Il portale delle società: iscrivi i tuoi atleti agli eventi, consulta il calendario gare, le classifiche ufficiali e gli incontri titolati.",
       },
-      { property: "og:title", content: "FIGHT HUB — Il portale del fighiting italiano" },
+      { property: "og:title", content: "FIGHT HUB — Il portale del fighting italiano" },
       {
         property: "og:description",
         content:
@@ -53,7 +53,7 @@ function Home() {
         <div className="flex flex-col justify-center">
           <h1 className="w-full max-w-[520px]">
             <img src={logo.url} alt="FIGHT HUB" className="h-auto w-full max-w-[520px]" />
-            <span className="mt-2 block text-center text-base font-normal italic text-foreground sm:text-lg">Il portale del fighiting italiano</span>
+            <span className="mt-2 block text-center text-base font-normal italic text-foreground sm:text-lg">Il portale del fighting italiano</span>
           </h1>
           <p className="mt-5 max-w-[42ch] text-pretty text-sm text-muted-foreground sm:text-base">
             Iscrivi gli atleti della tua società, segui il calendario gare e tieni d'occhio le classifiche.
