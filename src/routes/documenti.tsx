@@ -136,7 +136,7 @@ function GuidaIscrizioni() {
         </GuidaSezione>
 
         <GuidaSezione
-          titolo="4. Pool e abbinamenti"
+          titolo="6. Pool e abbinamenti"
           aperto={!!aperte[4]}
           onToggle={() => toggle(4)}
         >
@@ -148,7 +148,7 @@ function GuidaIscrizioni() {
         </GuidaSezione>
 
         <GuidaSezione
-          titolo="5. Problemi frequenti"
+          titolo="7. Problemi frequenti"
           aperto={!!aperte[5]}
           onToggle={() => toggle(5)}
         >
@@ -164,7 +164,7 @@ function GuidaIscrizioni() {
                 <tr><td className="py-1.5 pr-4 font-medium">Non vedo il mio atleta nella lista iscrizioni</td><td className="py-1.5">Verifica che sia salvato nel roster e che la disciplina sia tra quelle ammesse dall'evento.</td></tr>
                 <tr><td className="py-1.5 pr-4 font-medium">Categoria di peso errata</td><td className="py-1.5">Correggi il peso nel roster: l'iscrizione ricalcola la categoria in automatico.</td></tr>
                 <tr><td className="py-1.5 pr-4 font-medium">Certificato scaduto</td><td className="py-1.5">Carica il nuovo certificato dalla scheda atleta prima di iscriverlo.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Ho sbagliato iscrizione</td><td className="py-1.5">Contatta l'organizzatore dell'evento o l'amministratore per la rimozione.</td></tr>
+                <tr><td className="py-1.5 pr-4 font-medium">Ho sbagliato iscrizione</td><td className="py-1.5">Usa Modifica nella pagina dell'evento; per la rimozione contatta l'organizzatore.</td></tr>
               </tbody>
             </table>
           </div>
