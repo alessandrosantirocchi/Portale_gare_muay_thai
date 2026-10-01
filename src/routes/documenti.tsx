@@ -74,78 +74,69 @@ function GuidaIscrizioni() {
         Guida rapida — Registrare la società e iscrivere gli atleti
       </h2>
       <Pannello className="overflow-hidden p-0">
-        <GuidaSezione
-          titolo="1. Registrazione della società"
-          aperto={!!aperte[1]}
-          onToggle={() => toggle(1)}
-        >
+        <GuidaSezione titolo="1. Registrazione società" aperto={!!aperte[1]} onToggle={() => toggle(1)}>
           <ol className="list-decimal space-y-1 pl-5">
-            <li>Apri FIGHT HUB e clicca <strong>Accedi</strong> in alto a destra.</li>
-            <li>Scegli <strong>Registrati</strong> e accedi con il tuo account Google, oppure con email e password.</li>
-            <li>Al primo accesso inserisci il <strong>nome della società</strong> così come è stato registrato all'albo.</li>
-            <li>Dal profilo puoi caricare il <strong>logo della società</strong> (PNG o JPG, max 2 MB).</li>
+            <li>Clicca <strong>Accedi</strong> in alto a destra, poi <strong>Registrati</strong> (con Google o email e password).</li>
+            <li>Inserisci <strong>Nome della società</strong>, <strong>Codice Fiscale</strong> (obbligatorio) e <strong>Città</strong>.</li>
+            <li>Dal profilo puoi caricare il <strong>logo</strong> sociale.</li>
+          </ol>
+        </GuidaSezione>
+
+        <GuidaSezione titolo="2. Inserimento atleti (roster)" aperto={!!aperte[2]} onToggle={() => toggle(2)}>
+          <p className="mb-2">
+            Vai in <strong>La mia area → Atleti</strong> e compila la riga in <strong>Nuovi atleti</strong> (con <strong>+ Aggiungi atleta</strong> ne inserisci più di uno):
+          </p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li><strong>Nome e Cognome</strong>: iniziali maiuscole automatiche.</li>
+            <li><strong>Data di nascita</strong> e <strong>Genere</strong> (M o F).</li>
+            <li><strong>KO o Light</strong>:
+              <ul className="mt-1 list-[circle] space-y-1 pl-5">
+                <li><strong>KO</strong> (contatto pieno): 16–40 anni (Junior 16–18, Senior 19–40). Richiede la <strong>Classe</strong> A, B, C o N.</li>
+                <li><strong>Light</strong> (contatto leggero): 6–55 anni (Gioco Sport 6–9, Cadetti 10–15, Junior 16–18, Senior 19–40, Master 40–55). Nessuna classe.</li>
+              </ul>
+            </li>
+            <li><strong>Categoria di età</strong>: assegnata in automatico dalla data di nascita.</li>
+            <li><strong>Peso reale (kg)</strong>, <strong>Disciplina</strong>, <strong>Categoria di peso</strong>, <strong>Totale match</strong> e <strong>Cognome coach</strong>.</li>
+          </ul>
+          <p className="mt-2">Clicca <strong>Salva atleti</strong>: il roster resta salvato per tutte le gare.</p>
+        </GuidaSezione>
+
+        <GuidaSezione titolo="3. Iscrivere un atleta a una gara" aperto={!!aperte[3]} onToggle={() => toggle(3)}>
+          <p className="mb-2">
+            Clicca <strong>Iscrivi atleti a una gara</strong> dalla tua area, oppure apri la gara dal <strong>Calendario</strong>:
+          </p>
+          <ol className="list-decimal space-y-1 pl-5">
+            <li>Apri la tendina <strong>Seleziona atleta dal tuo roster</strong>.</li>
+            <li>La riga dell'atleta compare già compilata con i suoi dati.</li>
+            <li>Clicca <strong>Conferma iscrizione all'evento</strong>: l'iscrizione è immediata.</li>
           </ol>
           <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
-            Un account gestisce una sola società: se ne gestisci più di una, registrati con account diversi.
+            Un atleta con certificato medico scaduto non può essere iscritto.
+          </p>
+        </GuidaSezione>
+
+        <GuidaSezione titolo="4. Cosa puoi modificare" aperto={!!aperte[6]} onToggle={() => toggle(6)}>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              <strong>Prima di confermare</strong>: peso per la gara (la categoria di peso si ricalcola subito), disciplina, classe, coach e match. Per atleti di 17–18 anni puoi spuntare il <strong>passaggio a Senior</strong>.
+            </li>
+            <li>
+              <strong>Dopo la conferma</strong>: nella tabella in fondo alla pagina dell'evento clicca <strong>Modifica</strong> per cambiare peso o disciplina, fino alla chiusura delle iscrizioni.
+            </li>
+            <li>
+              <strong>Dati anagrafici e certificato</strong>: si aggiornano in qualsiasi momento dalla scheda <strong>Atleti</strong>.
+            </li>
+          </ul>
+        </GuidaSezione>
+
+        <GuidaSezione titolo="5. Controllare le iscrizioni" aperto={!!aperte[7]} onToggle={() => toggle(7)}>
+          <p>
+            In <strong>La mia area → Le mie iscrizioni</strong> trovi il riepilogo sempre aggiornato: atleti iscritti, gare attive ed elenco diviso per evento.
           </p>
         </GuidaSezione>
 
         <GuidaSezione
-          titolo="2. Inserimento degli atleti (roster)"
-          aperto={!!aperte[2]}
-          onToggle={() => toggle(2)}
-        >
-          <ol className="list-decimal space-y-1 pl-5">
-            <li>Entra nell'<strong>Area riservata</strong> e apri la scheda <strong>Atleti</strong>.</li>
-            <li>Nel modulo <strong>Nuovi atleti</strong> ogni atleta occupa una riga: con <strong>+ Aggiungi atleta</strong> li inserisci tutti insieme.</li>
-            <li>Compila <strong>tutti i campi</strong> (sono obbligatori):</li>
-          </ol>
-          <div className="mt-2 overflow-x-auto">
-            <table className="w-full text-[12px]">
-              <thead>
-                <tr className="border-b border-border text-left text-muted-foreground">
-                  <th className="py-1.5 pr-4 font-medium">Campo</th>
-                  <th className="py-1.5 font-medium">Indicazioni</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                <tr><td className="py-1.5 pr-4 font-medium">Nome e Cognome</td><td className="py-1.5">Salvati automaticamente con le iniziali maiuscole.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Data di nascita</td><td className="py-1.5">Determina in automatico la categoria d'età (Senior, Junior, Cadetti…).</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Sesso</td><td className="py-1.5">M o F: il menu delle categorie di peso si adatta in automatico.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Peso (kg)</td><td className="py-1.5">Il peso reale dell'atleta (es. 72).</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Categoria di peso</td><td className="py-1.5">Uomini da −48 a +91 kg, donne da −45 a −75 kg.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Classe</td><td className="py-1.5">A, B, C, N oppure Light.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Disciplina</td><td className="py-1.5">Muay Thai, Kickboxing, K1, Fight Code, Altro.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Cognome coach</td><td className="py-1.5">Il cognome dell'allenatore di riferimento.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Totale match</td><td className="py-1.5">Numero totale di incontri disputati.</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <ol className="mt-2 list-decimal space-y-1 pl-5" start={4}>
-            <li>Clicca <strong>Salva atleti</strong>: il roster resta permanente e riutilizzabile per ogni evento.</li>
-            <li>Dalla scheda del singolo atleta puoi caricare il <strong>certificato medico</strong> e modificare i dati.</li>
-          </ol>
-        </GuidaSezione>
-
-        <GuidaSezione
-          titolo="3. Iscrizione a un evento"
-          aperto={!!aperte[3]}
-          onToggle={() => toggle(3)}
-        >
-          <ol className="list-decimal space-y-1 pl-5">
-            <li>Apri la pagina dell'evento dal <strong>Calendario</strong>.</li>
-            <li><strong>Spunta la casella</strong> accanto all'atleta: l'iscrizione è subito confermata, senza altre conferme.</li>
-            <li>Il sistema assegna automaticamente la <strong>categoria di peso ufficiale</strong> da peso reale, sesso ed età alla data dell'evento (es. 72 kg → −75 kg).</li>
-            <li>Per un atleta di 17 anni puoi scegliere <strong>"Iscrivi nella categoria Senior"</strong> per la singola gara.</li>
-            <li>Controlla tutte le iscrizioni nella scheda <strong>Le mie iscrizioni</strong> dell'area riservata.</li>
-          </ol>
-          <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
-            Attenzione: un atleta con certificato medico scaduto non può essere iscritto. Verifica la scadenza prima dell'evento.
-          </p>
-        </GuidaSezione>
-
-        <GuidaSezione
-          titolo="4. Pool e abbinamenti"
+          titolo="6. Pool e abbinamenti"
           aperto={!!aperte[4]}
           onToggle={() => toggle(4)}
         >
@@ -157,7 +148,7 @@ function GuidaIscrizioni() {
         </GuidaSezione>
 
         <GuidaSezione
-          titolo="5. Problemi frequenti"
+          titolo="7. Problemi frequenti"
           aperto={!!aperte[5]}
           onToggle={() => toggle(5)}
         >
@@ -173,7 +164,7 @@ function GuidaIscrizioni() {
                 <tr><td className="py-1.5 pr-4 font-medium">Non vedo il mio atleta nella lista iscrizioni</td><td className="py-1.5">Verifica che sia salvato nel roster e che la disciplina sia tra quelle ammesse dall'evento.</td></tr>
                 <tr><td className="py-1.5 pr-4 font-medium">Categoria di peso errata</td><td className="py-1.5">Correggi il peso nel roster: l'iscrizione ricalcola la categoria in automatico.</td></tr>
                 <tr><td className="py-1.5 pr-4 font-medium">Certificato scaduto</td><td className="py-1.5">Carica il nuovo certificato dalla scheda atleta prima di iscriverlo.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Ho sbagliato iscrizione</td><td className="py-1.5">Contatta l'organizzatore dell'evento o l'amministratore per la rimozione.</td></tr>
+                <tr><td className="py-1.5 pr-4 font-medium">Ho sbagliato iscrizione</td><td className="py-1.5">Usa Modifica nella pagina dell'evento; per la rimozione contatta l'organizzatore.</td></tr>
               </tbody>
             </table>
           </div>
