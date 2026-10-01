@@ -6,3 +6,4 @@
 - [x] Gioco Sport: limiti di peso -24 + limiti Young Cadet (TS + DB, migrazione 0025)
 - [x] Young Cadet: aggiungere categoria +60 nel roster
 - [x] Roster: restringere colonna Cat. di peso (richiesta utente 01/10) — verificata
+- [ ] Documenti: rendere più chiara la riga KO/Light della guida
