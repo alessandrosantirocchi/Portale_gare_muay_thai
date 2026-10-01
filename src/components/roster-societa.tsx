@@ -95,7 +95,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
       if (error) throw error;
       const erroriFile: string[] = [];
       for (let i = 0; i < righe.length; i++) {
-        const file = righe[i].file; const id = data?.[i]?.id;
+        const file = righe[i]?.file; const id = data?.[i]?.id;
         if (!file || !id) continue;
         const path = `${userId}/${id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
         const up = await supabase.storage.from("certificati").upload(path, file);
