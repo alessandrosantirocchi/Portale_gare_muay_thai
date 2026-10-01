@@ -197,6 +197,13 @@
       "when": 1790843523130,
       "tag": "0027_add_organizzatore_role",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1790843553385,
+      "tag": "0028_codice_fiscale_eventi_ruolo_senior18",
+      "breakpoints": true
     }
   ]
 }
