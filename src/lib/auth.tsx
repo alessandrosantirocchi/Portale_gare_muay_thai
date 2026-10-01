@@ -38,6 +38,22 @@ export function useProfilo(userId?: string) {
   });
 }
 
+export function useIsOrganizzatore(userId?: string) {
+  return useQuery({
+    queryKey: ["ruolo-organizzatore", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId!)
+        .in("role", ["admin", "organizzatore"]);
+      if (error) throw error;
+      return (data ?? []).length > 0;
+    },
+  });
+}
+
 export function useIsAdmin(userId?: string) {
   return useQuery({
     queryKey: ["ruolo-admin", userId],
