@@ -114,7 +114,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         </label>
 
         {atleta && riga && <form onSubmit={(e) => { e.preventDefault(); setMsg(""); save.mutate(); }} className="max-w-full overflow-x-auto">
-          <div className="grid min-w-[1100px] grid-cols-[0.9fr_0.9fr_1.05fr_0.6fr_0.6fr_1.55fr_0.7fr_0.95fr_0.5fr_0.9fr_0.5fr_0.9fr] items-end gap-1.5 border-y border-border py-4">
+          <div className="grid min-w-[1100px] grid-cols-[0.9fr_0.9fr_1.05fr_0.4fr_0.6fr_1.55fr_0.7fr_0.95fr_0.5fr_0.55fr_0.5fr_0.9fr] items-end gap-1.5 border-y border-border py-4">
             <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Nome<input disabled value={atleta.nome} className={campoClass} /></label>
             <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Cognome<input disabled value={atleta.cognome} className={campoClass} /></label>
             <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Data nascita<input disabled type="date" value={atleta.data_nascita ?? ""} className={campoClass} /></label>
