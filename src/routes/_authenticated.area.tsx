@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsAdmin, useProfilo, useSession } from "@/lib/auth";
+import { useIsAdmin, useIsOrganizzatore, useProfilo, useSession } from "@/lib/auth";
 import { formatDataBreve, formatDataCompleta, DISCIPLINE } from "@/lib/format";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { RosterSocieta } from "@/components/roster-societa";
@@ -35,6 +35,7 @@ function AreaSocieta() {
   const { data: profilo } = useProfilo(user?.id);
   const logoUrl = useLogoUrl(profilo?.logo_path);
   const { data: admin } = useIsAdmin(user?.id);
+  const { data: organizzatore } = useIsOrganizzatore(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
     "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti"
@@ -70,10 +71,11 @@ function AreaSocieta() {
           <h1 className="font-display text-3xl font-semibold uppercase tracking-wide">
             {profilo?.nome_societa || user?.email}
           </h1>
-          {profilo?.codice_societa && (
+          {(profilo?.codice_fiscale || profilo?.citta) && (
             <p className="mt-1 text-[12px] text-muted-foreground">
-              Codice società: {profilo.codice_societa}
-              {profilo?.citta ? ` · ${profilo.citta}` : ""}
+              {profilo?.codice_fiscale ? `Codice fiscale: ${profilo.codice_fiscale}` : ""}
+              {profilo?.codice_fiscale && profilo?.citta ? " · " : ""}
+              {profilo?.citta ?? ""}
             </p>
           )}
           </div>
@@ -87,12 +89,20 @@ function AreaSocieta() {
         </button>
       </div>
 
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4">
+        <div>
+          <p className="font-display text-lg uppercase tracking-wide">Iscrivi atleti a una gara</p>
+          <p className="text-[12px] text-muted-foreground">Apri il calendario e scegli l'evento con iscrizioni aperte.</p>
+        </div>
+        <Button type="button" onClick={() => navigate({ to: "/calendario" })}>Vai al calendario gare</Button>
+      </div>
+
       <div className="mt-6 flex flex-wrap gap-2">
         {([
           ["atleti", "I miei atleti"],
           ["societa", "La mia società"],
           ["iscrizioni", "Iscrizioni"],
-          ["eventi", "Gestione eventi"],
+          ...(admin || organizzatore ? ([["eventi", "Gestione eventi"]] as const) : []),
           ["matchmaking", "Matchmaking"],
           ...(admin
             ? ([
@@ -120,7 +130,7 @@ function AreaSocieta() {
         {tab === "atleti" && <RosterSocieta userId={user.id} nomeSocieta={profilo?.nome_societa ?? ""} />}
         {tab === "societa" && <ProfiloSocieta profilo={profilo} />}
         {tab === "iscrizioni" && <MieIscrizioni userId={user.id} />}
-        {tab === "eventi" && <GestioneEventi admin={!!admin} userId={user.id} />}
+        {tab === "eventi" && (admin || organizzatore) && <GestioneEventi admin={!!admin} userId={user.id} />}
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
         {tab === "matchmaking" && <MatchmakingAdmin admin={!!admin} userId={user.id} />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
