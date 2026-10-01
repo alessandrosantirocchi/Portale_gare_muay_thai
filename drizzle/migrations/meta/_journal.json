@@ -190,6 +190,13 @@
       "when": 1790763124743,
       "tag": "0026_ifma_weight_class_ycadet_plus60",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1790843523130,
+      "tag": "0027_add_organizzatore_role",
+      "breakpoints": true
     }
   ]
 }
