@@ -17,7 +17,7 @@ export type UtenteAdmin = {
   id: string;
   email: string | null;
   nome_societa: string | null;
-  codice_societa: string | null;
+  codice_fiscale: string | null;
   citta: string | null;
   created_at: string | null;
   ruoli: string[];
@@ -31,7 +31,7 @@ export const listaUtenti = createServerFn({ method: "GET" })
 
     const { data: profili, error: e1 } = await supabaseAdmin
       .from("profiles")
-      .select("id, email, nome_societa, codice_societa, citta, created_at")
+      .select("id, email, nome_societa, codice_fiscale, citta, created_at")
       .order("created_at", { ascending: false });
     if (e1) throw new Error(e1.message);
 
@@ -61,9 +61,9 @@ export const creaUtente = createServerFn({ method: "POST" })
         email: z.string().email(),
         password: z.string().min(8),
         nome_societa: z.string().min(1),
-        codice_societa: z.string().optional().default(""),
+        codice_fiscale: z.string().optional().default(""),
         citta: z.string().optional().default(""),
-        ruolo: z.enum(["societa", "admin"]).default("societa"),
+        ruolo: z.enum(["societa", "admin", "organizzatore"]).default("societa"),
       })
       .parse(data),
   )
@@ -77,7 +77,7 @@ export const creaUtente = createServerFn({ method: "POST" })
       email_confirm: true,
       user_metadata: {
         nome_societa: data.nome_societa,
-        codice_societa: data.codice_societa,
+        codice_fiscale: data.codice_fiscale,
         citta: data.citta,
       },
     });
@@ -89,13 +89,13 @@ export const creaUtente = createServerFn({ method: "POST" })
       id,
       email: data.email,
       nome_societa: data.nome_societa,
-      codice_societa: data.codice_societa || null,
+      codice_fiscale: data.codice_fiscale.replace(/\s+/g, "").toUpperCase() || null,
       citta: data.citta || null,
     });
 
-    if (data.ruolo === "admin") {
+    if (data.ruolo !== "societa") {
       await supabaseAdmin.from("user_roles").upsert(
-        { user_id: id, role: "admin" },
+        { user_id: id, role: data.ruolo },
         { onConflict: "user_id,role", ignoreDuplicates: true },
       );
     }
@@ -109,7 +109,7 @@ export const impostaRuolo = createServerFn({ method: "POST" })
     z
       .object({
         user_id: z.string().uuid(),
-        ruolo: z.enum(["societa", "admin"]),
+        ruolo: z.enum(["admin", "organizzatore"]),
         attivo: z.boolean(),
       })
       .parse(data),

@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsAdmin, useProfilo, useSession } from "@/lib/auth";
+import { useIsAdmin, useIsOrganizzatore, useProfilo, useSession } from "@/lib/auth";
 import { formatDataBreve, formatDataCompleta, DISCIPLINE } from "@/lib/format";
 import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { RosterSocieta } from "@/components/roster-societa";
@@ -35,6 +35,7 @@ function AreaSocieta() {
   const { data: profilo } = useProfilo(user?.id);
   const logoUrl = useLogoUrl(profilo?.logo_path);
   const { data: admin } = useIsAdmin(user?.id);
+  const { data: organizzatore } = useIsOrganizzatore(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
     "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti"
@@ -70,10 +71,11 @@ function AreaSocieta() {
           <h1 className="font-display text-3xl font-semibold uppercase tracking-wide">
             {profilo?.nome_societa || user?.email}
           </h1>
-          {profilo?.codice_societa && (
+          {(profilo?.codice_fiscale || profilo?.citta) && (
             <p className="mt-1 text-[12px] text-muted-foreground">
-              Codice società: {profilo.codice_societa}
-              {profilo?.citta ? ` · ${profilo.citta}` : ""}
+              {profilo?.codice_fiscale ? `Codice fiscale: ${profilo.codice_fiscale}` : ""}
+              {profilo?.codice_fiscale && profilo?.citta ? " · " : ""}
+              {profilo?.citta ?? ""}
             </p>
           )}
           </div>
@@ -87,12 +89,20 @@ function AreaSocieta() {
         </button>
       </div>
 
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4">
+        <div>
+          <p className="font-display text-lg uppercase tracking-wide">Iscrivi atleti a una gara</p>
+          <p className="text-[12px] text-muted-foreground">Apri il calendario e scegli l'evento con iscrizioni aperte.</p>
+        </div>
+        <Button type="button" onClick={() => navigate({ to: "/calendario" })}>Vai al calendario gare</Button>
+      </div>
+
       <div className="mt-6 flex flex-wrap gap-2">
         {([
           ["atleti", "I miei atleti"],
           ["societa", "La mia società"],
           ["iscrizioni", "Iscrizioni"],
-          ["eventi", "Gestione eventi"],
+          ...(admin || organizzatore ? ([["eventi", "Gestione eventi"]] as const) : []),
           ["matchmaking", "Matchmaking"],
           ...(admin
             ? ([
@@ -120,7 +130,7 @@ function AreaSocieta() {
         {tab === "atleti" && <RosterSocieta userId={user.id} nomeSocieta={profilo?.nome_societa ?? ""} />}
         {tab === "societa" && <ProfiloSocieta profilo={profilo} />}
         {tab === "iscrizioni" && <MieIscrizioni userId={user.id} />}
-        {tab === "eventi" && <GestioneEventi admin={!!admin} userId={user.id} />}
+        {tab === "eventi" && (admin || organizzatore) && <GestioneEventi admin={!!admin} userId={user.id} />}
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
         {tab === "matchmaking" && <MatchmakingAdmin admin={!!admin} userId={user.id} />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
@@ -143,30 +153,60 @@ function MieIscrizioni({ userId }: { userId: string }) {
     },
   });
 
+  const gruppi = Object.values(
+    iscrizioni.reduce((acc: Record<string, { evento: any; righe: any[] }>, i: any) => {
+      const key = i.evento_id as string;
+      acc[key] ??= { evento: i.eventi, righe: [] };
+      acc[key].righe.push(i);
+      return acc;
+    }, {}),
+  ).sort((a, b) => String(a.evento?.data_evento ?? "").localeCompare(String(b.evento?.data_evento ?? "")));
+
   return (
-    <Pannello className="divide-y divide-border overflow-hidden">
-      {isLoading && <Vuoto testo="Caricamento…" />}
+    <div className="grid gap-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {[
+          ["Atleti iscritti", iscrizioni.length],
+          ["Gare con iscrizioni", gruppi.length],
+          ["Confermate", iscrizioni.filter((i: any) => i.stato === "confermata").length],
+        ].map(([label, value]) => (
+          <div key={String(label)} className="rounded-xl border border-border bg-card px-4 py-3">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
+            <p className="font-display text-2xl">{value}</p>
+          </div>
+        ))}
+      </div>
+
+      {isLoading && <Pannello><Vuoto testo="Caricamento…" /></Pannello>}
       {!isLoading && iscrizioni.length === 0 && (
-        <Vuoto testo="Nessuna iscrizione effettuata. Apri un evento dal calendario." />
+        <Pannello><Vuoto testo="Nessuna iscrizione effettuata. Apri un evento dal calendario." /></Pannello>
       )}
-      {iscrizioni.map((i: any) => (
-        <div key={i.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
-          <div>
-            <p className="text-sm font-medium">{i.snapshot_cognome} {i.snapshot_nome} · {i.eventi?.nome}</p>
+
+      {gruppi.map((g) => (
+        <Pannello key={g.righe[0].evento_id} className="overflow-hidden">
+          <div className="border-b border-border px-5 py-4">
+            <p className="font-display text-lg uppercase tracking-wide">{g.evento?.nome}</p>
             <p className="text-[12px] text-muted-foreground">
-              {formatDataCompleta(i.eventi?.data_evento)} · {i.eventi?.luogo}
+              {formatDataCompleta(g.evento?.data_evento)} · {g.evento?.luogo} · {g.righe.length} atlet{g.righe.length === 1 ? "a" : "i"}
             </p>
-            <ModificaIscrizione iscrizione={i} userId={userId} />
           </div>
-          <div className="text-right">
-            <p className="text-[12px] text-muted-foreground">
-              {i.snapshot_categoria ?? "—"} · {i.categoria_peso ?? "—"} · {i.snapshot_peso_kg ?? "—"} kg
-            </p>
-            <span className="text-[12px] font-medium capitalize">{i.stato}</span>
+          <div className="divide-y divide-border">
+            {g.righe.map((i: any) => (
+              <div key={i.id} className="flex flex-wrap items-start justify-between gap-3 px-5 py-4">
+                <div>
+                  <p className="text-sm font-medium">{i.snapshot_cognome} {i.snapshot_nome}</p>
+                  <p className="text-[12px] text-muted-foreground">
+                    {i.disciplina ?? "—"} · {i.snapshot_categoria ?? "—"} · {i.categoria_peso ?? "—"} · {i.snapshot_peso_kg ?? "—"} kg
+                  </p>
+                  <ModificaIscrizione iscrizione={i} userId={userId} />
+                </div>
+                <span className="rounded-full border border-border px-3 py-1 text-[11px] font-medium capitalize">{i.stato}</span>
+              </div>
+            ))}
           </div>
-        </div>
+        </Pannello>
       ))}
-    </Pannello>
+    </div>
   );
 }
 
@@ -590,7 +630,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
     email: "",
     password: "",
     nome_societa: "",
-    codice_societa: "",
+    codice_fiscale: "",
     citta: "",
     ruolo: "societa",
   });
@@ -607,21 +647,21 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
           email: form.email,
           password: form.password,
           nome_societa: form.nome_societa,
-          codice_societa: form.codice_societa,
+          codice_fiscale: form.codice_fiscale,
           citta: form.citta,
-          ruolo: form.ruolo as "societa" | "admin",
+          ruolo: form.ruolo as "societa" | "admin" | "organizzatore",
         },
       }),
     onSuccess: () => {
       setMsg("Account creato.");
-      setForm({ email: "", password: "", nome_societa: "", codice_societa: "", citta: "", ruolo: "societa" });
+      setForm({ email: "", password: "", nome_societa: "", codice_fiscale: "", citta: "", ruolo: "societa" });
       queryClient.invalidateQueries({ queryKey: ["admin-utenti"] });
     },
     onError: (e: any) => setMsg(e?.message ?? "Creazione non riuscita."),
   });
 
   const cambiaRuolo = useMutation({
-    mutationFn: (vars: { user_id: string; ruolo: "societa" | "admin"; attivo: boolean }) =>
+    mutationFn: (vars: { user_id: string; ruolo: "admin" | "organizzatore"; attivo: boolean }) =>
       ruolo({ data: vars }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-utenti"] }),
     onError: (e: any) => setMsg(e?.message ?? "Modifica ruolo non riuscita."),
@@ -645,15 +685,15 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
           <Input label="Password (min. 8 caratteri)" type="password" value={form.password} onChange={(v) => setForm({ ...form, password: v })} required />
           <Input label="Nome società" value={form.nome_societa} onChange={(v) => setForm({ ...form, nome_societa: v })} required />
           <div className="grid grid-cols-2 gap-3">
-            <Input label="Codice società" value={form.codice_societa} onChange={(v) => setForm({ ...form, codice_societa: v })} />
+            <Input label="Codice fiscale società" value={form.codice_fiscale} onChange={(v) => setForm({ ...form, codice_fiscale: v })} />
             <Input label="Città" value={form.citta} onChange={(v) => setForm({ ...form, citta: v })} />
           </div>
           <Select
             label="Ruolo"
             value={form.ruolo}
             onChange={(v) => setForm({ ...form, ruolo: v })}
-            options={["societa", "admin"]}
-            etichette={{ societa: "Società", admin: "Amministratore" }}
+            options={["societa", "organizzatore", "admin"]}
+            etichette={{ societa: "Società", organizzatore: "Organizzatore eventi", admin: "Amministratore" }}
           />
           <button
             type="submit"
@@ -673,6 +713,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
           {!isLoading && !error && utenti.length === 0 && <Vuoto testo="Nessun utente." />}
           {(utenti as any[]).map((u) => {
             const isAdmin = u.ruoli.includes("admin");
+            const isOrg = u.ruoli.includes("organizzatore");
             return (
               <div key={u.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
                 <div>
@@ -680,7 +721,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
                   <p className="text-[12px] text-muted-foreground">
                     {u.email}
                     {u.citta ? ` · ${u.citta}` : ""}
-                    {u.codice_societa ? ` · ${u.codice_societa}` : ""}
+                    {u.codice_fiscale ? ` · ${u.codice_fiscale}` : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -691,8 +732,16 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
                         : "rounded-full bg-muted px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
                     }
                   >
-                    {isAdmin ? "Amministratore" : "Società"}
+                    {isAdmin ? "Amministratore" : isOrg ? "Organizzatore" : "Società"}
                   </span>
+                  <button
+                    type="button"
+                    disabled={cambiaRuolo.isPending}
+                    onClick={() => cambiaRuolo.mutate({ user_id: u.id, ruolo: "organizzatore", attivo: !isOrg })}
+                    className="rounded-[10px] border border-border px-3 py-1.5 text-[12px] font-medium hover:bg-muted disabled:opacity-40"
+                  >
+                    {isOrg ? "Rimuovi organizzatore" : "Rendi organizzatore"}
+                  </button>
                   <button
                     type="button"
                     disabled={cambiaRuolo.isPending || (isAdmin && u.id === mioId)}

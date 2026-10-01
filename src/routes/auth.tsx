@@ -27,7 +27,7 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nomeSocieta, setNomeSocieta] = useState("");
-  const [codice, setCodice] = useState("");
+  const [codiceFiscale, setCodiceFiscale] = useState("");
   const [citta, setCitta] = useState("");
   const [errore, setErrore] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -48,7 +48,7 @@ function Auth() {
           email,
           password,
           options: {
-            data: { nome_societa: nomeSocieta, codice_societa: codice, citta },
+            data: { nome_societa: nomeSocieta, codice_fiscale: codiceFiscale.replace(/\s+/g, "").toUpperCase(), citta },
             emailRedirectTo: window.location.origin,
           },
         });
@@ -120,7 +120,7 @@ function Auth() {
                 required
               />
               <div className="grid grid-cols-2 gap-3">
-                <Campo label="Codice società" value={codice} onChange={setCodice} />
+                <Campo label="Codice fiscale società" value={codiceFiscale} onChange={setCodiceFiscale} required />
                 <Campo label="Città" value={citta} onChange={setCitta} />
               </div>
             </>

@@ -37,7 +37,7 @@ export function SiteHeader() {
         <div className="mx-auto flex min-h-20 max-w-[1200px] items-center justify-between gap-3 px-5 py-2">
           {!isHome && <Link to="/" className="flex min-w-0 shrink-0 flex-col items-start gap-0.5" aria-label="FIGHT HUB — Home">
             <img src={logo.url} alt="FIGHT HUB" className="h-auto w-[136px] object-contain sm:w-[170px]" />
-            <span className="text-[10px] italic leading-tight text-muted-foreground sm:text-[11px]">Il portale del fighiting italiano</span>
+            <span className="text-[10px] italic leading-tight text-muted-foreground sm:text-[11px]">Il portale del fighting italiano</span>
           </Link>}
 
           <nav className="hidden items-center gap-4 text-[12px] font-medium lg:flex xl:gap-6">

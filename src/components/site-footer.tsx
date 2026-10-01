@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <img src={logo.url} alt="FIGHT HUB" className="h-auto w-[160px]" />
-            <span className="text-[11px] italic text-ink-foreground/70">Il portale del fighiting italiano</span>
+            <span className="text-[11px] italic text-ink-foreground/70">Il portale del fighting italiano</span>
           </div>
         </div>
         <p className="text-[12px]">
