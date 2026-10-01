@@ -58,6 +58,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   const [form, setForm] = useState<Form>(empty);
   const [nuovi, setNuovi] = useState<Form[]>([{ ...empty }]);
   const [fileNuovi, setFileNuovi] = useState<(File | null)[]>([null]);
+  const [giro, setGiro] = useState(0);
   const [editId, setEditId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const { data: atleti = [], isLoading } = useQuery({
@@ -104,7 +105,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
       }
       return { count: righe.length, erroriFile };
     },
-    onSuccess: ({ count, erroriFile }) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.${erroriFile.length ? ` Certificato non caricato: ${erroriFile.join(", ")} (riprova da Modifica).` : ""}`); setNuovi([{ ...empty }]); setFileNuovi([null]); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
+    onSuccess: ({ count, erroriFile }) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.${erroriFile.length ? ` Certificato non caricato: ${erroriFile.join(", ")} (riprova da Modifica).` : ""}`); setNuovi([{ ...empty }]); setFileNuovi([null]); setGiro((g) => g + 1); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
     onError: (e) => setMessage(e.message),
   });
   const batchField = (index: number, key: keyof Form, label: string, type = "text") => <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">{label}<input aria-label={`${label} atleta ${index + 1}`} type={type} required max={type === "date" ? new Date().toISOString().slice(0, 10) : undefined} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={nuovi[index]?.[key] ?? ""} onChange={(e) => setNuovi((rows) => rows.map((r, n) => n === index ? key === "data_nascita" ? updateAgeCategory(r, { data_nascita: e.target.value }) : { ...r, [key]: e.target.value } : r))} className={type === "date" ? "mt-1 block w-full min-w-[7rem] rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground" : "mt-1 block w-full min-w-0 truncate rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground"} /></label>;
@@ -114,9 +115,9 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   return <div className="grid min-w-0 gap-6">
     {!editId && <form onSubmit={(e) => { e.preventDefault(); setMessage(""); saveMany.mutate(); }} className="min-w-0 max-w-full border-y border-border py-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl uppercase">Nuovi atleti</h2><Button type="button" variant="outline" onClick={() => { setNuovi((rows) => [...rows, { ...empty }]); setFileNuovi((f) => [...f, null]); }}>Aggiungi atleta</Button></div>
-      <div className="max-w-full space-y-3 overflow-x-auto">{nuovi.map((r, index) => <div key={index} className="min-w-[1180px] border-b border-border pb-4"><div className="grid grid-cols-[0.9fr_0.9fr_1.05fr_0.4fr_0.6fr_1.55fr_0.6fr_0.85fr_0.5fr_0.5fr_0.5fr_0.8fr_auto] items-end gap-1.5">
+      <div className="max-w-full space-y-3 overflow-x-auto">{nuovi.map((r, index) => <div key={`${giro}-${index}`} className="min-w-[1180px] border-b border-border pb-4"><div className="grid grid-cols-[0.9fr_0.9fr_1.05fr_0.4fr_0.6fr_1.55fr_0.6fr_0.85fr_0.5fr_0.5fr_0.5fr_0.8fr_auto] items-end gap-1.5">
         {batchField(index, "nome", "Nome")}{batchField(index, "cognome", "Cognome")}{batchField(index, "data_nascita", "Data nascita", "date")}{batchSelect(index, "sesso", "Genere", ["M", "F"])}{batchSelect(index, "formato", "KO / Light", FORMATI_ATLETA)}{batchSelect(index, "categoria", "Categoria di età", opzioniEta(r.formato, r.data_nascita))}{batchField(index, "peso_kg", "Peso reale (kg)", "number")}{batchSelect(index, "disciplina", "Disciplina", disciplinePerFormato(r.formato))}{batchSelect(index, "serie", "Classe", CLASSI, r.formato === "Light")}{batchSelect(index, "categoria_peso", "Cat. di peso", opzioniPeso(r.sesso, r.categoria))}{batchField(index, "totale_match", "Match", "number")}{batchField(index, "coach", "Cognome coach")}
-        <div className="flex items-end"><Button type="button" variant="outline" size="sm" className="px-2 text-xs" onClick={() => { setNuovi((rows) => rows.length > 1 ? rows.filter((_, n) => n !== index) : [{ ...empty }]); setFileNuovi((f) => f.length > 1 ? f.filter((_, n) => n !== index) : [null]); }}>Rimuovi</Button></div>
+        <div className="flex items-end"><Button type="button" variant="outline" size="sm" className="px-2 text-xs" onClick={() => { setNuovi((rows) => rows.length > 1 ? rows.filter((_, n) => n !== index) : [{ ...empty }]); setFileNuovi((f) => f.length > 1 ? f.filter((_, n) => n !== index) : [null]); setGiro((g) => g + 1); }}>Rimuovi</Button></div>
       </div>
       <div className="mt-2 flex flex-wrap items-end gap-3">
         <span className="text-[11px] font-medium text-muted-foreground">Certificato medico (facoltativo):</span>
