@@ -5,3 +5,4 @@
 - [x] Verificare larghezza colonna "Categoria di età" nell'anteprima (164px, testo completo)
 - [x] Gioco Sport: limiti di peso -24 + limiti Young Cadet (TS + DB, migrazione 0025)
 - [x] Young Cadet: aggiungere categoria +60 nel roster
+- [ ] Roster: restringere colonna Cat. di peso (richiesta utente 01/10)
