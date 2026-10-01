@@ -91,8 +91,16 @@ function GuidaIscrizioni() {
             <li><strong>Data di nascita</strong> e <strong>Genere</strong> (M o F).</li>
             <li><strong>KO o Light</strong>:
               <ul className="mt-1 list-[circle] space-y-1 pl-5">
-                <li><strong>KO</strong> (contatto pieno): 16–40 anni (Junior 16–18, Senior 19–40). Richiede la <strong>Classe</strong> A, B, C o N.</li>
-                <li><strong>Light</strong> (contatto leggero): 6–55 anni (Gioco Sport 6–9, Cadetti 10–15, Junior 16–18, Senior 19–40, Master 40–55). Nessuna classe.</li>
+                <li>
+                  <strong>KO (contatto pieno)</strong>: solo atleti da 16 a 40 anni compiuti.
+                  <br />Categorie: <strong>Junior</strong> 16–18 anni, <strong>Senior</strong> 19–40 anni.
+                  <br />Devi scegliere anche la <strong>Classe</strong> in base all'esperienza: A, B, C oppure N (esordiente).
+                </li>
+                <li>
+                  <strong>Light (contatto leggero)</strong>: atleti da 6 a 55 anni.
+                  <br />Categorie: <strong>Gioco Sport</strong> 6–9, <strong>Cadetti</strong> 10–15, <strong>Junior</strong> 16–18, <strong>Senior</strong> 19–40, <strong>Master</strong> 40–55.
+                  <br />La Classe non serve.
+                </li>
               </ul>
             </li>
             <li><strong>Categoria di età</strong>: assegnata in automatico dalla data di nascita.</li>

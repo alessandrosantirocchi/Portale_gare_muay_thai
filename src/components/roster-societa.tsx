@@ -57,6 +57,8 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   const qc = useQueryClient();
   const [form, setForm] = useState<Form>(empty);
   const [nuovi, setNuovi] = useState<Form[]>([{ ...empty }]);
+  const [fileNuovi, setFileNuovi] = useState<(File | null)[]>([null]);
+  const [giro, setGiro] = useState(0);
   const [editId, setEditId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const { data: atleti = [], isLoading } = useQuery({
@@ -85,14 +87,25 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   });
   const saveMany = useMutation({
     mutationFn: async () => {
-      const validi = nuovi.filter((r) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim() || r.categoria_peso);
-      if (!validi.length) throw new Error("Compila almeno un atleta.");
-      validi.forEach(validaAtleta);
-      const { error } = await supabase.from("atleti").insert(validi.map((r) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, categoria_peso: r.categoria_peso, formato: r.formato, disciplina: r.disciplina, serie: r.formato === "Light" ? null : r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, societa_id: userId, nome_societa: nomeSocieta })));
+      const righe = nuovi.map((r, i) => ({ r, file: fileNuovi[i] ?? null })).filter(({ r }) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim() || r.categoria_peso);
+      if (!righe.length) throw new Error("Compila almeno un atleta.");
+      righe.forEach(({ r }) => validaAtleta(r));
+      for (const { file } of righe) if (file && file.size > 10_000_000) throw new Error(`Il certificato ${file.name} supera 10 MB.`);
+      const { data, error } = await supabase.from("atleti").insert(righe.map(({ r }) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, categoria_peso: r.categoria_peso, formato: r.formato, disciplina: r.disciplina, serie: r.formato === "Light" ? null : r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, certificato_scadenza: r.certificato_scadenza || null, societa_id: userId, nome_societa: nomeSocieta }))).select("id");
       if (error) throw error;
-      return validi.length;
+      const erroriFile: string[] = [];
+      for (let i = 0; i < righe.length; i++) {
+        const file = righe[i]?.file; const id = data?.[i]?.id;
+        if (!file || !id) continue;
+        const path = `${userId}/${id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+        const up = await supabase.storage.from("certificati").upload(path, file);
+        if (up.error) { erroriFile.push(file.name); continue; }
+        const upd = await supabase.from("atleti").update({ certificato_path: path }).eq("id", id).eq("societa_id", userId);
+        if (upd.error) erroriFile.push(file.name);
+      }
+      return { count: righe.length, erroriFile };
     },
-    onSuccess: (count) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.`); setNuovi([{ ...empty }]); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
+    onSuccess: ({ count, erroriFile }) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.${erroriFile.length ? ` Certificato non caricato: ${erroriFile.join(", ")} (riprova da Modifica).` : ""}`); setNuovi([{ ...empty }]); setFileNuovi([null]); setGiro((g) => g + 1); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
     onError: (e) => setMessage(e.message),
   });
   const batchField = (index: number, key: keyof Form, label: string, type = "text") => <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">{label}<input aria-label={`${label} atleta ${index + 1}`} type={type} required max={type === "date" ? new Date().toISOString().slice(0, 10) : undefined} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={nuovi[index]?.[key] ?? ""} onChange={(e) => setNuovi((rows) => rows.map((r, n) => n === index ? key === "data_nascita" ? updateAgeCategory(r, { data_nascita: e.target.value }) : { ...r, [key]: e.target.value } : r))} className={type === "date" ? "mt-1 block w-full min-w-[7rem] rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground" : "mt-1 block w-full min-w-0 truncate rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground"} /></label>;
@@ -101,11 +114,16 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   const select = (key: keyof Form, label: string, values: readonly string[], disabled = false, extraClass = "") => <label className="text-xs text-muted-foreground">{label}<select required={key === "categoria_peso" || key === "categoria"} disabled={disabled} value={form[key]} onChange={(e) => setForm((f) => key === "formato" ? updateAgeCategory(f, { formato: e.target.value, disciplina: disciplinePerFormato(e.target.value).includes(f.disciplina) ? f.disciplina : (disciplinePerFormato(e.target.value)[0] ?? "Muay Thai"), serie: e.target.value === "Light" ? "" : (f.serie || "N") }) : { ...f, [key]: e.target.value, ...(key === "sesso" && !opzioniPeso(e.target.value, f.categoria).includes(f.categoria_peso) ? { categoria_peso: "" } : {}), ...(key === "categoria" && !opzioniPeso(f.sesso, e.target.value).includes(f.categoria_peso) ? { categoria_peso: "" } : {}) })} className={`mt-1 block w-full rounded-md border border-input bg-background p-2 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-50 ${extraClass}`}>{(key === "categoria_peso" || key === "categoria" || (key === "serie" && disabled)) && <option value="">—</option>}{values.map((v) => <option key={v}>{v}</option>)}</select></label>;
   return <div className="grid min-w-0 gap-6">
     {!editId && <form onSubmit={(e) => { e.preventDefault(); setMessage(""); saveMany.mutate(); }} className="min-w-0 max-w-full border-y border-border py-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl uppercase">Nuovi atleti</h2><Button type="button" variant="outline" onClick={() => setNuovi((rows) => [...rows, { ...empty }])}>Aggiungi atleta</Button></div>
-      <div className="max-w-full space-y-3 overflow-x-auto">{nuovi.map((r, index) => <div key={index} className="grid min-w-[1180px] grid-cols-[0.9fr_0.9fr_1.05fr_0.4fr_0.6fr_1.55fr_0.6fr_0.85fr_0.5fr_0.5fr_0.5fr_0.8fr_auto] items-end gap-1.5 border-b border-border pb-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl uppercase">Nuovi atleti</h2><Button type="button" variant="outline" onClick={() => { setNuovi((rows) => [...rows, { ...empty }]); setFileNuovi((f) => [...f, null]); }}>Aggiungi atleta</Button></div>
+      <div className="max-w-full space-y-3 overflow-x-auto">{nuovi.map((r, index) => <div key={`${giro}-${index}`} className="min-w-[1180px] border-b border-border pb-4"><div className="grid grid-cols-[0.9fr_0.9fr_1.05fr_0.4fr_0.6fr_1.55fr_0.6fr_0.85fr_0.5fr_0.5fr_0.5fr_0.8fr_auto] items-end gap-1.5">
         {batchField(index, "nome", "Nome")}{batchField(index, "cognome", "Cognome")}{batchField(index, "data_nascita", "Data nascita", "date")}{batchSelect(index, "sesso", "Genere", ["M", "F"])}{batchSelect(index, "formato", "KO / Light", FORMATI_ATLETA)}{batchSelect(index, "categoria", "Categoria di età", opzioniEta(r.formato, r.data_nascita))}{batchField(index, "peso_kg", "Peso reale (kg)", "number")}{batchSelect(index, "disciplina", "Disciplina", disciplinePerFormato(r.formato))}{batchSelect(index, "serie", "Classe", CLASSI, r.formato === "Light")}{batchSelect(index, "categoria_peso", "Cat. di peso", opzioniPeso(r.sesso, r.categoria))}{batchField(index, "totale_match", "Match", "number")}{batchField(index, "coach", "Cognome coach")}
-        <div className="flex items-end"><Button type="button" variant="outline" size="sm" className="px-2 text-xs" onClick={() => setNuovi((rows) => rows.length > 1 ? rows.filter((_, n) => n !== index) : [{ ...empty }])}>Rimuovi</Button></div>
-      </div>)}</div>
+        <div className="flex items-end"><Button type="button" variant="outline" size="sm" className="px-2 text-xs" onClick={() => { setNuovi((rows) => rows.length > 1 ? rows.filter((_, n) => n !== index) : [{ ...empty }]); setFileNuovi((f) => f.length > 1 ? f.filter((_, n) => n !== index) : [null]); setGiro((g) => g + 1); }}>Rimuovi</Button></div>
+      </div>
+      <div className="mt-2 flex flex-wrap items-end gap-3">
+        <span className="text-[11px] font-medium text-muted-foreground">Certificato medico (facoltativo):</span>
+        <label className="text-[11px] leading-tight text-muted-foreground">Scadenza<input aria-label={`Scadenza certificato atleta ${index + 1}`} type="date" value={r.certificato_scadenza} onChange={(e) => setNuovi((rows) => rows.map((x, n) => n === index ? { ...x, certificato_scadenza: e.target.value } : x))} className="mt-1 block w-[9rem] rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground" /></label>
+        <label className="text-[11px] leading-tight text-muted-foreground">Documento (PDF o immagine)<input aria-label={`Certificato atleta ${index + 1}`} type="file" accept="application/pdf,image/*" onChange={(e) => { const file = e.target.files?.[0] ?? null; setFileNuovi((f) => { const next = [...f]; while (next.length < nuovi.length) next.push(null); next[index] = file; return next; }); }} className="mt-1 block text-[11px]" /></label>
+      </div></div>)}</div>
       <div className="mt-4 flex items-center gap-3"><Button type="submit" disabled={saveMany.isPending}>{saveMany.isPending ? "Salvataggio…" : "Salva atleti"}</Button>{!editId && message && <p role="status" className="text-xs text-muted-foreground">{message}</p>}</div>
     </form>}
     {editId && <Pannello className="p-5"><h2 className="font-display text-xl uppercase">Modifica atleta</h2><form onSubmit={(e) => { e.preventDefault(); setMessage(""); save.mutate(); }} className="mt-4 grid grid-cols-2 gap-3">
