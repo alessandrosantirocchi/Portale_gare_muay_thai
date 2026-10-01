@@ -630,7 +630,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
     email: "",
     password: "",
     nome_societa: "",
-    codice_societa: "",
+    codice_fiscale: "",
     citta: "",
     ruolo: "societa",
   });
@@ -647,21 +647,21 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
           email: form.email,
           password: form.password,
           nome_societa: form.nome_societa,
-          codice_societa: form.codice_societa,
+          codice_fiscale: form.codice_fiscale,
           citta: form.citta,
-          ruolo: form.ruolo as "societa" | "admin",
+          ruolo: form.ruolo as "societa" | "admin" | "organizzatore",
         },
       }),
     onSuccess: () => {
       setMsg("Account creato.");
-      setForm({ email: "", password: "", nome_societa: "", codice_societa: "", citta: "", ruolo: "societa" });
+      setForm({ email: "", password: "", nome_societa: "", codice_fiscale: "", citta: "", ruolo: "societa" });
       queryClient.invalidateQueries({ queryKey: ["admin-utenti"] });
     },
     onError: (e: any) => setMsg(e?.message ?? "Creazione non riuscita."),
   });
 
   const cambiaRuolo = useMutation({
-    mutationFn: (vars: { user_id: string; ruolo: "societa" | "admin"; attivo: boolean }) =>
+    mutationFn: (vars: { user_id: string; ruolo: "admin" | "organizzatore"; attivo: boolean }) =>
       ruolo({ data: vars }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-utenti"] }),
     onError: (e: any) => setMsg(e?.message ?? "Modifica ruolo non riuscita."),
@@ -685,15 +685,15 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
           <Input label="Password (min. 8 caratteri)" type="password" value={form.password} onChange={(v) => setForm({ ...form, password: v })} required />
           <Input label="Nome società" value={form.nome_societa} onChange={(v) => setForm({ ...form, nome_societa: v })} required />
           <div className="grid grid-cols-2 gap-3">
-            <Input label="Codice società" value={form.codice_societa} onChange={(v) => setForm({ ...form, codice_societa: v })} />
+            <Input label="Codice fiscale società" value={form.codice_fiscale} onChange={(v) => setForm({ ...form, codice_fiscale: v })} />
             <Input label="Città" value={form.citta} onChange={(v) => setForm({ ...form, citta: v })} />
           </div>
           <Select
             label="Ruolo"
             value={form.ruolo}
             onChange={(v) => setForm({ ...form, ruolo: v })}
-            options={["societa", "admin"]}
-            etichette={{ societa: "Società", admin: "Amministratore" }}
+            options={["societa", "organizzatore", "admin"]}
+            etichette={{ societa: "Società", organizzatore: "Organizzatore eventi", admin: "Amministratore" }}
           />
           <button
             type="submit"
@@ -713,6 +713,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
           {!isLoading && !error && utenti.length === 0 && <Vuoto testo="Nessun utente." />}
           {(utenti as any[]).map((u) => {
             const isAdmin = u.ruoli.includes("admin");
+            const isOrg = u.ruoli.includes("organizzatore");
             return (
               <div key={u.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
                 <div>
@@ -720,7 +721,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
                   <p className="text-[12px] text-muted-foreground">
                     {u.email}
                     {u.citta ? ` · ${u.citta}` : ""}
-                    {u.codice_societa ? ` · ${u.codice_societa}` : ""}
+                    {u.codice_fiscale ? ` · ${u.codice_fiscale}` : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -731,8 +732,16 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
                         : "rounded-full bg-muted px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
                     }
                   >
-                    {isAdmin ? "Amministratore" : "Società"}
+                    {isAdmin ? "Amministratore" : isOrg ? "Organizzatore" : "Società"}
                   </span>
+                  <button
+                    type="button"
+                    disabled={cambiaRuolo.isPending}
+                    onClick={() => cambiaRuolo.mutate({ user_id: u.id, ruolo: "organizzatore", attivo: !isOrg })}
+                    className="rounded-[10px] border border-border px-3 py-1.5 text-[12px] font-medium hover:bg-muted disabled:opacity-40"
+                  >
+                    {isOrg ? "Rimuovi organizzatore" : "Rendi organizzatore"}
+                  </button>
                   <button
                     type="button"
                     disabled={cambiaRuolo.isPending || (isAdmin && u.id === mioId)}
