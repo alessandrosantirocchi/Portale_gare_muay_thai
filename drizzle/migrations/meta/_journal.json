@@ -211,6 +211,13 @@
       "when": 1791106806844,
       "tag": "0029_atleti_tessera_path",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1791108382794,
+      "tag": "0030_handle_new_user_regione",
+      "breakpoints": true
     }
   ]
 }

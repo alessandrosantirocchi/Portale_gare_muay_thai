@@ -21,6 +21,13 @@ export const Route = createFileRoute("/auth")({
   component: Auth,
 });
 
+const REGIONI = [
+  "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
+  "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
+  "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
+  "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto",
+];
+
 function Auth() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -29,6 +36,7 @@ function Auth() {
   const [nomeSocieta, setNomeSocieta] = useState("");
   const [codiceFiscale, setCodiceFiscale] = useState("");
   const [citta, setCitta] = useState("");
+  const [regione, setRegione] = useState("");
   const [errore, setErrore] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [carico, setCarico] = useState(false);
@@ -48,7 +56,7 @@ function Auth() {
           email,
           password,
           options: {
-            data: { nome_societa: nomeSocieta, codice_fiscale: codiceFiscale.replace(/\s+/g, "").toUpperCase(), citta },
+            data: { nome_societa: nomeSocieta, codice_fiscale: codiceFiscale.replace(/\s+/g, "").toUpperCase(), citta, regione },
             emailRedirectTo: window.location.origin,
           },
         });
@@ -123,6 +131,20 @@ function Auth() {
                 <Campo label="Codice fiscale società" value={codiceFiscale} onChange={setCodiceFiscale} required />
                 <Campo label="Città" value={citta} onChange={setCitta} />
               </div>
+              <label className="text-[12px] font-medium text-muted-foreground">
+                Regione
+                <select
+                  required
+                  value={regione}
+                  onChange={(e) => setRegione(e.target.value)}
+                  className="mt-1 w-full rounded-[10px] border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+                >
+                  <option value="">Seleziona…</option>
+                  {REGIONI.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </label>
             </>
           )}
           <Campo label="Email" type="email" value={email} onChange={setEmail} required />
