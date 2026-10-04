@@ -218,6 +218,13 @@
       "when": 1791108382794,
       "tag": "0030_handle_new_user_regione",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1791142190317,
+      "tag": "0031_sync_peso_atleta_iscrizioni",
+      "breakpoints": true
     }
   ]
 }
