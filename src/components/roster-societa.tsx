@@ -103,7 +103,8 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
           const path = `${userId}/${id}/${Date.now()}-${doc.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
           const up = await supabase.storage.from("certificati").upload(path, doc);
           if (up.error) { erroriFile.push(doc.name); continue; }
-          const upd = await supabase.from("atleti").update({ [col]: path }).eq("id", id).eq("societa_id", userId);
+          const values = col === "tessera_path" ? { tessera_path: path } : { certificato_path: path };
+          const upd = await supabase.from("atleti").update(values).eq("id", id).eq("societa_id", userId);
           if (upd.error) erroriFile.push(doc.name);
         }
       }
