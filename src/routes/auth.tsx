@@ -127,6 +127,19 @@ function Auth() {
           )}
           <Campo label="Email" type="email" value={email} onChange={setEmail} required />
           <Campo label="Password" type="password" value={password} onChange={setPassword} required />
+          {mode === "signup" && (
+            <label className="flex items-start gap-2 text-[12px] text-muted-foreground">
+              <input type="checkbox" required className="mt-0.5" />
+              <span>
+                Ho letto l'
+                <Link to="/privacy" target="_blank" className="text-primary underline">
+                  informativa privacy
+                </Link>{" "}
+                e dichiaro di essere autorizzato a trattare i dati degli atleti che inserirò
+                (compreso il consenso dei genitori per i minorenni).
+              </span>
+            </label>
+          )}
 
           {errore && <p className="text-[12px] text-destructive">{errore}</p>}
           {info && <p className="text-[12px] text-accent">{info}</p>}

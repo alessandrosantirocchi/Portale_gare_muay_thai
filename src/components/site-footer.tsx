@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import logo from "@/assets/fight-hub-cropped.png.asset.json";
 
 export function SiteFooter() {
@@ -11,9 +12,12 @@ export function SiteFooter() {
             <span className="text-[11px] italic text-ink-foreground/70">Il portale del fighting italiano</span>
           </div>
         </div>
-        <p className="text-[12px]">
-          © 2026 FIGHT HUB · Portale iscrizione atleti, calendario gare e classifiche
-        </p>
+        <div className="flex flex-col gap-1 text-[12px] sm:items-end">
+          <p>© 2026 FIGHT HUB · Portale iscrizione atleti, calendario gare e classifiche</p>
+          <Link to="/privacy" className="underline hover:text-ink-foreground">
+            Privacy e trattamento dati
+          </Link>
+        </div>
       </div>
     </footer>
   );
