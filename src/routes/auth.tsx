@@ -29,6 +29,7 @@ function Auth() {
   const [nomeSocieta, setNomeSocieta] = useState("");
   const [codiceFiscale, setCodiceFiscale] = useState("");
   const [citta, setCitta] = useState("");
+  const [regione, setRegione] = useState("");
   const [errore, setErrore] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [carico, setCarico] = useState(false);
