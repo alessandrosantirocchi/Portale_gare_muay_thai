@@ -49,7 +49,7 @@ function Auth() {
           email,
           password,
           options: {
-            data: { nome_societa: nomeSocieta, codice_fiscale: codiceFiscale.replace(/\s+/g, "").toUpperCase(), citta },
+            data: { nome_societa: nomeSocieta, codice_fiscale: codiceFiscale.replace(/\s+/g, "").toUpperCase(), citta, regione },
             emailRedirectTo: window.location.origin,
           },
         });
