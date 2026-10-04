@@ -1,0 +1,1 @@
+ALTER TABLE public.atleti ADD COLUMN IF NOT EXISTS tessera_path TEXT;

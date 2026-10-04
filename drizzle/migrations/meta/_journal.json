@@ -204,6 +204,13 @@
       "when": 1790843553385,
       "tag": "0028_codice_fiscale_eventi_ruolo_senior18",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791106806844,
+      "tag": "0029_atleti_tessera_path",
+      "breakpoints": true
     }
   ]
 }
