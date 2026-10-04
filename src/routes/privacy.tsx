@@ -21,7 +21,8 @@ export const Route = createFileRoute("/privacy")({
   component: Privacy,
 });
 
-const EMAIL = "infonktmuaythai@gmail.com";
+// Contatto privacy: da compilare con i dati del titolare prima del lancio.
+const EMAIL: string | null = null;
 
 function Sezione({ titolo, children }: { titolo: string; children: React.ReactNode }) {
   return (
@@ -49,12 +50,18 @@ function Privacy() {
       <div className="mt-6 rounded-2xl bg-card px-6 ring-1 ring-border">
         <Sezione titolo="1. Titolare del trattamento">
           <p>
-            Il titolare del trattamento è FIGHT HUB — "Il portale del fighting italiano". Per qualsiasi
-            richiesta relativa ai dati personali puoi scrivere a{" "}
-            <a className="text-primary underline" href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
-            .
+            Il titolare del trattamento è FIGHT HUB — "Il portale del fighting italiano". I dati di
+            contatto del titolare saranno pubblicati in questa sezione.
+            {EMAIL && (
+              <>
+                {" "}
+                Per qualsiasi richiesta relativa ai dati personali puoi scrivere a{" "}
+                <a className="text-primary underline" href={`mailto:${EMAIL}`}>
+                  {EMAIL}
+                </a>
+                .
+              </>
+            )}
           </p>
         </Sezione>
 
@@ -155,10 +162,15 @@ function Privacy() {
         <Sezione titolo="9. I tuoi diritti">
           <p>
             In qualsiasi momento puoi chiedere accesso, rettifica, cancellazione, limitazione,
-            portabilità dei dati e opporti al trattamento (artt. 15–22 GDPR), scrivendo a{" "}
-            <a className="text-primary underline" href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
+            portabilità dei dati e opporti al trattamento (artt. 15–22 GDPR)
+            {EMAIL && (
+              <>
+                , scrivendo a{" "}
+                <a className="text-primary underline" href={`mailto:${EMAIL}`}>
+                  {EMAIL}
+                </a>
+              </>
+            )}
             . Rispondiamo entro 30 giorni. Hai inoltre diritto di proporre reclamo al Garante per la
             protezione dei dati personali (www.garanteprivacy.it).
           </p>
