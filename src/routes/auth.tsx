@@ -122,8 +122,22 @@ function Auth() {
               />
               <div className="grid grid-cols-2 gap-3">
                 <Campo label="Codice fiscale società" value={codiceFiscale} onChange={setCodiceFiscale} required />
-                <Campo label="Città" value={citta} onChange={setCitta} />
+                <Campo label="Città" value={citta} onChange={setCitta} required />
               </div>
+              <label className="text-[12px] font-medium text-muted-foreground">
+                Regione
+                <select
+                  required
+                  value={regione}
+                  onChange={(e) => setRegione(e.target.value)}
+                  className="mt-1 w-full rounded-[10px] border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+                >
+                  <option value="">Seleziona…</option>
+                  {REGIONI.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </label>
             </>
           )}
           <Campo label="Email" type="email" value={email} onChange={setEmail} required />
