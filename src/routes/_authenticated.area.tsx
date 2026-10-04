@@ -626,6 +626,7 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
   const crea = useServerFn(creaUtente);
   const ruolo = useServerFn(impostaRuolo);
   const [msg, setMsg] = useState<string | null>(null);
+  const [aperta, setAperta] = useState<string | null>(null);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -715,15 +716,23 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
             const isAdmin = u.ruoli.includes("admin");
             const isOrg = u.ruoli.includes("organizzatore");
             return (
-              <div key={u.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
-                <div>
-                  <p className="text-sm font-medium">{u.nome_societa || u.email}</p>
+              <div key={u.id}>
+              <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
+                <button
+                  type="button"
+                  onClick={() => setAperta(aperta === u.id ? null : u.id)}
+                  className="text-left"
+                >
+                  <p className="text-sm font-medium text-primary hover:underline">
+                    {aperta === u.id ? "▾ " : "▸ "}
+                    {u.nome_societa || u.email}
+                  </p>
                   <p className="text-[12px] text-muted-foreground">
                     {u.email}
                     {u.citta ? ` · ${u.citta}` : ""}
                     {u.codice_fiscale ? ` · ${u.codice_fiscale}` : ""}
                   </p>
-                </div>
+                </button>
                 <div className="flex items-center gap-2">
                   <span
                     className={
@@ -754,9 +763,122 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
                   </button>
                 </div>
               </div>
+              {aperta === u.id && <SchedaSocieta id={u.id} registrata={u.created_at} />}
+              </div>
             );
           })}
         </Pannello>
+      </div>
+    </div>
+  );
+}
+
+function SchedaSocieta({ id, registrata }: { id: string; registrata: string | null }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["admin-scheda-societa", id],
+    queryFn: async () => {
+      const [p, a, i] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
+        supabase.from("atleti").select("*").eq("societa_id", id).order("cognome"),
+        supabase
+          .from("iscrizioni")
+          .select("id, stato, disciplina, categoria_peso, snapshot_nome, snapshot_cognome, snapshot_peso_kg, eventi(nome, data_evento)")
+          .eq("societa_id", id)
+          .order("created_at", { ascending: false }),
+      ]);
+      if (p.error) throw p.error;
+      if (a.error) throw a.error;
+      if (i.error) throw i.error;
+      return { profilo: p.data as any, atleti: (a.data ?? []) as any[], iscrizioni: (i.data ?? []) as any[] };
+    },
+  });
+
+  async function apri(path: string) {
+    const { data, error } = await supabase.storage.from("certificati").createSignedUrl(path, 300);
+    if (error || !data) return alert("Documento non disponibile.");
+    window.open(data.signedUrl, "_blank");
+  }
+
+  if (isLoading) return <p className="px-5 pb-4 text-[12px] text-muted-foreground">Caricamento scheda…</p>;
+  if (error || !data) return <p className="px-5 pb-4 text-[12px] text-destructive">Impossibile caricare la scheda.</p>;
+  const { profilo, atleti, iscrizioni } = data;
+  const campi: [string, any][] = [
+    ["Nome società", profilo?.nome_societa],
+    ["Codice fiscale", profilo?.codice_fiscale],
+    ["Partita IVA", profilo?.partita_iva],
+    ["Codice affiliazione", profilo?.codice_affiliazione],
+    ["Email", profilo?.email],
+    ["Telefono", profilo?.telefono],
+    ["Città", profilo?.citta],
+    ["Provincia", profilo?.provincia],
+    ["Regione", profilo?.regione],
+    ["Coach", [profilo?.nome_coach, profilo?.cognome_coach].filter(Boolean).join(" ")],
+    ["Registrata il", registrata ? formatDataBreve(registrata) : null],
+  ];
+
+  return (
+    <div className="space-y-4 bg-muted/30 px-5 py-4 text-[12px]">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3">
+        {campi.map(([k, v]) => (
+          <div key={k}>
+            <span className="text-muted-foreground">{k}: </span>
+            <span className="font-medium">{v || "—"}</span>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <p className="mb-1 font-semibold uppercase tracking-wide">Atleti ({atleti.length})</p>
+        {atleti.length === 0 ? (
+          <p className="text-muted-foreground">Nessun atleta.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left">
+              <thead className="text-muted-foreground">
+                <tr>
+                  <th className="py-1">Atleta</th><th>Nascita</th><th>G</th><th>Formato</th><th>Categoria</th>
+                  <th>Peso</th><th>Disciplina</th><th>Classe</th><th>Cert. scad.</th><th>Documenti</th>
+                </tr>
+              </thead>
+              <tbody>
+                {atleti.map((a) => (
+                  <tr key={a.id} className="border-t border-border">
+                    <td className="py-1 font-medium">{a.cognome} {a.nome}</td>
+                    <td>{a.data_nascita ? formatDataBreve(a.data_nascita) : "—"}</td>
+                    <td>{a.sesso}</td>
+                    <td>{a.formato}</td>
+                    <td>{a.categoria ?? "—"}</td>
+                    <td>{a.peso_kg ?? "—"} {a.categoria_peso ? `(${a.categoria_peso})` : ""}</td>
+                    <td>{a.disciplina}</td>
+                    <td>{a.serie ?? "—"}</td>
+                    <td>{a.certificato_scadenza ? formatDataBreve(a.certificato_scadenza) : "—"}</td>
+                    <td className="space-x-2">
+                      {a.certificato_path && <button type="button" className="text-primary underline" onClick={() => apri(a.certificato_path)}>Certificato</button>}
+                      {a.tessera_path && <button type="button" className="text-primary underline" onClick={() => apri(a.tessera_path)}>Tessera</button>}
+                      {!a.certificato_path && !a.tessera_path && "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div>
+        <p className="mb-1 font-semibold uppercase tracking-wide">Iscrizioni alle gare ({iscrizioni.length})</p>
+        {iscrizioni.length === 0 ? (
+          <p className="text-muted-foreground">Nessuna iscrizione.</p>
+        ) : (
+          <ul className="space-y-0.5">
+            {iscrizioni.map((i) => (
+              <li key={i.id}>
+                <span className="font-medium">{i.eventi?.nome ?? "Evento"}</span>
+                {i.eventi?.data_evento ? ` (${formatDataBreve(i.eventi.data_evento)})` : ""} — {i.snapshot_cognome} {i.snapshot_nome}, {i.disciplina ?? "—"}, {i.categoria_peso ?? "—"} · <span className="text-muted-foreground">{i.stato}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
