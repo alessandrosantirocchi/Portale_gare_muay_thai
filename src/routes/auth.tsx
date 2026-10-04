@@ -122,7 +122,7 @@ function Auth() {
               />
               <div className="grid grid-cols-2 gap-3">
                 <Campo label="Codice fiscale società" value={codiceFiscale} onChange={setCodiceFiscale} required />
-                <Campo label="Città" value={citta} onChange={setCitta} required />
+                <Campo label="Città" value={citta} onChange={setCitta} />
               </div>
               <label className="text-[12px] font-medium text-muted-foreground">
                 Regione
