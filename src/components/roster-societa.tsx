@@ -96,17 +96,20 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
       if (error) throw error;
       const erroriFile: string[] = [];
       for (let i = 0; i < righe.length; i++) {
-        const file = righe[i]?.file; const id = data?.[i]?.id;
-        if (!file || !id) continue;
-        const path = `${userId}/${id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-        const up = await supabase.storage.from("certificati").upload(path, file);
-        if (up.error) { erroriFile.push(file.name); continue; }
-        const upd = await supabase.from("atleti").update({ certificato_path: path }).eq("id", id).eq("societa_id", userId);
-        if (upd.error) erroriFile.push(file.name);
+        const { file, tessera } = righe[i] ?? {}; const id = data?.[i]?.id;
+        if (!id) continue;
+        for (const [doc, col] of [[file, "certificato_path"], [tessera, "tessera_path"]] as const) {
+          if (!doc) continue;
+          const path = `${userId}/${id}/${Date.now()}-${doc.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+          const up = await supabase.storage.from("certificati").upload(path, doc);
+          if (up.error) { erroriFile.push(doc.name); continue; }
+          const upd = await supabase.from("atleti").update({ [col]: path }).eq("id", id).eq("societa_id", userId);
+          if (upd.error) erroriFile.push(doc.name);
+        }
       }
       return { count: righe.length, erroriFile };
     },
-    onSuccess: ({ count, erroriFile }) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.${erroriFile.length ? ` Certificato non caricato: ${erroriFile.join(", ")} (riprova da Modifica).` : ""}`); setNuovi([{ ...empty }]); setFileNuovi([null]); setGiro((g) => g + 1); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
+    onSuccess: ({ count, erroriFile }) => { setMessage(`${count} atlet${count === 1 ? "a salvato" : "i salvati"}.${erroriFile.length ? ` Documento non caricato: ${erroriFile.join(", ")} (riprova da Modifica).` : ""}`); setNuovi([{ ...empty }]); setFileNuovi([null]); setTessereNuove([null]); setGiro((g) => g + 1); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
     onError: (e) => setMessage(e.message),
   });
   const batchField = (index: number, key: keyof Form, label: string, type = "text") => <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">{label}<input aria-label={`${label} atleta ${index + 1}`} type={type} required max={type === "date" ? new Date().toISOString().slice(0, 10) : undefined} min={type === "number" ? "0" : undefined} step={key === "peso_kg" ? "0.1" : undefined} value={nuovi[index]?.[key] ?? ""} onChange={(e) => setNuovi((rows) => rows.map((r, n) => n === index ? key === "data_nascita" ? updateAgeCategory(r, { data_nascita: e.target.value }) : { ...r, [key]: e.target.value } : r))} className={type === "date" ? "mt-1 block w-full min-w-[7rem] rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground" : "mt-1 block w-full min-w-0 truncate rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground"} /></label>;
