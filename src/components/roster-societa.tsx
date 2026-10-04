@@ -58,6 +58,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   const [form, setForm] = useState<Form>(empty);
   const [nuovi, setNuovi] = useState<Form[]>([{ ...empty }]);
   const [fileNuovi, setFileNuovi] = useState<(File | null)[]>([null]);
+  const [tessereNuove, setTessereNuove] = useState<(File | null)[]>([null]);
   const [giro, setGiro] = useState(0);
   const [editId, setEditId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -87,10 +88,10 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
   });
   const saveMany = useMutation({
     mutationFn: async () => {
-      const righe = nuovi.map((r, i) => ({ r, file: fileNuovi[i] ?? null })).filter(({ r }) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim() || r.categoria_peso);
+      const righe = nuovi.map((r, i) => ({ r, file: fileNuovi[i] ?? null, tessera: tessereNuove[i] ?? null })).filter(({ r }) => r.nome.trim() || r.cognome.trim() || r.data_nascita || r.peso_kg || r.coach.trim() || r.categoria_peso);
       if (!righe.length) throw new Error("Compila almeno un atleta.");
       righe.forEach(({ r }) => validaAtleta(r));
-      for (const { file } of righe) if (file && file.size > 10_000_000) throw new Error(`Il certificato ${file.name} supera 10 MB.`);
+      for (const { file, tessera } of righe) { if (file && file.size > 10_000_000) throw new Error(`Il certificato ${file.name} supera 10 MB.`); if (tessera && tessera.size > 10_000_000) throw new Error(`La tessera ${tessera.name} supera 10 MB.`); }
       const { data, error } = await supabase.from("atleti").insert(righe.map(({ r }) => ({ nome: nomeProprio(r.nome), cognome: nomeProprio(r.cognome), data_nascita: r.data_nascita, sesso: r.sesso, peso_kg: r.peso_kg ? Number(r.peso_kg) : null, categoria_peso: r.categoria_peso, formato: r.formato, disciplina: r.disciplina, serie: r.formato === "Light" ? null : r.serie, categoria: r.categoria, coach: r.coach.trim() || null, totale_match: Number(r.totale_match) || 0, certificato_scadenza: r.certificato_scadenza || null, societa_id: userId, nome_societa: nomeSocieta }))).select("id");
       if (error) throw error;
       const erroriFile: string[] = [];
