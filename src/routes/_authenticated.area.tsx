@@ -401,13 +401,13 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
     data_evento: evento.data_evento ?? "",
     luogo: evento.luogo ?? "",
     sede: evento.sede ?? "",
-    fine_iscrizioni: (evento.fine_iscrizioni ?? "").slice(0, 16),
+    fine_iscrizioni: aLocale(evento.fine_iscrizioni),
     orario: evento.orario ?? "",
     programma: evento.programma ?? "",
     descrizione: evento.descrizione ?? "",
     stato: evento.stato === "aperto" ? "iscrizioni aperte" : evento.stato === "chiuso" ? "iscrizioni chiuse" : evento.stato ?? "bozza",
     organizzatore: evento.organizzatore ?? "",
-    apertura_iscrizioni: evento.apertura_iscrizioni?.slice(0, 16) ?? "",
+    apertura_iscrizioni: aLocale(evento.apertura_iscrizioni),
     limite_partecipanti: String(evento.limite_partecipanti ?? ""),
     blocca_certificato_scaduto: evento.blocca_certificato_scaduto ?? false,
     originale_richiesto: evento.originale_richiesto ?? false,
@@ -1163,4 +1163,12 @@ function ConfermaIscrizioni() {
       </Pannello>
     </div>
   );
+}
+
+function aLocale(v: string | null | undefined) {
+  if (!v) return "";
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return "";
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 }
