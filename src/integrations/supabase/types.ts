@@ -39,6 +39,7 @@ export type Database = {
           serie: string | null
           sesso: string
           societa_id: string | null
+          tessera_path: string | null
           totale_match: number | null
           vittorie: number
         }
@@ -66,6 +67,7 @@ export type Database = {
           serie?: string | null
           sesso?: string
           societa_id?: string | null
+          tessera_path?: string | null
           totale_match?: number | null
           vittorie?: number
         }
@@ -93,6 +95,7 @@ export type Database = {
           serie?: string | null
           sesso?: string
           societa_id?: string | null
+          tessera_path?: string | null
           totale_match?: number | null
           vittorie?: number
         }
