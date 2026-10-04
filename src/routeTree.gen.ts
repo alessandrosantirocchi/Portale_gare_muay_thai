@@ -17,6 +17,7 @@ import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as ClassificheRouteImport } from './routes/classifiche'
 import { Route as DocumentiRouteImport } from './routes/documenti'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TitoliRouteImport } from './routes/titoli'
 import { Route as AuthenticatedAreaRouteImport } from './routes/_authenticated.area'
 import { Route as EventiIdRouteImport } from './routes/eventi.$id'
@@ -60,6 +61,11 @@ const NewsRoute = NewsRouteImport.update({
   path: '/news',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TitoliRoute = TitoliRouteImport.update({
   id: '/titoli',
   path: '/titoli',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/classifiche': typeof ClassificheRoute
   '/documenti': typeof DocumentiRoute
   '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/titoli': typeof TitoliRoute
   '/area': typeof AuthenticatedAreaRoute
   '/eventi/$id': typeof EventiIdRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/classifiche': typeof ClassificheRoute
   '/documenti': typeof DocumentiRoute
   '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/titoli': typeof TitoliRoute
   '/area': typeof AuthenticatedAreaRoute
   '/eventi/$id': typeof EventiIdRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/classifiche': typeof ClassificheRoute
   '/documenti': typeof DocumentiRoute
   '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/titoli': typeof TitoliRoute
   '/_authenticated/area': typeof AuthenticatedAreaRoute
   '/eventi/$id': typeof EventiIdRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/classifiche'
     | '/documenti'
     | '/news'
+    | '/privacy'
     | '/titoli'
     | '/area'
     | '/eventi/$id'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/classifiche'
     | '/documenti'
     | '/news'
+    | '/privacy'
     | '/titoli'
     | '/area'
     | '/eventi/$id'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/classifiche'
     | '/documenti'
     | '/news'
+    | '/privacy'
     | '/titoli'
     | '/_authenticated/area'
     | '/eventi/$id'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   ClassificheRoute: typeof ClassificheRoute
   DocumentiRoute: typeof DocumentiRoute
   NewsRoute: typeof NewsRoute
+  PrivacyRoute: typeof PrivacyRoute
   TitoliRoute: typeof TitoliRoute
   EventiIdRoute: typeof EventiIdRoute
 }
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/titoli': {
       id: '/titoli'
       path: '/titoli'
@@ -270,6 +290,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClassificheRoute: ClassificheRoute,
   DocumentiRoute: DocumentiRoute,
   NewsRoute: NewsRoute,
+  PrivacyRoute: PrivacyRoute,
   TitoliRoute: TitoliRoute,
   EventiIdRoute: EventiIdRoute,
 }
