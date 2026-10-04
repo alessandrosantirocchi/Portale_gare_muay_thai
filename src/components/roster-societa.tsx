@@ -78,7 +78,7 @@ export function RosterSocieta({ userId, nomeSocieta }: { userId: string; nomeSoc
       const { error } = editId ? await supabase.from("atleti").update(values).eq("id", editId).eq("societa_id", userId) : await supabase.from("atleti").insert({ ...values, societa_id: userId, nome_societa: nomeSocieta });
       if (error) throw error;
     },
-    onSuccess: () => { setMessage("Atleta salvato."); setForm(empty); setEditId(null); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["atleti"] }); },
+    onSuccess: () => { setMessage("Atleta salvato."); setForm(empty); setEditId(null); for (const k of ["miei-atleti", "atleti", "mie-iscrizioni", "iscritti", "iscrizioni-atleta", "public-pools", "iscrizioni-admin"]) qc.invalidateQueries({ queryKey: [k] }); },
     onError: (e) => setMessage(e.message),
   });
   const remove = useMutation({
