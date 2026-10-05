@@ -4,8 +4,10 @@ type Limiti = { M: number[]; F: number[] };
 
 // Gioco Sport (fino a 9 anni, solo Light): parte da -24 e riprende i limiti Young Cadet.
 const GIOCO_SPORT: Limiti = { M: [24, 28, 32, 37, 42, 47, 52, 57, 60], F: [24, 28, 32, 37, 42, 47, 52, 57, 60] };
-const YOUNG_CADET: Limiti = { M: [28, 32, 37, 42, 47, 52, 57, 60], F: [28, 32, 37, 42, 47, 52, 57, 60] };
-const OLDER_CADET: Limiti = { M: [32, 37, 42, 47, 52, 57, 63, 69], F: [32, 37, 42, 46, 50, 55, 60, 65] };
+// Young e Older Cadet estesi fino alla 75 kg su richiesta: oltre i limiti standard IFMA
+// si aggiungono le fasce superiori per coprire i pesi più alti.
+const YOUNG_CADET: Limiti = { M: [28, 32, 37, 42, 47, 52, 57, 60, 63.5, 67, 71, 75], F: [28, 32, 37, 42, 47, 52, 57, 60, 63.5, 67, 71, 75] };
+const OLDER_CADET: Limiti = { M: [32, 37, 42, 47, 52, 57, 63, 69, 71, 75], F: [32, 37, 42, 46, 50, 55, 60, 65, 67, 71, 75] };
 const JUNIOR: Limiti = { M: [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91], F: [42, 45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75] };
 const SENIOR: Limiti = { M: [48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91], F: [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75] };
 
@@ -25,9 +27,8 @@ export function categoriePesoPerCategoria(sesso: string, categoria: string): str
   const fascia = c.includes("GIOCO SPORT") ? GIOCO_SPORT : c.includes("YOUNG") ? YOUNG_CADET : c.includes("OLD CADET") ? OLDER_CADET : c.includes("JUNIOR") ? JUNIOR : SENIOR;
   const limiti = fascia[gender];
   const base = limiti.map((peso) => `-${peso} kg`);
-  // Gioco Sport e Young Cadet hanno la +60 per entrambi i generi; per le altre fasce la + resta solo maschile.
-  const conPlus = fascia === GIOCO_SPORT || fascia === YOUNG_CADET || gender === "M";
-  return conPlus ? [...base, `+${limiti[limiti.length - 1]} kg`] : base;
+  // Tutte le fasce hanno la categoria + per entrambi i generi (es. Young Cadet +60, Older Cadet +69/+65).
+  return [...base, `+${limiti[limiti.length - 1]} kg`];
 }
 
 function etaCompiuta(nascita: string, data: string): number | null {
