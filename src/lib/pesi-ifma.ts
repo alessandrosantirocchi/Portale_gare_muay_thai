@@ -25,9 +25,8 @@ export function categoriePesoPerCategoria(sesso: string, categoria: string): str
   const fascia = c.includes("GIOCO SPORT") ? GIOCO_SPORT : c.includes("YOUNG") ? YOUNG_CADET : c.includes("OLD CADET") ? OLDER_CADET : c.includes("JUNIOR") ? JUNIOR : SENIOR;
   const limiti = fascia[gender];
   const base = limiti.map((peso) => `-${peso} kg`);
-  // Gioco Sport e Young Cadet hanno la +60 per entrambi i generi; per le altre fasce la + resta solo maschile.
-  const conPlus = fascia === GIOCO_SPORT || fascia === YOUNG_CADET || gender === "M";
-  return conPlus ? [...base, `+${limiti[limiti.length - 1]} kg`] : base;
+  // Tutte le fasce hanno la categoria + per entrambi i generi (es. Young Cadet +60, Older Cadet +69/+65).
+  return [...base, `+${limiti[limiti.length - 1]} kg`];
 }
 
 function etaCompiuta(nascita: string, data: string): number | null {
