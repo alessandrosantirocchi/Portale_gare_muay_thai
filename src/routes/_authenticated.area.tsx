@@ -540,8 +540,10 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
 function RigaEventoAdmin({
   evento,
   onElimina,
+  admin,
 }: {
   evento: any;
+  admin: boolean;
   onElimina: () => void;
 }) {
   const queryClient = useQueryClient();
@@ -641,7 +643,7 @@ function RigaEventoAdmin({
           Elimina
         </button>
       </div>
-      {modifica && <ModificaEvento evento={evento} onChiudi={() => setModifica(false)} />}
+      {modifica && <ModificaEvento evento={evento} admin={admin} onChiudi={() => setModifica(false)} />}
     </div>
   );
 }
