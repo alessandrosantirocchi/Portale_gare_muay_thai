@@ -346,7 +346,7 @@ function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
 function ListaEventiAdmin({ admin, userId }: { admin: boolean; userId: string }) {
   const queryClient = useQueryClient();
   const { data: eventi = [], isLoading } = useQuery({
-    queryKey: ["eventi"],
+    queryKey: ["eventi", "gestione", admin ? "tutti" : userId],
     queryFn: async () => {
       const richiesta = admin
         ? supabase.from("eventi").select("*")
@@ -378,6 +378,7 @@ function ListaEventiAdmin({ admin, userId }: { admin: boolean; userId: string })
           <RigaEventoAdmin
             key={e.id}
             evento={e}
+            admin={admin}
             onElimina={() => {
               if (confirm(`Eliminare l'evento "${e.nome}" e le relative iscrizioni?`)) {
                 elimina.mutate(e.id);
@@ -390,7 +391,7 @@ function ListaEventiAdmin({ admin, userId }: { admin: boolean; userId: string })
   );
 }
 
-function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => void }) {
+function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: () => void; admin: boolean }) {
   const queryClient = useQueryClient();
   const [f, setF] = useState({
     nome: evento.nome ?? "",
@@ -411,8 +412,16 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
     limite_partecipanti: String(evento.limite_partecipanti ?? ""),
     blocca_certificato_scaduto: evento.blocca_certificato_scaduto ?? false,
     originale_richiesto: evento.originale_richiesto ?? false,
+    organizzatore_id: (evento.organizzatore_id ?? "") as string,
   });
   const [msg, setMsg] = useState<string | null>(null);
+  const caricaUtenti = useServerFn(listaUtenti);
+  const { data: organizzatori = [] } = useQuery({
+    queryKey: ["admin-utenti"],
+    enabled: admin,
+    queryFn: () => caricaUtenti(),
+    select: (lista) => lista.filter((u) => u.ruoli.includes("organizzatore") || u.ruoli.includes("admin")),
+  });
 
   const salva = useMutation({
     mutationFn: async () => {
@@ -437,6 +446,7 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
           limite_partecipanti: f.limite_partecipanti ? Number(f.limite_partecipanti) : null,
           blocca_certificato_scaduto: f.blocca_certificato_scaduto,
           originale_richiesto: f.originale_richiesto,
+          ...(admin ? { organizzatore_id: f.organizzatore_id || null } : {}),
         })
         .eq("id", evento.id);
       if (error) throw error;
@@ -471,6 +481,22 @@ function ModificaEvento({ evento, onChiudi }: { evento: any; onChiudi: () => voi
       <Input label="Sede / palazzetto" value={f.sede} onChange={(v) => setF({ ...f, sede: v })} />
       <Input label="Fine iscrizioni" type="datetime-local" value={f.fine_iscrizioni} onChange={(v) => setF({ ...f, fine_iscrizioni: v })} required />
       <Input label="Organizzatore" value={f.organizzatore} onChange={(v) => setF({ ...f, organizzatore: v })} />
+      {admin && (
+        <label className="text-[12px] font-medium text-muted-foreground">
+          Account organizzatore (può modificare questo evento)
+          <select
+            value={f.organizzatore_id}
+            onChange={(e) => setF({ ...f, organizzatore_id: e.target.value })}
+            className="mt-1 w-full rounded-[10px] border border-input bg-background px-3 py-2 text-sm text-foreground"
+          >
+            <option value="">— Nessuno (solo admin) —</option>
+            {organizzatori.map((u) => (
+              <option key={u.id} value={u.id}>{u.nome_societa} · {u.email}</option>
+            ))}
+          </select>
+        </label>
+      )}
+
       <Input label="Apertura iscrizioni" type="datetime-local" value={f.apertura_iscrizioni} onChange={(v) => setF({ ...f, apertura_iscrizioni: v })} />
       <Input label="Limite partecipanti" type="number" value={f.limite_partecipanti} onChange={(v) => setF({ ...f, limite_partecipanti: v })} />
       <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.blocca_certificato_scaduto} onChange={(e) => setF({ ...f, blocca_certificato_scaduto: e.target.checked })} />Blocca iscrizioni senza certificato valido</label>
