@@ -232,6 +232,13 @@
       "when": 1791195836832,
       "tag": "0032_organizzatori_locandine",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791206610800,
+      "tag": "0033_extend_cadet_weight_limits_to_75",
+      "breakpoints": true
     }
   ]
 }
