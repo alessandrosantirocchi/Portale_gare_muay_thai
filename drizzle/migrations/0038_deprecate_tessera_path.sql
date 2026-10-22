@@ -1,0 +1,1 @@
+COMMENT ON COLUMN public.atleti.tessera_path IS 'DEPRECATED: immagine della tessera non piu utilizzata; la verifica usa i numeri tessera_opes / tessera_fight1'
