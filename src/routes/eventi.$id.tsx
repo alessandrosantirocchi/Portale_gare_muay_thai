@@ -3,7 +3,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchEvento, fetchIscrittiEvento, type Atleta } from "@/lib/queries";
-import { formatDataCompleta, disciplineEvento, disciplinaCanonica, type FormatiIncontro } from "@/lib/format";
+import { formatDataCompleta, disciplineEvento, type FormatiIncontro } from "@/lib/format";
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
 import { IscrizioneEvento } from "@/components/iscrizione-evento";
@@ -154,7 +154,6 @@ function SchedaEvento() {
                pools.forEach((p) => p.iscrizione_ids.forEach((entryId) => poolDi.set(entryId, p.iscrizione_ids.length)));
                const matchDi = new Map<string, number>();
                matches.forEach((m) => { if (m.numero != null) { matchDi.set(m.rosso_id, m.numero); matchDi.set(m.blu_id, m.numero); } });
-               const abbrDisciplina: Record<string, string> = { "MUAY THAI": "MT", KICKBOXING: "KICK", K1: "K1", "FIGHT CODE": "FC", ALTRO: "ALTRO" };
                const righe = iscritti.filter((i: any) => corrisponde(`${i.nome} ${i.cognome} ${i.nome_societa}`.toLocaleLowerCase("it-IT")));
                const nome = (entryId: string) => { const i = iscritti.find((x: any) => x.id === entryId); return i ? `${i.cognome} ${i.nome} · ${i.nome_societa}` : "Atleta non disponibile"; };
                const matchVisibili = matches.filter((m) => corrisponde(`${nome(m.rosso_id)} ${nome(m.blu_id)}`.toLocaleLowerCase("it-IT")));
