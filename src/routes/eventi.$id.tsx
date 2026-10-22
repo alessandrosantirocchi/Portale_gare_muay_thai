@@ -38,6 +38,7 @@ function SchedaEvento() {
     queryKey: ["evento", id],
     queryFn: () => fetchEvento(id),
   });
+  const [filtri, setFiltri] = useState(FILTRI_VUOTI);
   const { data: iscritti = [] } = useQuery({
     queryKey: ["iscritti", id],
     queryFn: () => fetchIscrittiEvento(id),
@@ -154,11 +155,14 @@ function SchedaEvento() {
                pools.forEach((p) => p.iscrizione_ids.forEach((entryId) => poolDi.set(entryId, p.iscrizione_ids.length)));
                const matchDi = new Map<string, number>();
                matches.forEach((m) => { if (m.numero != null) { matchDi.set(m.rosso_id, m.numero); matchDi.set(m.blu_id, m.numero); } });
-               const righe = iscritti.filter((i: any) => corrisponde(`${i.nome} ${i.cognome} ${i.nome_societa}`.toLocaleLowerCase("it-IT")));
+               const righe = iscritti.filter((i: any) => corrisponde(`${i.nome} ${i.cognome} ${i.nome_societa}`.toLocaleLowerCase("it-IT")) && (!filtri.disciplina || i.disciplina === filtri.disciplina) && (!filtri.formato || i.formato === filtri.formato) && (!filtri.eta || i.categoria_eta === filtri.eta) && (!filtri.sesso || i.snapshot_sesso === filtri.sesso) && (!filtri.peso || i.categoria === filtri.peso) && (!filtri.societa || i.nome_societa === filtri.societa));
+               const valori = (k: string) => [...new Set(iscritti.map((x: any) => x[k]).filter(Boolean))].sort() as string[];
+               const filtroSel = (k: keyof typeof filtri, label: string, campo: string) => <label key={k} className="grid gap-1 text-xs text-muted-foreground">{label}<select value={filtri[k]} onChange={(e) => setFiltri({ ...filtri, [k]: e.target.value })} className="rounded-md border border-input bg-background px-2 py-1.5 text-sm text-foreground"><option value="">Tutti</option>{valori(campo).map((v) => <option key={v}>{v}</option>)}</select></label>;
                const nome = (entryId: string) => { const i = iscritti.find((x: any) => x.id === entryId); return i ? `${i.cognome} ${i.nome} · ${i.nome_societa}` : "Atleta non disponibile"; };
                const matchVisibili = matches.filter((m) => corrisponde(`${nome(m.rosso_id)} ${nome(m.blu_id)}`.toLocaleLowerCase("it-IT")));
                return <>
                  {pools.length === 0 && matches.length === 0 && <p className="mt-5 border-y border-border py-5 text-sm text-muted-foreground">Gli abbinamenti non sono ancora stati pubblicati.</p>}
+                 <div className="mt-5 flex flex-wrap items-end gap-3">{filtroSel("disciplina", "Disciplina", "disciplina")}{filtroSel("formato", "Formato", "formato")}{filtroSel("eta", "Cat. età", "categoria_eta")}{filtroSel("sesso", "Sesso", "snapshot_sesso")}{filtroSel("peso", "Cat. peso", "categoria")}{filtroSel("societa", "Società", "nome_societa")}{Object.values(filtri).some(Boolean) && <button type="button" onClick={() => setFiltri(FILTRI_VUOTI)} className="pb-2 text-xs text-primary underline">Azzera filtri</button>}<span className="pb-2 text-xs text-muted-foreground">{righe.length} risultati</span></div>
                  <div className="mt-5 overflow-x-auto">
                    <table className="w-full border-collapse text-sm">
                      <thead>
@@ -197,6 +201,8 @@ function SchedaEvento() {
     </div>
   );
 }
+
+const FILTRI_VUOTI = { disciplina: "", formato: "", eta: "", sesso: "", peso: "", societa: "" };
 
 function LocandinaEvento({ path, nome }: { path: string | null; nome: string }) {
   const { data: url } = useLocandinaPubblica(path);
