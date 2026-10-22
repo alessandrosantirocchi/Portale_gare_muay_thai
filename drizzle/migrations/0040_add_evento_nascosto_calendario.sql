@@ -1,0 +1,2 @@
+ALTER TABLE public.eventi ADD COLUMN IF NOT EXISTS nascosto boolean NOT NULL DEFAULT false;
+COMMENT ON COLUMN public.eventi.nascosto IS 'Se true l''evento non compare nel calendario pubblico né in home; resta visibile e modificabile nell''area organizzatori/admin.';

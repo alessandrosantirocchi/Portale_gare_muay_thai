@@ -414,6 +414,7 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
     limite_partecipanti: String(evento.limite_partecipanti ?? ""),
     blocca_certificato_scaduto: evento.blocca_certificato_scaduto ?? false,
     originale_richiesto: evento.originale_richiesto ?? false,
+    nascosto: evento.nascosto ?? false,
     organizzatore_id: (evento.organizzatore_id ?? "") as string,
   });
   const [msg, setMsg] = useState<string | null>(null);
@@ -448,6 +449,7 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
           limite_partecipanti: f.limite_partecipanti ? Number(f.limite_partecipanti) : null,
           blocca_certificato_scaduto: f.blocca_certificato_scaduto,
           originale_richiesto: f.originale_richiesto,
+          nascosto: f.nascosto,
           ...(admin ? { organizzatore_id: f.organizzatore_id || null } : {}),
         })
         .eq("id", evento.id);
@@ -503,6 +505,7 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
       <Input label="Limite partecipanti" type="number" value={f.limite_partecipanti} onChange={(v) => setF({ ...f, limite_partecipanti: v })} />
       <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.blocca_certificato_scaduto} onChange={(e) => setF({ ...f, blocca_certificato_scaduto: e.target.checked })} />Blocca iscrizioni senza certificato valido</label>
       <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.originale_richiesto} onChange={(e) => setF({ ...f, originale_richiesto: e.target.checked })} />Originale richiesto al check-in</label>
+      <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.nascosto} onChange={(e) => setF({ ...f, nascosto: e.target.checked })} />Nascondi dal calendario pubblico (l'evento resta qui, nella tua area)</label>
       <Input label="Orario" value={f.orario} onChange={(v) => setF({ ...f, orario: v })} />
       <label className="text-[12px] font-medium text-muted-foreground">
         Programma (una voce per riga)
@@ -607,7 +610,14 @@ function RigaEventoAdmin({
           </div>
         )}
         <div>
-          <p className="text-sm font-medium">{evento.nome}</p>
+          <p className="text-sm font-medium">
+            {evento.nome}
+            {evento.nascosto && (
+              <span className="ml-2 rounded-full border border-destructive/40 px-2 py-0.5 text-[10px] font-semibold uppercase text-destructive">
+                Nascosto
+              </span>
+            )}
+          </p>
           <p className="text-[12px] text-muted-foreground">
             {formatDataBreve(evento.data_evento)} · {evento.luogo}
           </p>
