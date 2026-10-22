@@ -253,6 +253,13 @@
       "when": 1792661971730,
       "tag": "0035_organizer_view_athlete_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792667219690,
+      "tag": "0036_athlete_membership_verification",
+      "breakpoints": true
     }
   ]
 }
