@@ -47,6 +47,7 @@ export type Atleta = {
   totale_match: number | null;
   certificato_scadenza: string | null;
   formato?: string | null;
+  categoria_peso?: string | null;
 };
 
 export async function fetchEventi() {
