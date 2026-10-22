@@ -77,8 +77,8 @@ function Privacy() {
           </p>
           <p>
             <strong>Dati relativi alla salute (art. 9 GDPR):</strong> certificato medico di idoneità e
-            relativa scadenza, caricati facoltativamente dalla società. Insieme alla tessera federale
-            sono trattati solo per verificare l'idoneità alla gara.
+            relativa scadenza, caricati facoltativamente dalla società; sono trattati solo per
+            verificare l'idoneità alla gara.
           </p>
           <p>
             <strong>Dati tecnici:</strong> dati di accesso e di navigazione strettamente necessari al
