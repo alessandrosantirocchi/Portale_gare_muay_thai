@@ -17,6 +17,8 @@ export function MatchmakingAdmin({ admin, userId }: { admin: boolean; userId: st
   const { data: iscrizioni = [] } = useQuery({ queryKey: ["match-iscrizioni", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("iscrizioni").select("*, atleti(nome,cognome,nome_societa,sesso,data_nascita,peso_kg,disciplina,serie,categoria,totale_match)").eq("evento_id", eventoId).eq("stato", "confermata"); if (error) throw error; return data as Iscrizione[]; } });
   const { data: cards = [] } = useQuery({ queryKey: ["match-cards", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.from("match_cards").select("*").eq("evento_id", eventoId).order("numero"); if (error) throw error; return data ?? []; } });
   const { data: pools = [] } = useQuery({ queryKey: ["match-pools", eventoId], enabled: !!eventoId, refetchInterval: 30000, queryFn: async () => { const { data, error } = await supabase.from("pools").select("*").eq("evento_id", eventoId).order("numero"); if (error) throw error; return data ?? []; } });
+  const { data: documenti = [] } = useQuery({ queryKey: ["match-documenti", eventoId], enabled: !!eventoId, queryFn: async () => { const { data, error } = await supabase.rpc("documenti_iscritti_evento", { p_evento_id: eventoId }); if (error) throw error; return data ?? []; } });
+  async function apriDoc(path: string | null) { if (!path) return; const w = window.open("", "_blank"); const { data, error } = await supabase.storage.from("certificati").createSignedUrl(path, 300); if (error || !data) { w?.close(); setMsg("Documento non disponibile."); return; } if (w) w.location.href = data.signedUrl; else window.location.href = data.signedUrl; }
   const occupati = new Set([...cards.flatMap((c) => [c.rosso_id, c.blu_id]), ...pools.flatMap((p) => p.iscrizione_ids)]);
   const liberi = iscrizioni.filter((i) => !occupati.has(i.id));
   const proposta = evento ? proponiAbbinamenti(liberi, evento.data_evento) : { coppie: [], senzaMatch: [] };
@@ -57,7 +59,7 @@ export function MatchmakingAdmin({ admin, userId }: { admin: boolean; userId: st
   const rigaAtleta = (i: Iscrizione, extra?: React.ReactNode) => {
     const d = evento ? datiGara(i, evento.data_evento) : null;
     return <div key={i.id} className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_repeat(5,minmax(0,0.6fr))_minmax(0,0.9fr)] items-center gap-2 border-b border-border px-2 py-2 text-xs last:border-b-0">
-      <span className="min-w-0 truncate font-semibold text-foreground">{d?.cognome} {d?.nome}</span>
+      <span className="min-w-0 font-semibold text-foreground"><span className="block truncate">{d?.cognome} {d?.nome}</span>{(() => { const doc = documenti.find((x) => x.iscrizione_id === i.id); return doc && (doc.tessera_path || doc.certificato_path) ? <span className="flex gap-2 text-[11px] font-normal">{doc.tessera_path && <button type="button" className="text-primary underline" onClick={() => apriDoc(doc.tessera_path)}>Tessera</button>}{doc.certificato_path && <button type="button" className="text-primary underline" onClick={() => apriDoc(doc.certificato_path)}>Certificato</button>}</span> : null; })()}</span>
       <span className="min-w-0 truncate text-muted-foreground">{d?.team}</span>
       <span className="text-muted-foreground">{d?.disciplina}</span>
       <span className="text-muted-foreground">{d?.sesso}</span>
