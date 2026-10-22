@@ -9,6 +9,7 @@ import { Pannello, Vuoto } from "@/components/ui-blocchi";
 import { RosterSocieta } from "@/components/roster-societa";
 import { ProfiloSocieta, useLogoUrl } from "@/components/profilo-societa";
 import { MatchmakingAdmin } from "@/components/matchmaking-admin";
+import { VerificaTessere } from "@/components/verifica-tessere";
 import { STATI_EVENTO } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
 import { DisciplineEvento } from "@/components/discipline-evento";
@@ -38,7 +39,7 @@ function AreaSocieta() {
   const { data: organizzatore } = useIsOrganizzatore(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
-    "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti"
+    "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti" | "tessere"
   >("atleti");
 
   async function esci() {
@@ -102,7 +103,7 @@ function AreaSocieta() {
           ["atleti", "I miei atleti"],
           ["societa", "La mia società"],
           ["iscrizioni", "Iscrizioni"],
-          ...(admin || organizzatore ? ([["eventi", "Gestione eventi"]] as const) : []),
+          ...(admin || organizzatore ? ([["eventi", "Gestione eventi"], ["tessere", "Verifica tessere"]] as const) : []),
           ["matchmaking", "Matchmaking"],
           ...(admin
             ? ([
@@ -134,6 +135,7 @@ function AreaSocieta() {
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
         {tab === "matchmaking" && <MatchmakingAdmin admin={!!admin} userId={user.id} />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
+        {tab === "tessere" && (admin || organizzatore) && <VerificaTessere admin={!!admin} userId={user.id} />}
       </div>
     </div>
   );

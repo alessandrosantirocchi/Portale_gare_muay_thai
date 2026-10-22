@@ -39,7 +39,12 @@ export type Database = {
           serie: string | null
           sesso: string
           societa_id: string | null
+          tessera_fight1: string | null
+          tessera_note: string | null
+          tessera_opes: string | null
           tessera_path: string | null
+          tessera_stato: string
+          tessera_verificata_at: string | null
           totale_match: number | null
           vittorie: number
         }
@@ -67,7 +72,12 @@ export type Database = {
           serie?: string | null
           sesso?: string
           societa_id?: string | null
+          tessera_fight1?: string | null
+          tessera_note?: string | null
+          tessera_opes?: string | null
           tessera_path?: string | null
+          tessera_stato?: string
+          tessera_verificata_at?: string | null
           totale_match?: number | null
           vittorie?: number
         }
@@ -95,7 +105,12 @@ export type Database = {
           serie?: string | null
           sesso?: string
           societa_id?: string | null
+          tessera_fight1?: string | null
+          tessera_note?: string | null
+          tessera_opes?: string | null
           tessera_path?: string | null
+          tessera_stato?: string
+          tessera_verificata_at?: string | null
           totale_match?: number | null
           vittorie?: number
         }
@@ -667,9 +682,14 @@ export type Database = {
       documenti_iscritti_evento: {
         Args: { p_evento_id: string }
         Returns: {
+          atleta_id: string
           certificato_path: string
           iscrizione_id: string
+          tessera_fight1: string
+          tessera_note: string
+          tessera_opes: string
           tessera_path: string
+          tessera_stato: string
         }[]
       }
       has_role: {
@@ -690,6 +710,10 @@ export type Database = {
       }
       refresh_automatic_pools: {
         Args: { p_evento_id: string }
+        Returns: undefined
+      }
+      verifica_tessera_atleta: {
+        Args: { p_atleta_id: string; p_note?: string; p_stato: string }
         Returns: undefined
       }
     }

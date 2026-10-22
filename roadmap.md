@@ -10,3 +10,5 @@
 - [x] Estendere categorie peso Young/Older Cadet fino alla 75 kg (richiesta 05/10)
 - [x] Correggere il vincolo categorie peso atleti e verificare i salvataggi Young/Older Cadet (prove da interfaccia a 67 kg, atleti temporanei eliminati)
 - [ ] Privacy: inserire contatto titolare quando fornito (email rimossa su richiesta 04/10)
+
+- [x] Tessera: numero OPES/Fight 1 obbligatorio, verifica admin+organizzatori, striscia rossa irregolare, elimina/ricarica immagine
