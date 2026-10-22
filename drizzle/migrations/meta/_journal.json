@@ -267,6 +267,13 @@
       "when": 1792667309399,
       "tag": "0037_relax_tessera_check_legacy_rows",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1792667878485,
+      "tag": "0038_deprecate_tessera_path",
+      "breakpoints": true
     }
   ]
 }

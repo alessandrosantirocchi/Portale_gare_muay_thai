@@ -30,7 +30,6 @@ export function VerificaTessere({ admin, userId }: { admin: boolean; userId: str
       return (docs.data ?? []).map((d) => ({ ...d, iscr: isc.data?.find((i) => i.id === d.iscrizione_id) }));
     },
   });
-  async function apriDoc(path: string | null) { if (!path) return; const w = window.open("", "_blank"); const { data, error } = await supabase.storage.from("certificati").createSignedUrl(path, 300); if (error || !data) { w?.close(); setMsg("Documento non disponibile."); return; } if (w) w.location.href = data.signedUrl; else window.location.href = data.signedUrl; }
   async function imposta(atletaId: string, stato: string) {
     let note: string | null = null;
     if (stato === "irregolare") { note = window.prompt("Motivo dell'irregolarità (visibile alla società):", "") ; if (note === null) return; }
@@ -54,7 +53,7 @@ export function VerificaTessere({ admin, userId }: { admin: boolean; userId: str
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="font-semibold">{r.iscr?.snapshot_cognome} {r.iscr?.snapshot_nome} <span className="text-xs font-normal text-muted-foreground">· {r.iscr?.snapshot_team}</span></p>
-            <p className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><StatoTesseraBadge stato={r.tessera_stato} /><span>OPES: <b className="text-foreground">{r.tessera_opes || "—"}</b></span><span>Fight 1: <b className="text-foreground">{r.tessera_fight1 || "—"}</b></span>{r.tessera_path ? <button type="button" className="text-primary underline" onClick={() => apriDoc(r.tessera_path)}>Vedi tessera</button> : <span>Nessuna immagine</span>}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><StatoTesseraBadge stato={r.tessera_stato} /><span>OPES: <b className="text-foreground">{r.tessera_opes || "—"}</b></span><span>Fight 1: <b className="text-foreground">{r.tessera_fight1 || "—"}</b></span></p>
           </div>
           <div className="flex gap-2">
             <Button size="sm" disabled={r.tessera_stato === "verificato"} onClick={() => imposta(r.atleta_id, "verificato")}>✓ Verificato</Button>

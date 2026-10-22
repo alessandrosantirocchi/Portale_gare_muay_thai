@@ -884,8 +884,7 @@ function SchedaSocieta({ id, registrata }: { id: string; registrata: string | nu
                     <td>{a.certificato_scadenza ? formatDataBreve(a.certificato_scadenza) : "—"}</td>
                     <td className="space-x-2">
                       {a.certificato_path && <button type="button" className="text-primary underline" onClick={() => apri(a.certificato_path)}>Certificato</button>}
-                      {a.tessera_path && <button type="button" className="text-primary underline" onClick={() => apri(a.tessera_path)}>Tessera</button>}
-                      {!a.certificato_path && !a.tessera_path && "—"}
+                      {!a.certificato_path && "—"}
                     </td>
                   </tr>
                 ))}
