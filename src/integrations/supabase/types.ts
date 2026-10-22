@@ -639,14 +639,17 @@ export type Database = {
         Row: {
           atleta_id: string | null
           categoria: string | null
+          categoria_eta: string | null
           cognome: string | null
           created_at: string | null
           disciplina: string | null
           evento_id: string | null
+          formato: string | null
           id: string | null
           nome: string | null
           nome_societa: string | null
           peso_kg: number | null
+          senior_17: boolean | null
           snapshot_coach: string | null
           snapshot_serie: string | null
           snapshot_sesso: string | null
