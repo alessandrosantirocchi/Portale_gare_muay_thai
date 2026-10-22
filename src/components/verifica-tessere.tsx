@@ -35,7 +35,7 @@ export function VerificaTessere({ admin, userId }: { admin: boolean; userId: str
     let note: string | null = null;
     if (stato === "irregolare") { note = window.prompt("Motivo dell'irregolarità (visibile alla società):", "") ; if (note === null) return; }
     setMsg("");
-    const { error } = await supabase.rpc("verifica_tessera_atleta", { p_atleta_id: atletaId, p_stato: stato, p_note: note ?? undefined });
+    const { error } = await supabase.rpc("verifica_tessera_atleta", { p_atleta_id: atletaId, p_stato: stato, p_note: note ?? "" });
     setMsg(error ? error.message : "Stato aggiornato.");
     for (const k of ["verifica-tessere", "match-documenti", "miei-atleti"]) qc.invalidateQueries({ queryKey: [k] });
   }
