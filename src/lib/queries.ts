@@ -53,6 +53,7 @@ export async function fetchEventi() {
   const { data, error } = await supabase
     .from("eventi")
     .select("*")
+    .eq("nascosto", false)
     .order("data_evento", { ascending: true });
   if (error) throw error;
   return (data ?? []) as Evento[];
