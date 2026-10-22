@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Atleta, Evento } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
-import { categoriaPesoIfma } from "@/lib/pesi-ifma";
+import { categoriaPesoIfma, categoriePesoPerCategoria } from "@/lib/pesi-ifma";
 import { CLASSI, categorieEtaDisponibili, etaAllaData } from "@/lib/fight-hub";
 
 type Riga = {
@@ -15,6 +15,7 @@ type Riga = {
   coach: string;
   totale_match: string;
   senior: boolean;
+  categoria_peso: string;
 };
 
 const campoClass = "mt-1 block w-full min-w-0 rounded-md border border-input bg-background px-1.5 py-1 text-[11px] text-foreground disabled:cursor-not-allowed disabled:opacity-60";
@@ -42,7 +43,8 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
 
   const atleta = atleti.find((a) => a.id === sel) ?? null;
   const eta = atleta ? etaAllaData(atleta.data_nascita, evento.data_evento) : null;
-  const catPeso = atleta && riga ? categoriaPesoIfma(riga.peso_kg ? Number(riga.peso_kg) : null, atleta.sesso, atleta.data_nascita, evento.data_evento) : null;
+  const catAuto = atleta && riga ? categoriaPesoIfma(riga.peso_kg ? Number(riga.peso_kg) : null, atleta.sesso, atleta.data_nascita, evento.data_evento) : null;
+  const opzioniCat = atleta && riga ? [...new Set([riga.categoria_peso, ...categoriePesoPerCategoria(atleta.sesso, riga.senior ? "Senior" : riga.categoria)])].filter(Boolean) : [];
 
   function scegli(id: string) {
     setSel(id);
@@ -59,6 +61,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       coach: a.coach ?? "",
       totale_match: String(a.totale_match ?? 0),
       senior: false,
+      categoria_peso: a.categoria_peso ?? "",
     });
   }
 
@@ -69,8 +72,9 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       if (!userId) throw new Error("Accedi per iscriverti.");
       if (!atleta || !riga) throw new Error("Seleziona un atleta dal tuo roster.");
       const peso = riga.peso_kg ? Number(riga.peso_kg) : null;
-      const categoriaPeso = categoriaPesoIfma(peso, atleta.sesso, atleta.data_nascita, evento.data_evento);
-      if (!categoriaPeso) throw new Error("Inserisci un peso di gara valido (e controlla data di nascita e genere dell'atleta).");
+      if (!peso || peso <= 0) throw new Error("Inserisci un peso di gara valido.");
+      const categoriaPeso = riga.categoria_peso || categoriaPesoIfma(peso, atleta.sesso, atleta.data_nascita, evento.data_evento);
+      if (!categoriaPeso) throw new Error("Seleziona la categoria di peso.");
       const { error } = await supabase.from("iscrizioni").insert({
         evento_id: evento.id, atleta_id: atleta.id, societa_id: userId, stato: "confermata",
         categoria_peso: categoriaPeso, disciplina: riga.disciplina,
@@ -139,7 +143,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
                 {CLASSI.map((v) => <option key={v}>{v}</option>)}
               </select>
             </label>
-            <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Cat. di peso<input disabled value={catPeso ?? "—"} className={campoClass} /></label>
+            <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Cat. di peso<select required value={riga.categoria_peso} onChange={(e) => setRiga({ ...riga, categoria_peso: e.target.value })} className={campoClass}><option value="">{catAuto ? `Auto (${catAuto})` : "—"}</option>{opzioniCat.map((v) => <option key={v}>{v}</option>)}</select></label>
             <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Match
               <input type="number" min="0" value={riga.totale_match} onChange={(e) => setRiga({ ...riga, totale_match: e.target.value })} className={campoClass} />
             </label>
@@ -165,7 +169,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
             {iscritti.map((a) => <div key={a.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
               <span className="font-medium">{a.cognome} {a.nome}</span>
               <span className="text-[12px] text-muted-foreground">
-                {categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "—"} · {existing[a.id]}
+                {a.categoria_peso ?? categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "—"} · {existing[a.id]}
               </span>
             </div>)}
           </div>
