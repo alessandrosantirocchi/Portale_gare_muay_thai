@@ -8,4 +8,5 @@
 - [x] Roster: restringere colonna Cat. di peso (richiesta utente 01/10) — verificata
 - [x] Documenti: rendere più chiara la riga KO/Light della guida
 - [x] Estendere categorie peso Young/Older Cadet fino alla 75 kg (richiesta 05/10)
+- [ ] Correggere il vincolo categorie peso atleti e verificare i salvataggi Young/Older Cadet
 - [ ] Privacy: inserire contatto titolare quando fornito (email rimossa su richiesta 04/10)
