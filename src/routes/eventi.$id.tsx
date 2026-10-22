@@ -3,7 +3,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchEvento, fetchIscrittiEvento, type Atleta } from "@/lib/queries";
-import { formatDataCompleta, disciplineEvento, disciplinaCanonica, type FormatiIncontro } from "@/lib/format";
+import { formatDataCompleta, disciplineEvento, type FormatiIncontro } from "@/lib/format";
 import { Pannello, Vuoto, Etichetta } from "@/components/ui-blocchi";
 import { useSession } from "@/lib/auth";
 import { IscrizioneEvento } from "@/components/iscrizione-evento";
@@ -154,7 +154,6 @@ function SchedaEvento() {
                pools.forEach((p) => p.iscrizione_ids.forEach((entryId) => poolDi.set(entryId, p.iscrizione_ids.length)));
                const matchDi = new Map<string, number>();
                matches.forEach((m) => { if (m.numero != null) { matchDi.set(m.rosso_id, m.numero); matchDi.set(m.blu_id, m.numero); } });
-               const abbrDisciplina: Record<string, string> = { "MUAY THAI": "MT", KICKBOXING: "KICK", K1: "K1", "FIGHT CODE": "FC", ALTRO: "ALTRO" };
                const righe = iscritti.filter((i: any) => corrisponde(`${i.nome} ${i.cognome} ${i.nome_societa}`.toLocaleLowerCase("it-IT")));
                const nome = (entryId: string) => { const i = iscritti.find((x: any) => x.id === entryId); return i ? `${i.cognome} ${i.nome} · ${i.nome_societa}` : "Atleta non disponibile"; };
                const matchVisibili = matches.filter((m) => corrisponde(`${nome(m.rosso_id)} ${nome(m.blu_id)}`.toLocaleLowerCase("it-IT")));
@@ -164,11 +163,11 @@ function SchedaEvento() {
                    <table className="w-full border-collapse text-sm">
                      <thead>
                        <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-                         {["Cognome", "Nome", "Società", "Disc.", "Sesso", "Classe", "Cat. peso", "Peso (kg)", "Coach", "Pool"].map((h) => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}
+                         {["Cognome", "Nome", "Società", "Disciplina", "Formato", "Cat. età", "Sesso", "Classe", "Cat. peso", "Coach", "Pool"].map((h) => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}
                        </tr>
                      </thead>
                      <tbody className="divide-y divide-border">
-                       {righe.length === 0 && <tr><td colSpan={10} className="px-2 py-4 text-sm text-muted-foreground">Nessun atleta trovato.</td></tr>}
+                       {righe.length === 0 && <tr><td colSpan={11} className="px-2 py-4 text-sm text-muted-foreground">Nessun atleta trovato.</td></tr>}
                        {righe.map((i: any) => {
                          const pool = poolDi.get(i.id);
                          const match = matchDi.get(i.id);
@@ -177,11 +176,12 @@ function SchedaEvento() {
                              <td className="px-2 py-2 font-medium">{i.cognome}</td>
                              <td className="px-2 py-2">{i.nome}</td>
                              <td className="px-2 py-2 text-muted-foreground">{i.nome_societa}</td>
-                             <td className="px-2 py-2 font-semibold text-primary">{abbrDisciplina[disciplinaCanonica(i.disciplina ?? "")] ?? (i.disciplina ?? "—")}</td>
+                             <td className="px-2 py-2 font-semibold text-primary">{i.disciplina ?? "—"}</td>
+                             <td className="px-2 py-2"><span className="rounded bg-muted px-2 py-0.5 text-xs font-semibold">{i.formato === "KO" ? "KO · Contatto pieno" : (i.formato ?? "—")}</span></td>
+                             <td className="px-2 py-2 text-xs">{i.categoria_eta ?? "—"}{i.senior_17 ? " → Senior" : ""}</td>
                              <td className="px-2 py-2"><span className="rounded bg-muted px-2 py-0.5 text-xs font-semibold">{i.snapshot_sesso ?? "—"}</span></td>
-                             <td className="px-2 py-2 text-muted-foreground">{i.snapshot_serie ?? "—"}</td>
-                             <td className="px-2 py-2 text-muted-foreground">{i.categoria ?? "—"}</td>
-                             <td className="px-2 py-2">{i.peso_kg ?? "—"}</td>
+                             <td className="px-2 py-2 text-muted-foreground">{i.formato === "KO" ? (i.snapshot_serie ?? "—") : "—"}</td>
+                             <td className="px-2 py-2 font-medium">{i.categoria ?? "—"}</td>
                              <td className="px-2 py-2 text-muted-foreground">{i.snapshot_coach ?? "—"}</td>
                              <td className="px-2 py-2">{pool ? <span className="animate-pulse rounded-full bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground">Pool da {pool}</span> : match ? <span className="text-xs font-semibold text-primary">Match #{match}</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
                            </tr>

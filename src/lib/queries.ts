@@ -91,7 +91,7 @@ export async function fetchConteggiIscritti() {
 export async function fetchIscrittiEvento(eventoId: string) {
   const { data, error } = await supabase
     .from("iscrizioni_pubbliche")
-    .select("id, evento_id, atleta_id, stato, nome, cognome, nome_societa, peso_kg, categoria, disciplina, created_at, snapshot_sesso, snapshot_serie, snapshot_coach, snapshot_totale_match")
+    .select("id, evento_id, atleta_id, stato, nome, cognome, nome_societa, peso_kg, categoria, disciplina, created_at, snapshot_sesso, snapshot_serie, snapshot_coach, snapshot_totale_match, formato, categoria_eta, senior_17")
     .eq("evento_id", eventoId)
     .order("created_at", { ascending: true });
   if (error) throw error;
