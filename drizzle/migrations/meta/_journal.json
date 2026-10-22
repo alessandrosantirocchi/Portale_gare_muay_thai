@@ -246,6 +246,13 @@
       "when": 1792658590927,
       "tag": "0034_align_athlete_weight_constraint_with_cadet_divisions",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1792661971730,
+      "tag": "0035_organizer_view_athlete_documents",
+      "breakpoints": true
     }
   ]
 }
