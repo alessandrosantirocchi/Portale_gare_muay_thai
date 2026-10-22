@@ -664,6 +664,14 @@ export type Database = {
       }
     }
     Functions: {
+      documenti_iscritti_evento: {
+        Args: { p_evento_id: string }
+        Returns: {
+          certificato_path: string
+          iscrizione_id: string
+          tessera_path: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
