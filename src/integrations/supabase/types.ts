@@ -171,6 +171,7 @@ export type Database = {
           locandina_path: string | null
           locandina_pubblicata: boolean
           luogo: string
+          nascosto: boolean
           nome: string
           orario: string | null
           organizzatore: string | null
@@ -199,6 +200,7 @@ export type Database = {
           locandina_path?: string | null
           locandina_pubblicata?: boolean
           luogo: string
+          nascosto?: boolean
           nome: string
           orario?: string | null
           organizzatore?: string | null
@@ -227,6 +229,7 @@ export type Database = {
           locandina_path?: string | null
           locandina_pubblicata?: boolean
           luogo?: string
+          nascosto?: boolean
           nome?: string
           orario?: string | null
           organizzatore?: string | null
