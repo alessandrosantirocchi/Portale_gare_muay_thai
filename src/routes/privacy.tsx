@@ -72,8 +72,8 @@ function Privacy() {
           </p>
           <p>
             <strong>Dati degli atleti:</strong> nome, cognome, data di nascita, genere, peso, disciplina,
-            formato (KO/Light), classe, categoria di età e di peso, numero di match disputati e
-            risultati sportivi.
+            formato (KO/Light), classe, categoria di età e di peso, numero di match disputati,
+            risultati sportivi e numeri di tessera (OPES, Fight 1).
           </p>
           <p>
             <strong>Dati relativi alla salute (art. 9 GDPR):</strong> certificato medico di idoneità e
