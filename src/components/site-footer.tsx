@@ -13,7 +13,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="flex flex-col gap-1 text-[12px] sm:items-end">
-          <p>© 2026 FIGHT HUB · Designed &amp; Developed by Alessandro Santirocchi</p>
+          <p>© 2026 FIGHT HUB · Designed &amp; Developed by Aesse</p>
           <Link to="/privacy" className="underline hover:text-ink-foreground">
             Privacy e trattamento dati
           </Link>
