@@ -12,3 +12,4 @@
 - [ ] Privacy: inserire contatto titolare quando fornito (email rimossa su richiesta 04/10)
 
 - [x] Tessera: numero OPES/Fight 1 obbligatorio, verifica admin+organizzatori, striscia rossa irregolare, elimina/ricarica immagine
+- [x] Nascondere Oktagon e Oktagon Talents dal calendario (flag "nascosto" sugli eventi, reversibile)
