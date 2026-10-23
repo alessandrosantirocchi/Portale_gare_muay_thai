@@ -7,7 +7,7 @@ export const Route = createFileRoute("/privacy")({
       {
         name: "description",
         content:
-          "Informativa privacy di FIGHT HUB ai sensi del Regolamento UE 2016/679 (GDPR): dati di società e atleti, minori, certificati medici e diritti.",
+          "Informativa privacy di FIGHT HUB ai sensi del Regolamento UE 2016/679 (GDPR): dati di società e atleti, minori e diritti.",
       },
       { property: "og:title", content: "Privacy e trattamento dati — FIGHT HUB" },
       {
@@ -76,11 +76,6 @@ function Privacy() {
             risultati sportivi e numeri di tessera (OPES, Fight 1).
           </p>
           <p>
-            <strong>Dati relativi alla salute (art. 9 GDPR):</strong> certificato medico di idoneità e
-            relativa scadenza, caricati facoltativamente dalla società; sono trattati solo per
-            verificare l'idoneità alla gara.
-          </p>
-          <p>
             <strong>Dati tecnici:</strong> dati di accesso e di navigazione strettamente necessari al
             funzionamento e alla sicurezza del sito.
           </p>
@@ -96,10 +91,6 @@ function Privacy() {
               Organizzazione delle competizioni: assegnazione categorie, pool, abbinamenti e match card
               — esecuzione del servizio e legittimo interesse allo svolgimento delle gare (art. 6.1.b e
               6.1.f).
-            </li>
-            <li>
-              Verifica dell'idoneità sanitaria — obblighi di legge in materia di tutela sanitaria
-              delle attività sportive e finalità di medicina sportiva (art. 9.2.b e 9.2.h).
             </li>
             <li>
               Pubblicazione di calendario, abbinamenti, risultati e classifiche — legittimo interesse
@@ -122,7 +113,7 @@ function Privacy() {
           <p>
             Sono visibili a tutti i visitatori solo: nome e cognome dell'atleta, società di
             appartenenza, disciplina, categoria di età e di peso, abbinamenti pubblicati, risultati e
-            classifiche. Data di nascita completa, peso reale, certificati medici, tessere, email e
+            classifiche. Data di nascita completa, peso reale, numeri di tessera, email e
             codice fiscale <strong>non sono mai pubblici</strong>.
           </p>
         </Sezione>
@@ -143,9 +134,7 @@ function Privacy() {
 
         <Sezione titolo="7. Conservazione">
           <p>
-            I dati dell'account e del roster sono conservati finché l'account resta attivo. I
-            certificati medici sono conservati fino alla loro scadenza o fino a cancellazione da parte
-            della società. Risultati e classifiche possono essere conservati come archivio storico
+            I dati dell'account e del roster sono conservati finché l'account resta attivo. Risultati e classifiche possono essere conservati come archivio storico
             sportivo. In caso di chiusura dell'account i dati vengono cancellati o resi anonimi, salvo
             obblighi di legge.
           </p>
