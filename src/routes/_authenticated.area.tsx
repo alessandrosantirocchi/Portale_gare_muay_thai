@@ -307,7 +307,6 @@ function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
           <Input label="Organizzatore" value={form.organizzatore} onChange={(v) => setForm({ ...form, organizzatore: v })} />
           <Input label="Apertura iscrizioni" type="datetime-local" value={form.apertura_iscrizioni} onChange={(v) => setForm({ ...form, apertura_iscrizioni: v })} />
           <Input label="Limite partecipanti (opzionale)" type="number" value={form.limite_partecipanti} onChange={(v) => setForm({ ...form, limite_partecipanti: v })} />
-          <label className="flex gap-2 text-xs"><input type="checkbox" checked={form.blocca_certificato_scaduto} onChange={(e) => setForm({ ...form, blocca_certificato_scaduto: e.target.checked })} />Blocca iscrizioni senza certificato valido</label>
           <label className="flex gap-2 text-xs"><input type="checkbox" checked={form.originale_richiesto} onChange={(e) => setForm({ ...form, originale_richiesto: e.target.checked })} />Originale richiesto al check-in</label>
           <Input label="Orario (es. Apertura 9:00 · Gare 10:30)" value={form.orario} onChange={(v) => setForm({ ...form, orario: v })} />
           <label className="text-[12px] font-medium text-muted-foreground">
@@ -503,7 +502,6 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
 
       <Input label="Apertura iscrizioni" type="datetime-local" value={f.apertura_iscrizioni} onChange={(v) => setF({ ...f, apertura_iscrizioni: v })} />
       <Input label="Limite partecipanti" type="number" value={f.limite_partecipanti} onChange={(v) => setF({ ...f, limite_partecipanti: v })} />
-      <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.blocca_certificato_scaduto} onChange={(e) => setF({ ...f, blocca_certificato_scaduto: e.target.checked })} />Blocca iscrizioni senza certificato valido</label>
       <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.originale_richiesto} onChange={(e) => setF({ ...f, originale_richiesto: e.target.checked })} />Originale richiesto al check-in</label>
       <label className="flex gap-2 text-xs"><input type="checkbox" checked={f.nascosto} onChange={(e) => setF({ ...f, nascosto: e.target.checked })} />Nascondi dal calendario pubblico (l'evento resta qui, nella tua area)</label>
       <Input label="Orario" value={f.orario} onChange={(v) => setF({ ...f, orario: v })} />
@@ -891,11 +889,6 @@ function SchedaSocieta({ id, registrata }: { id: string; registrata: string | nu
                     <td>{a.peso_kg ?? "—"} {a.categoria_peso ? `(${a.categoria_peso})` : ""}</td>
                     <td>{a.disciplina}</td>
                     <td>{a.serie ?? "—"}</td>
-                    <td>{a.certificato_scadenza ? formatDataBreve(a.certificato_scadenza) : "—"}</td>
-                    <td className="space-x-2">
-                      {a.certificato_path && <button type="button" className="text-primary underline" onClick={() => apri(a.certificato_path)}>Certificato</button>}
-                      {!a.certificato_path && "—"}
-                    </td>
                   </tr>
                 ))}
               </tbody>
