@@ -62,7 +62,7 @@ export function MatchmakingAdmin({ admin, userId }: { admin: boolean; userId: st
       <span className="min-w-0 font-semibold text-foreground"><span className="block truncate">{d?.cognome} {d?.nome}</span>{(() => { const doc = documenti.find((x) => x.iscrizione_id === i.id); return doc ? <span className="flex flex-wrap gap-2 text-[11px] font-normal">{doc.tessera_stato === "irregolare" ? <span className="rounded bg-destructive px-1.5 font-bold text-destructive-foreground">TESSERA IRREGOLARE</span> : doc.tessera_stato === "verificato" ? <span className="text-primary">✓ Tessera</span> : <span className="text-muted-foreground">Tessera in verifica</span>}{doc.certificato_path && <button type="button" className="text-primary underline" onClick={() => apriDoc(doc.certificato_path)}>Certificato</button>}</span> : null; })()}</span>
       <span className="min-w-0 truncate text-muted-foreground">{d?.team}</span>
       <span className="text-muted-foreground">{d?.disciplina}</span>
-      <span className="text-muted-foreground">{d?.sesso}</span>
+      <span className={`rounded px-1.5 text-xs font-semibold ${d?.sesso === "F" ? "badge-genere-f" : d?.sesso === "M" ? "badge-genere-m" : "text-muted-foreground"}`}>{d?.sesso}</span>
       <span className="text-muted-foreground">{d?.serie}</span>
       <span className="text-muted-foreground">{i.categoria_peso ?? "—"}</span>
       <span className="text-muted-foreground">{d?.peso ?? "—"} kg</span>

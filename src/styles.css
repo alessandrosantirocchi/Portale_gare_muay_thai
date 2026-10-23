@@ -130,3 +130,7 @@
     var(--tricolore-rosso) 66.66% 100%
   );
 }
+
+:root { --genere-f: oklch(0.72 0.16 350); --genere-m: oklch(0.75 0.12 225); }
+@utility badge-genere-f { background-color: color-mix(in oklch, var(--genere-f) 20%, transparent); color: var(--genere-f); border: 1px solid color-mix(in oklch, var(--genere-f) 50%, transparent); }
+@utility badge-genere-m { background-color: color-mix(in oklch, var(--genere-m) 20%, transparent); color: var(--genere-m); border: 1px solid color-mix(in oklch, var(--genere-m) 50%, transparent); }
