@@ -302,6 +302,13 @@
       "when": 1792752583796,
       "tag": "0042_automatic_pools_include_light",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1792752603462,
+      "tag": "0043_refresh_pools_after_light_rule",
+      "breakpoints": true
     }
   ]
 }
