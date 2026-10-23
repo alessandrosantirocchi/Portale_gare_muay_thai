@@ -1,0 +1,1 @@
+DO $x$ DECLARE r record; BEGIN FOR r IN SELECT id FROM public.eventi LOOP PERFORM public.refresh_automatic_pools(r.id); END LOOP; END $x$;
