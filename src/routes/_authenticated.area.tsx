@@ -875,7 +875,7 @@ function SchedaSocieta({ id, registrata }: { id: string; registrata: string | nu
               <thead className="text-muted-foreground">
                 <tr>
                   <th className="py-1">Atleta</th><th>Nascita</th><th>G</th><th>Formato</th><th>Categoria</th>
-                  <th>Peso</th><th>Disciplina</th><th>Classe</th><th>Cert. scad.</th><th>Documenti</th>
+                  <th>Peso</th><th>Disciplina</th><th>Classe</th>
                 </tr>
               </thead>
               <tbody>
