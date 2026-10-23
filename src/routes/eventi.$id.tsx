@@ -151,8 +151,8 @@ function SchedaEvento() {
              {(() => {
                const testo = cercaAbbinamento.trim().toLocaleLowerCase("it-IT");
                const corrisponde = (t: string) => !testo || t.includes(testo);
-               const poolDi = new Map<string, number>();
-               pools.forEach((p) => p.iscrizione_ids.forEach((entryId) => poolDi.set(entryId, p.iscrizione_ids.length)));
+               const poolDi = new Map<string, { numero: number | null; n: number }>();
+               pools.forEach((p) => p.iscrizione_ids.forEach((entryId) => poolDi.set(entryId, { numero: p.numero, n: p.iscrizione_ids.length })));
                const matchDi = new Map<string, number>();
                matches.forEach((m) => { if (m.numero != null) { matchDi.set(m.rosso_id, m.numero); matchDi.set(m.blu_id, m.numero); } });
                const righe = iscritti.filter((i: any) => corrisponde(`${i.nome} ${i.cognome} ${i.nome_societa}`.toLocaleLowerCase("it-IT")) && (!filtri.disciplina || i.disciplina === filtri.disciplina) && (!filtri.formato || i.formato === filtri.formato) && (!filtri.eta || i.categoria_eta === filtri.eta) && (!filtri.sesso || i.snapshot_sesso === filtri.sesso) && (!filtri.peso || i.categoria === filtri.peso) && (!filtri.societa || i.nome_societa === filtri.societa));
@@ -187,7 +187,7 @@ function SchedaEvento() {
                              <td className="px-2 py-2 text-muted-foreground">{i.formato === "KO" ? (i.snapshot_serie ?? "—") : "—"}</td>
                              <td className="px-2 py-2 font-medium">{i.categoria ?? "—"}</td>
                              <td className="px-2 py-2 text-muted-foreground">{i.snapshot_coach ?? "—"}</td>
-                             <td className="px-2 py-2">{pool ? <span className="animate-pulse rounded-full bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground">Pool da {pool}</span> : match ? <span className="text-xs font-semibold text-primary">Match #{match}</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
+                             <td className="whitespace-nowrap px-2 py-2">{pool ? <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold leading-none text-primary-foreground">Pool #{pool.numero ?? "—"} <span className="opacity-80">· {pool.n} atleti</span></span> : match ? <span className="whitespace-nowrap text-xs font-semibold text-primary">Match #{match}</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
                            </tr>
                          );
                        })}
