@@ -14,3 +14,4 @@
 - [x] Tessera: numero OPES/Fight 1 obbligatorio, verifica admin+organizzatori, striscia rossa irregolare, elimina/ricarica immagine
 - [x] Nascondere Oktagon e Oktagon Talents dal calendario (flag "nascosto" sugli eventi, reversibile)
 - [x] Filtri iscritti nella pagina evento (disciplina, categoria, sesso, formato)
+- [x] Pagina evento: badge "Pool · N atleti" cliccabile che filtra la tabella sugli atleti di quel pool (verificato 23/10: 24 → 2 righe, "Mostra tutti" ripristina)
