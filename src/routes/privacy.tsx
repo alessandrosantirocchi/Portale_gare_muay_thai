@@ -93,10 +93,6 @@ function Privacy() {
               6.1.f).
             </li>
             <li>
-              Verifica dell'idoneità sanitaria — obblighi di legge in materia di tutela sanitaria
-              delle attività sportive e finalità di medicina sportiva (art. 9.2.b e 9.2.h).
-            </li>
-            <li>
               Pubblicazione di calendario, abbinamenti, risultati e classifiche — legittimo interesse
               alla trasparenza delle competizioni (art. 6.1.f).
             </li>
