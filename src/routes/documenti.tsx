@@ -118,9 +118,6 @@ function GuidaIscrizioni() {
             <li>La riga dell'atleta compare già compilata con i suoi dati.</li>
             <li>Clicca <strong>Conferma iscrizione all'evento</strong>: l'iscrizione è immediata.</li>
           </ol>
-          <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
-            Un atleta con certificato medico scaduto non può essere iscritto.
-          </p>
         </GuidaSezione>
 
         <GuidaSezione titolo="4. Cosa puoi modificare" aperto={!!aperte[6]} onToggle={() => toggle(6)}>
@@ -132,7 +129,7 @@ function GuidaIscrizioni() {
               <strong>Dopo la conferma</strong>: nella tabella in fondo alla pagina dell'evento clicca <strong>Modifica</strong> per cambiare peso o disciplina, fino alla chiusura delle iscrizioni.
             </li>
             <li>
-              <strong>Dati anagrafici e certificato</strong>: si aggiornano in qualsiasi momento dalla scheda <strong>Atleti</strong>.
+              <strong>Dati anagrafici e tessera</strong>: si aggiornano in qualsiasi momento dalla scheda <strong>Atleti</strong>.
             </li>
           </ul>
         </GuidaSezione>
@@ -171,7 +168,6 @@ function GuidaIscrizioni() {
               <tbody className="divide-y divide-border">
                 <tr><td className="py-1.5 pr-4 font-medium">Non vedo il mio atleta nella lista iscrizioni</td><td className="py-1.5">Verifica che sia salvato nel roster e che la disciplina sia tra quelle ammesse dall'evento.</td></tr>
                 <tr><td className="py-1.5 pr-4 font-medium">Categoria di peso errata</td><td className="py-1.5">Correggi il peso nel roster: l'iscrizione ricalcola la categoria in automatico.</td></tr>
-                <tr><td className="py-1.5 pr-4 font-medium">Certificato scaduto</td><td className="py-1.5">Carica il nuovo certificato dalla scheda atleta prima di iscriverlo.</td></tr>
                 <tr><td className="py-1.5 pr-4 font-medium">Ho sbagliato iscrizione</td><td className="py-1.5">Usa Modifica nella pagina dell'evento; per la rimozione contatta l'organizzatore.</td></tr>
               </tbody>
             </table>
