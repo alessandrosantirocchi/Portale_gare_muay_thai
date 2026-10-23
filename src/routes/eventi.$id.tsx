@@ -183,7 +183,7 @@ function SchedaEvento() {
                              <td className="px-2 py-2 font-semibold text-primary">{i.disciplina ?? "—"}</td>
                              <td className="px-2 py-2"><span className="rounded bg-muted px-2 py-0.5 text-xs font-semibold">{i.formato === "KO" ? "KO · Contatto pieno" : (i.formato ?? "—")}</span></td>
                              <td className="px-2 py-2 text-xs">{i.categoria_eta ?? "—"}{i.senior_17 ? " → Senior" : ""}</td>
-                             <td className="px-2 py-2"><span className="rounded bg-muted px-2 py-0.5 text-xs font-semibold">{i.snapshot_sesso ?? "—"}</span></td>
+                             <td className="px-2 py-2"><span className={`rounded px-2 py-0.5 text-xs font-semibold ${i.snapshot_sesso === "F" ? "badge-genere-f" : i.snapshot_sesso === "M" ? "badge-genere-m" : "bg-muted"}`}>{i.snapshot_sesso ?? "—"}</span></td>
                              <td className="px-2 py-2 text-muted-foreground">{i.formato === "KO" ? (i.snapshot_serie ?? "—") : "—"}</td>
                              <td className="px-2 py-2 font-medium">{i.categoria ?? "—"}</td>
                              <td className="px-2 py-2 text-muted-foreground">{i.snapshot_coach ?? "—"}</td>
