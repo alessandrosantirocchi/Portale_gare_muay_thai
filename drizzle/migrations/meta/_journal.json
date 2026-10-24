@@ -330,6 +330,13 @@
       "when": 1792825846112,
       "tag": "0046_remove_medical_certificate_registration_gate",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1792858224780,
+      "tag": "0047_athlete_medical_suspension",
+      "breakpoints": true
     }
   ]
 }

@@ -28,6 +28,9 @@ export type Database = {
           created_at: string
           data_nascita: string | null
           disciplina: string
+          fermo_medico: boolean
+          fermo_medico_fino_al: string | null
+          fermo_medico_note: string | null
           formato: string
           id: string
           nome: string
@@ -61,6 +64,9 @@ export type Database = {
           created_at?: string
           data_nascita?: string | null
           disciplina?: string
+          fermo_medico?: boolean
+          fermo_medico_fino_al?: string | null
+          fermo_medico_note?: string | null
           formato?: string
           id?: string
           nome: string
@@ -94,6 +100,9 @@ export type Database = {
           created_at?: string
           data_nascita?: string | null
           disciplina?: string
+          fermo_medico?: boolean
+          fermo_medico_fino_al?: string | null
+          fermo_medico_note?: string | null
           formato?: string
           id?: string
           nome?: string
