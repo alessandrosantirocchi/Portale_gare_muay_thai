@@ -1,3 +1,4 @@
+import { FermoMedico } from "@/components/fermo-medico";
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -39,7 +40,7 @@ function AreaSocieta() {
   const { data: organizzatore } = useIsOrganizzatore(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<
-    "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti" | "tessere"
+    "atleti" | "societa" | "iscrizioni" | "eventi" | "conferme" | "matchmaking" | "utenti" | "tessere" | "fermo"
   >("atleti");
 
   async function esci() {
@@ -109,6 +110,7 @@ function AreaSocieta() {
             ? ([
                 ["conferme", "Tutte le iscrizioni"],
                 ["utenti", "Utenti e ruoli"],
+                ["fermo", "Fermo medico"],
               ] as const)
             : []),
         ] as const).map(([k, label]) => (
@@ -134,6 +136,7 @@ function AreaSocieta() {
         {tab === "eventi" && (admin || organizzatore) && <GestioneEventi admin={!!admin} userId={user.id} />}
         {tab === "conferme" && admin && <ConfermaIscrizioni />}
         {tab === "matchmaking" && <MatchmakingAdmin admin={!!admin} userId={user.id} />}
+        {tab === "fermo" && admin && <FermoMedico />}
         {tab === "utenti" && admin && <GestioneUtenti mioId={user.id} />}
         {tab === "tessere" && (admin || organizzatore) && <VerificaTessere admin={!!admin} userId={user.id} />}
       </div>
