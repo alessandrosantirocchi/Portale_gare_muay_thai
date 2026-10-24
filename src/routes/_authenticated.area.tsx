@@ -230,7 +230,6 @@ function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
     organizzatore: "",
     apertura_iscrizioni: "",
     limite_partecipanti: "",
-    blocca_certificato_scaduto: false,
     originale_richiesto: false,
   });
   const [msg, setMsg] = useState<string | null>(null);
@@ -253,7 +252,6 @@ function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
         organizzatore: form.organizzatore || null,
         apertura_iscrizioni: form.apertura_iscrizioni ? new Date(form.apertura_iscrizioni).toISOString() : null,
         limite_partecipanti: form.limite_partecipanti ? Number(form.limite_partecipanti) : null,
-        blocca_certificato_scaduto: form.blocca_certificato_scaduto,
         originale_richiesto: form.originale_richiesto,
         organizzatore_id: userId,
         stato: "iscrizioni aperte",
@@ -275,7 +273,7 @@ function GestioneEventi({ admin, userId }: { admin: boolean; userId: string }) {
         fine_iscrizioni: "",
         descrizione: "",
         orario: "",
-        programma: "", organizzatore: "", apertura_iscrizioni: "", limite_partecipanti: "", blocca_certificato_scaduto: false, originale_richiesto: false,
+        programma: "", organizzatore: "", apertura_iscrizioni: "", limite_partecipanti: "", originale_richiesto: false,
       });
     },
     onError: (e: any) => setMsg(e.message ?? "Errore."),
@@ -411,7 +409,6 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
     organizzatore: evento.organizzatore ?? "",
     apertura_iscrizioni: aLocale(evento.apertura_iscrizioni),
     limite_partecipanti: String(evento.limite_partecipanti ?? ""),
-    blocca_certificato_scaduto: evento.blocca_certificato_scaduto ?? false,
     originale_richiesto: evento.originale_richiesto ?? false,
     nascosto: evento.nascosto ?? false,
     organizzatore_id: (evento.organizzatore_id ?? "") as string,
@@ -446,7 +443,6 @@ function ModificaEvento({ evento, onChiudi, admin }: { evento: any; onChiudi: ()
           organizzatore: f.organizzatore || null,
           apertura_iscrizioni: f.apertura_iscrizioni ? new Date(f.apertura_iscrizioni).toISOString() : null,
           limite_partecipanti: f.limite_partecipanti ? Number(f.limite_partecipanti) : null,
-          blocca_certificato_scaduto: f.blocca_certificato_scaduto,
           originale_richiesto: f.originale_richiesto,
           nascosto: f.nascosto,
           ...(admin ? { organizzatore_id: f.organizzatore_id || null } : {}),
