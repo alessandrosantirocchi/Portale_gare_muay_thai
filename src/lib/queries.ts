@@ -29,6 +29,8 @@ export type Evento = {
 
 export type Atleta = {
   id: string;
+  fermo_medico?: boolean | null;
+  fermo_medico_fino_al?: string | null;
   societa_id: string | null;
   nome_societa: string;
   nome: string;
