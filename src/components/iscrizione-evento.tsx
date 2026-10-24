@@ -111,9 +111,9 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         <label className="block max-w-md text-xs text-muted-foreground">Seleziona atleta dal tuo roster
           <select value={sel} onChange={(e) => scegli(e.target.value)} className="mt-1 block w-full rounded-md border border-input bg-background p-2 text-sm text-foreground">
             <option value="">— Scegli un atleta —</option>
-            {atleti.map((a) => <option key={a.id} value={a.id} disabled={!!existing[a.id]}>
-              {a.cognome} {a.nome} · {a.formato ?? "KO"} · {a.peso_kg ?? "—"} kg{existing[a.id] ? " (già iscritto)" : ""}
-            </option>)}
+            {atleti.map((a) => { const fermo = !!a.fermo_medico && (!a.fermo_medico_fino_al || a.fermo_medico_fino_al >= evento.data_evento); return <option key={a.id} value={a.id} disabled={!!existing[a.id] || fermo}>
+              {a.cognome} {a.nome} · {a.formato ?? "KO"} · {a.peso_kg ?? "—"} kg{existing[a.id] ? " (già iscritto)" : ""}{fermo ? " (fermo medico)" : ""}
+            </option>; })}
           </select>
         </label>
 
