@@ -71,12 +71,13 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
       return Array.from({ length: Math.ceil(membri.length / 2) }, (_, index) => ({ rosso_id: membri[index * 2], blu_id: membri[index * 2 + 1] as string | undefined }));
     }),
   ].map((c) => ({ ...c, k: info(c.rosso_id) ?? info(c.blu_id) })).filter((c) => c.k);
-  coppie.sort((a, b) => a.k!.etaIdx - b.k!.etaIdx || Number(b.k!.light) - Number(a.k!.light) || a.k!.classeIdx - b.k!.classeIdx || a.k!.pesoNum - b.k!.pesoNum);
+  // Light: one block per age category. KO: a single block, ordered by age, then class N→C→B→A, then weight.
+  coppie.sort((a, b) => Number(b.k!.light) - Number(a.k!.light) || a.k!.etaIdx - b.k!.etaIdx || a.k!.classeIdx - b.k!.classeIdx || a.k!.pesoNum - b.k!.pesoNum);
 
   let numero = 0, bloccoCorrente = "";
   for (const c of coppie) {
     const k = c.k!;
-    const blocco = `${k.categoria} · ${k.light ? "LIGHT" : `KO · CLASSE ${k.classe}`}`;
+    const blocco = k.light ? `${k.categoria} · LIGHT` : "KO · CONTATTO PIENO";
     if (blocco !== bloccoCorrente) {
       bloccoCorrente = blocco;
       sheet.addRow([]);
