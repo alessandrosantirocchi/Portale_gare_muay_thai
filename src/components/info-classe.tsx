@@ -30,8 +30,8 @@ export function InfoClasse() {
         <Info className="h-3.5 w-3.5" />
       </button>
       {aperto && (
-        <span className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4" onClick={() => setAperto(false)}>
-          <span role="dialog" aria-label="Classificazione atleti Fight1" onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-md border border-border bg-popover p-4 text-left text-xs leading-relaxed text-popover-foreground shadow-lg">
+        <span className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4" onClick={(e) => { e.preventDefault(); setAperto(false); }}>
+          <span role="dialog" aria-label="Classificazione atleti Fight1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="w-full max-w-sm rounded-md border border-border bg-popover p-4 text-left text-xs leading-relaxed text-popover-foreground shadow-lg">
             {TESTO}
           </span>
         </span>
