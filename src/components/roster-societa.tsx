@@ -9,6 +9,7 @@ import { categoriePesoRoster, categoriePesoPerCategoria } from "@/lib/pesi-ifma"
 import { z } from "zod";
 import { BadgeFermo, fermoAttivo } from "@/components/fermo-medico";
 import { StatoTesseraBadge, StrisciaIrregolare } from "@/components/verifica-tessere";
+import { InfoClasse } from "@/components/info-classe";
 
 const empty = { nome: "", cognome: "", data_nascita: "", sesso: "M", peso_kg: "", categoria_peso: "", formato: "KO", disciplina: "Muay Thai", serie: "N", categoria: "", coach: "", totale_match: "0", certificato_rilascio: "", certificato_scadenza: "", certificato_tipo: "", certificato_disciplina: "", tessera_opes: "", tessera_fight1: "" };
 type Form = typeof empty;
