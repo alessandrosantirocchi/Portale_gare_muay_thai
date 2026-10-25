@@ -12,13 +12,12 @@ if (typeof window !== "undefined") {
     sessionStorage.setItem(chiave, String(Date.now()));
     window.location.reload();
   };
-  window.addEventListener("vite:preloadError", (e) => {
-    e.preventDefault();
-    ricarica();
-  });
+  // Do not preventDefault: that makes the failed import resolve to undefined,
+  // which crashes the router with "reading 'component'". Just reload.
+  window.addEventListener("vite:preloadError", () => ricarica());
   window.addEventListener("unhandledrejection", (e) => {
     const msg = String((e.reason as Error)?.message ?? e.reason ?? "");
-    if (/Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module/i.test(msg)) ricarica();
+    if (/Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module|reading 'component'/i.test(msg)) ricarica();
   });
 }
 
