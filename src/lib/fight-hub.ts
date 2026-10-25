@@ -19,7 +19,7 @@ export const disciplinePerFormato = (formato: string): readonly string[] => DISC
 export const DISCIPLINE_GARA = ["Muay Thai", "K1 Rules", "Fight Code Rules", "MMA", "Kick Light", "A-MMA"] as const;
 export const STATI_EVENTO = ["bozza", "iscrizioni aperte", "iscrizioni chiuse", "matchmaking", "pubblicato", "concluso"] as const;
 
-export type Iscrizione = Database["public"]["Tables"]["iscrizioni"]["Row"] & { atleti?: { nome: string; cognome: string; nome_societa: string; sesso: string; data_nascita: string | null; peso_kg: number | null; disciplina: string; serie: string | null; categoria: string | null; totale_match: number | null } | null };
+export type Iscrizione = Database["public"]["Tables"]["iscrizioni"]["Row"] & { atleti?: { nome: string; cognome: string; nome_societa: string; sesso: string; data_nascita: string | null; peso_kg: number | null; disciplina: string; serie: string | null; categoria: string | null; totale_match: number | null; formato?: string | null } | null };
 
 export function etaAllaData(nascita: string | null, dataEvento: string) {
   if (!nascita) return null;
@@ -45,16 +45,27 @@ export function datiGara(i: Iscrizione, dataEvento: string) {
   };
 }
 
+function fasciaGara(i: Iscrizione, categoria: string) {
+  if (i.senior_17) return "SENIOR";
+  return categoria.trim().toUpperCase().replace(/\s*\d.*$/, "");
+}
+
 export function compatibilita(a: Iscrizione, b: Iscrizione, dataEvento: string) {
   const x = datiGara(a, dataEvento), y = datiGara(b, dataEvento);
   if (a.id === b.id || a.societa_id === b.societa_id) return null;
   if (x.sesso !== y.sesso || x.disciplina.toUpperCase() !== y.disciplina.toUpperCase()) return null;
+  // Hard rules: same format, same age band, same official weight class, same class for KO.
+  const fx = a.atleti?.formato ?? null, fy = b.atleti?.formato ?? null;
+  if (fx && fy && fx !== fy) return null;
+  if (fasciaGara(a, x.categoria) !== fasciaGara(b, y.categoria)) return null;
+  if (a.categoria_peso && b.categoria_peso && a.categoria_peso !== b.categoria_peso) return null;
+  if ((fx ?? fy) === "KO" && (x.serie || "") !== (y.serie || "")) return null;
   const peso = x.peso == null || y.peso == null ? null : Math.abs(x.peso - y.peso);
   const eta = x.eta == null || y.eta == null ? null : Math.abs(x.eta - y.eta);
   const esperienza = Math.abs(x.match - y.match);
-  const serieDiversa = !!x.serie && !!y.serie && x.serie !== y.serie;
-  const categoriaDiversa = !!x.categoria && !!y.categoria && x.categoria !== y.categoria;
-  const score = Math.max(0, Math.round(100 - (peso ?? 5) * 5 - (eta ?? 3) * 2 - esperienza * 3 - (serieDiversa ? 20 : 0) - (categoriaDiversa ? 22 : 0)));
+  const serieDiversa = false;
+  const categoriaDiversa = false;
+  const score = Math.max(0, Math.round(100 - (peso ?? 5) * 5 - (eta ?? 3) * 2 - esperienza * 3));
   return { score, peso, eta, esperienza, serieDiversa, categoriaDiversa };
 }
 
