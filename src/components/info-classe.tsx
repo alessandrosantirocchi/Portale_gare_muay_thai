@@ -5,7 +5,7 @@ const TESTO = (
   <>
     <p className="font-semibold">Classificazione atleti Fight1</p>
     <p className="mt-1">La classe dell'atleta viene definita in base all'esperienza agonistica e al numero di vittorie conseguite.</p>
-    <ul className="mt-1.5 space-y-1">
+    <ul className="mt-1.5 list-disc space-y-1 pl-4">
       <li><strong>Classe N (Novizi):</strong> da 0 a 3 incontri disputati.</li>
       <li><strong>Classe C:</strong> fino a 5 vittorie in classe C, anche non consecutive.</li>
       <li><strong>Classe B:</strong> accesso dopo 5 vittorie in classe C.</li>
@@ -30,12 +30,11 @@ export function InfoClasse() {
         <Info className="h-3.5 w-3.5" />
       </button>
       {aperto && (
-        <>
-          <span aria-hidden className="fixed inset-0 z-40" onClick={() => setAperto(false)} />
-          <span role="dialog" aria-label="Classificazione atleti Fight1" className="absolute left-0 top-5 z-50 w-72 rounded-md border border-border bg-popover p-3 text-left text-[11px] leading-relaxed text-popover-foreground shadow-lg">
+        <span className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4" onClick={() => setAperto(false)}>
+          <span role="dialog" aria-label="Classificazione atleti Fight1" onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-md border border-border bg-popover p-4 text-left text-xs leading-relaxed text-popover-foreground shadow-lg">
             {TESTO}
           </span>
-        </>
+        </span>
       )}
     </span>
   );
