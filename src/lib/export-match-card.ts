@@ -30,77 +30,101 @@ export async function esportaMatchCard(evento: { nome: string; data_evento: stri
   ];
   pools.forEach((p) => p.iscrizione_ids.forEach((id) => poolSheet.addRow({ numero: p.numero, ...lookup.get(id) })));
 
-  const sheet = workbook.addWorksheet("Match Card", { views: [{ state: "frozen", ySplit: 4 }] });
+  const sheet = workbook.addWorksheet("Match Card", { views: [{ state: "frozen", ySplit: 2 }] });
   sheet.columns = [
-    { width: 14 }, { width: 25 }, { width: 27 }, { width: 28 },
-    { width: 20 }, { width: 13 }, { width: 24 },
-    { width: 25 }, { width: 27 }, { width: 28 },
+    { width: 10 }, { width: 22 }, { width: 25 }, { width: 28 },
+    { width: 18 }, { width: 11 }, { width: 22 }, { width: 18 },
+    { width: 22 }, { width: 25 }, { width: 28 },
   ];
-  sheet.mergeCells("A1:J1");
-  sheet.getCell("A1").value = `${evento.nome.toLocaleUpperCase("it-IT")} · ${evento.luogo} · ${evento.data_evento}`;
-  sheet.mergeCells("A2:J2");
-  sheet.getCell("A2").value = evento.orario ? `INIZIO GARE · ${evento.orario}` : "MATCH CARD";
-  sheet.mergeCells("B3:D3");
-  sheet.mergeCells("E3:G3");
-  sheet.mergeCells("H3:J3");
-  sheet.getCell("A3").value = "MATCH";
-  sheet.getCell("B3").value = "ANGOLO ROSSO";
-  sheet.getCell("E3").value = "INCONTRO";
-  sheet.getCell("H3").value = "ANGOLO BLU";
-  sheet.getRow(4).values = ["Numero match", "Nome", "Cognome", "Team", "Disciplina", "Classe", "Categoria di peso", "Nome", "Cognome", "Team"];
-
   const red = "FFCF1D26", blue = "FF116CB7", green = "FF8AC54A", yellow = "FFFFED38";
   const fill = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
+  sheet.mergeCells("A1:K1");
+  sheet.getCell("A1").value = `${evento.nome.toLocaleUpperCase("it-IT")} · ${evento.luogo} · ${evento.data_evento}`;
+  sheet.mergeCells("A2:K2");
+  sheet.getCell("A2").value = "INIZIO GARE · ORE: ____________";
   sheet.getRow(1).height = 40;
   sheet.getRow(2).height = 26;
-  sheet.getRow(3).height = 28;
-  sheet.getRow(4).height = 30;
   for (const [rowNumber, color] of [[1, green], [2, yellow]] as const) {
     const cell = sheet.getCell(`A${rowNumber}`);
     cell.fill = fill(color);
     cell.font = { name: "Arial", size: rowNumber === 1 ? 16 : 11, bold: true, color: { argb: "FF172029" } };
     cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
   }
-  for (const [address, color] of [["B3", red], ["H3", blue], ["A3", "FFD7DADD"], ["E3", "FFD7DADD"]] as const) {
-    const cell = sheet.getCell(address);
-    cell.fill = fill(color);
-    cell.font = { name: "Arial", size: 12, bold: true, color: { argb: color === red || color === blue ? "FFFFFFFF" : "FF172029" } };
-    cell.alignment = { horizontal: "center", vertical: "middle" };
-  }
-  sheet.getRow(4).eachCell((cell, col) => {
-    cell.fill = fill(col >= 2 && col <= 4 ? "FFF8DFDF" : col >= 8 && col <= 10 ? "FFDDEBF7" : "FFE5E7E9");
-    cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FF172029" } };
-    cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
-  });
-  const righe = [
-    ...cards.map((c) => ({ etichetta: c.numero ?? "—", rosso_id: c.rosso_id, blu_id: c.blu_id })),
+
+  const ordineEta = ["GIOCO SPORT", "YOUNG CADET", "OLD CADET", "JUNIOR", "SENIOR", "MASTER"];
+  const ordineClasse = ["N", "C", "B", "A"];
+  const iscr = new Map(iscrizioni.map((i) => [i.id, i]));
+  const info = (id?: string) => {
+    const i = id ? iscr.get(id) : undefined;
+    if (!i) return null;
+    const d = lookup.get(i.id)!;
+    const light = (i.atleti?.formato ?? "") === "Light";
+    const categoria = i.senior_17 ? "SENIOR 19–40 ANNI" : (d.categoria || "—").toUpperCase();
+    const etaIdx = ordineEta.findIndex((e) => categoria.startsWith(e));
+    const classe = light ? "LIGHT" : (d.serie || "—").toUpperCase();
+    return { d, light, categoria, classe, etaIdx: etaIdx < 0 ? 99 : etaIdx, classeIdx: light ? -1 : Math.max(0, ordineClasse.indexOf(classe)), pesoNum: Number((i.categoria_peso ?? "").replace(/[^\d.]/g, "")) || 999 };
+  };
+  const coppie = [
+    ...cards.map((c) => ({ rosso_id: c.rosso_id, blu_id: c.blu_id })),
     ...pools.flatMap((pool) => {
       const membri = pool.iscrizione_ids.filter((id) => lookup.has(id));
-      return Array.from({ length: Math.ceil(membri.length / 2) }, (_, index) => ({
-        etichetta: `Pool #${pool.numero ?? "—"} · ${index + 1}`,
-        rosso_id: membri[index * 2],
-        blu_id: membri[index * 2 + 1],
-      }));
+      return Array.from({ length: Math.ceil(membri.length / 2) }, (_, index) => ({ rosso_id: membri[index * 2], blu_id: membri[index * 2 + 1] as string | undefined }));
     }),
-  ];
-  righe.forEach((c, index) => {
+  ].map((c) => ({ ...c, k: info(c.rosso_id) ?? info(c.blu_id) })).filter((c) => c.k);
+  coppie.sort((a, b) => a.k!.etaIdx - b.k!.etaIdx || Number(b.k!.light) - Number(a.k!.light) || a.k!.classeIdx - b.k!.classeIdx || a.k!.pesoNum - b.k!.pesoNum);
+
+  let numero = 0, bloccoCorrente = "";
+  for (const c of coppie) {
+    const k = c.k!;
+    const blocco = `${k.categoria} · ${k.light ? "LIGHT" : `KO · CLASSE ${k.classe}`}`;
+    if (blocco !== bloccoCorrente) {
+      bloccoCorrente = blocco;
+      sheet.addRow([]);
+      const banner = sheet.addRow([`${blocco}   |   INIZIO ORE: ____________`]);
+      sheet.mergeCells(`A${banner.number}:K${banner.number}`);
+      banner.height = 26;
+      const bc = banner.getCell(1);
+      bc.fill = fill("FF24364A");
+      bc.font = { name: "Arial", size: 12, bold: true, color: { argb: "FFFFFFFF" } };
+      bc.alignment = { horizontal: "center", vertical: "middle" };
+      const top = sheet.addRow(["MATCH", "ANGOLO ROSSO", "", "", "INCONTRO", "", "", "", "ANGOLO BLU", "", ""]);
+      sheet.mergeCells(`B${top.number}:D${top.number}`);
+      sheet.mergeCells(`E${top.number}:H${top.number}`);
+      sheet.mergeCells(`I${top.number}:K${top.number}`);
+      top.height = 24;
+      for (const [col, color] of [[1, "FFD7DADD"], [2, red], [5, "FFD7DADD"], [9, blue]] as const) {
+        const cell = top.getCell(col);
+        cell.fill = fill(color);
+        cell.font = { name: "Arial", size: 12, bold: true, color: { argb: color === red || color === blue ? "FFFFFFFF" : "FF172029" } };
+        cell.alignment = { horizontal: "center", vertical: "middle" };
+      }
+      const head = sheet.addRow(["N.", "Nome", "Cognome", "Team", "Disciplina", "Classe", "Categoria età", "Categoria di peso", "Nome", "Cognome", "Team"]);
+      head.height = 26;
+      head.eachCell((cell, col) => {
+        cell.fill = fill(col >= 2 && col <= 4 ? "FFF8DFDF" : col >= 9 ? "FFDDEBF7" : "FFE5E7E9");
+        cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FF172029" } };
+        cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
+      });
+    }
+    numero += 1;
     const r = c.rosso_id ? lookup.get(c.rosso_id) : undefined, b = c.blu_id ? lookup.get(c.blu_id) : undefined;
-    const row = sheet.addRow([c.etichetta, r?.nome, r?.cognome, r?.team, r?.disciplina, r?.serie, r?.categoriaPeso ?? b?.categoriaPeso ?? "—", b?.nome, b?.cognome, b?.team]);
-    row.height = 34;
+    const row = sheet.addRow([numero, r?.nome, r?.cognome, r?.team, k.d.disciplina, k.classe, k.categoria, r?.categoriaPeso ?? b?.categoriaPeso ?? "—", b?.nome, b?.cognome, b?.team]);
+    row.height = 32;
+    const pari = numero % 2 === 1;
     row.eachCell({ includeEmpty: true }, (cell, col) => {
-      cell.fill = fill(index % 2 === 0 ? col >= 2 && col <= 4 ? "FFF8ECEC" : col >= 8 && col <= 10 ? "FFE8F2FB" : "FFE0E2E4" : col >= 2 && col <= 4 ? "FFFFF8F8" : col >= 8 && col <= 10 ? "FFF7FBFF" : "FFFFFFFF");
+      cell.fill = fill(pari ? col >= 2 && col <= 4 ? "FFF8ECEC" : col >= 9 ? "FFE8F2FB" : "FFE0E2E4" : col >= 2 && col <= 4 ? "FFFFF8F8" : col >= 9 ? "FFF7FBFF" : "FFFFFFFF");
       cell.font = { name: "Arial", size: 11, color: { argb: "FF172029" }, bold: col === 1 };
-      cell.alignment = { vertical: "middle", horizontal: col === 1 || col === 5 || col === 6 || col === 7 ? "center" : "left", wrapText: true };
+      cell.alignment = { vertical: "middle", horizontal: col === 1 || (col >= 5 && col <= 8) ? "center" : "left", wrapText: true };
       cell.border = { bottom: { style: "hair", color: { argb: "FF9DA3A8" } } };
     });
-  });
+  }
   for (const other of [roster, poolSheet]) {
     other.getRow(1).height = 28;
     other.getRow(1).eachCell((cell) => { cell.fill = fill("FF24364A"); cell.font = { name: "Arial", bold: true, color: { argb: "FFFFFFFF" } }; cell.alignment = { vertical: "middle" }; });
     other.autoFilter = { from: { row: 1, column: 1 }, to: { row: Math.max(other.rowCount, 1), column: other.columnCount } };
   }
   sheet.pageSetup = { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 };
-  sheet.pageSetup.printTitlesRow = "1:4";
+  sheet.pageSetup.printTitlesRow = "1:2";
   const bytes = await workbook.xlsx.writeBuffer();
   const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
   const anchor = document.createElement("a");
