@@ -6,6 +6,7 @@ import type { Atleta, Evento } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { categoriaPesoIfma, categoriePesoPerCategoria } from "@/lib/pesi-ifma";
 import { CLASSI, categorieEtaDisponibili, etaAllaData } from "@/lib/fight-hub";
+import { InfoClasse } from "@/components/info-classe";
 
 type Riga = {
   disciplina: string;
@@ -137,7 +138,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
                 {discipline.map((v) => <option key={v}>{v}</option>)}
               </select>
             </label>
-            <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Classe
+            <label className="min-w-0 text-[11px] leading-tight text-muted-foreground">Classe<InfoClasse />
               <select disabled={(atleta.formato ?? "KO") === "Light"} value={riga.serie} onChange={(e) => setRiga({ ...riga, serie: e.target.value })} className={campoClass}>
                 <option value="">—</option>
                 {CLASSI.map((v) => <option key={v}>{v}</option>)}
