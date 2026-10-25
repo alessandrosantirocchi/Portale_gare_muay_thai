@@ -1,4 +1,5 @@
-import { describe, expect, test } from "bun:test";
+import { describe, test } from "node:test";
+import { strict as assert } from "node:assert";
 import { compatibilita, type Iscrizione } from "./fight-hub";
 
 const base = (o: Partial<Iscrizione> & { formato: string }): Iscrizione => ({
@@ -11,17 +12,17 @@ describe("proposte automatiche", () => {
   test("KO e Light non vengono mai abbinati", () => {
     const ko = base({ formato: "KO", snapshot_serie: "N", snapshot_categoria: "JUNIOR 16–18 ANNI", categoria_peso: "-63.5 kg", snapshot_peso_kg: 63.5 });
     const light = base({ formato: "Light" });
-    expect(compatibilita(ko, light, "2026-11-15")).toBeNull();
+    assert.equal(compatibilita(ko, light, "2026-11-15"), null);
   });
   test("fasce d'età diverse non vengono abbinate", () => {
-    expect(compatibilita(base({ formato: "Light" }), base({ formato: "Light", snapshot_categoria: "JUNIOR 16–18 ANNI" }), "2026-11-15")).toBeNull();
+    assert.equal(compatibilita(base({ formato: "Light" }), base({ formato: "Light", snapshot_categoria: "JUNIOR 16–18 ANNI" }), "2026-11-15"), null);
   });
   test("categorie di peso diverse non vengono abbinate", () => {
-    expect(compatibilita(base({ formato: "Light" }), base({ formato: "Light", categoria_peso: "-67 kg" }), "2026-11-15")).toBeNull();
+    assert.equal(compatibilita(base({ formato: "Light" }), base({ formato: "Light", categoria_peso: "-67 kg" }), "2026-11-15"), null);
   });
   test("nel KO serve la stessa classe", () => {
     const k = { formato: "KO", snapshot_categoria: "SENIOR 19–40 ANNI" };
-    expect(compatibilita(base({ ...k, snapshot_serie: "N" }), base({ ...k, snapshot_serie: "C" }), "2026-11-15")).toBeNull();
-    expect(compatibilita(base({ ...k, snapshot_serie: "C" }), base({ ...k, snapshot_serie: "C" }), "2026-11-15")).not.toBeNull();
+    assert.equal(compatibilita(base({ ...k, snapshot_serie: "N" }), base({ ...k, snapshot_serie: "C" }), "2026-11-15"), null);
+    assert.notEqual(compatibilita(base({ ...k, snapshot_serie: "C" }), base({ ...k, snapshot_serie: "C" }), "2026-11-15"), null);
   });
 });
