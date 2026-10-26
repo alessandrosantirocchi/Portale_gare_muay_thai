@@ -365,6 +365,13 @@
       "when": 1793007842392,
       "tag": "0051_sync_athlete_birth_date_open_registrations",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1793007879484,
+      "tag": "0052_allow_validated_birth_snapshot_sync",
+      "breakpoints": true
     }
   ]
 }
