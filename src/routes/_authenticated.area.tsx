@@ -771,6 +771,19 @@ function GestioneUtenti({ mioId }: { mioId: string }) {
                   </p>
                 </button>
                 <div className="flex items-center gap-2">
+                  {u.email && (
+                    <button
+                      type="button"
+                      className="text-[11px] text-primary underline"
+                      onClick={async () => {
+                        if (!confirm(`Inviare a ${u.email} il link per reimpostare la password?`)) return;
+                        const { error } = await supabase.auth.resetPasswordForEmail(u.email!, { redirectTo: `${window.location.origin}/reset-password` });
+                        alert(error ? `Invio non riuscito: ${error.message}` : "Link inviato.");
+                      }}
+                    >
+                      Reset password
+                    </button>
+                  )}
                   <span
                     className={
                       isAdmin
