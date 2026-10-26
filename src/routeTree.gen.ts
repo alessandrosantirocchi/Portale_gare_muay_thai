@@ -18,6 +18,7 @@ import { Route as ClassificheRouteImport } from './routes/classifiche'
 import { Route as DocumentiRouteImport } from './routes/documenti'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TitoliRouteImport } from './routes/titoli'
 import { Route as AuthenticatedAreaRouteImport } from './routes/_authenticated.area'
 import { Route as EventiIdRouteImport } from './routes/eventi.$id'
@@ -66,6 +67,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TitoliRoute = TitoliRouteImport.update({
   id: '/titoli',
   path: '/titoli',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/documenti': typeof DocumentiRoute
   '/news': typeof NewsRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/titoli': typeof TitoliRoute
   '/area': typeof AuthenticatedAreaRoute
   '/eventi/$id': typeof EventiIdRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/documenti': typeof DocumentiRoute
   '/news': typeof NewsRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/titoli': typeof TitoliRoute
   '/area': typeof AuthenticatedAreaRoute
   '/eventi/$id': typeof EventiIdRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/documenti': typeof DocumentiRoute
   '/news': typeof NewsRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/titoli': typeof TitoliRoute
   '/_authenticated/area': typeof AuthenticatedAreaRoute
   '/eventi/$id': typeof EventiIdRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/documenti'
     | '/news'
     | '/privacy'
+    | '/reset-password'
     | '/titoli'
     | '/area'
     | '/eventi/$id'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/documenti'
     | '/news'
     | '/privacy'
+    | '/reset-password'
     | '/titoli'
     | '/area'
     | '/eventi/$id'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/documenti'
     | '/news'
     | '/privacy'
+    | '/reset-password'
     | '/titoli'
     | '/_authenticated/area'
     | '/eventi/$id'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   DocumentiRoute: typeof DocumentiRoute
   NewsRoute: typeof NewsRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TitoliRoute: typeof TitoliRoute
   EventiIdRoute: typeof EventiIdRoute
 }
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/titoli': {
       id: '/titoli'
       path: '/titoli'
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentiRoute: DocumentiRoute,
   NewsRoute: NewsRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TitoliRoute: TitoliRoute,
   EventiIdRoute: EventiIdRoute,
 }
