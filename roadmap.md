@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Correggere la nascita nell’iscrizione di Scurtarelli e sincronizzare le correzioni del roster nelle gare aperte; verificare età e storico preservato.
+- [x] Correggere la nascita nell’iscrizione di Scurtarelli e sincronizzare le correzioni del roster nelle gare aperte; verificati 17 anni · JUNIOR nel matchmaking e 8 test superati.
 
 - [x] Adeguare fasce di età e categorie di peso alla tabella IFMA (roster + DB, migrazione 0024)
 - [x] Aggiungere categoria "GIOCO SPORT FINO A 9 ANNI" solo per Light (selettore + validazione età)
