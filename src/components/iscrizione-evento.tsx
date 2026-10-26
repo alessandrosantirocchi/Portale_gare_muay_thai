@@ -92,7 +92,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       if (!peso || peso <= 0) throw new Error("Inserisci un peso di gara valido.");
       const categoriaPeso = riga.categoria_peso || categoriaPesoIfma(peso, atleta.sesso, atleta.data_nascita, evento.data_evento);
       if (!categoriaPeso) throw new Error("Seleziona la categoria di peso.");
-      const { error } = await supabase.from("iscrizioni").insert({
+      const { data, error } = await supabase.from("iscrizioni").insert({
         evento_id: evento.id, atleta_id: atleta.id, societa_id: userId, stato: "confermata",
         categoria_peso: categoriaPeso, disciplina: riga.disciplina,
         snapshot_nome: atleta.nome, snapshot_cognome: atleta.cognome,
@@ -103,8 +103,9 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         senior_17: riga.senior,
         snapshot_coach: riga.coach || null,
         snapshot_totale_match: Number(riga.totale_match) || 0,
-      });
+      }).select("id").single();
       if (error) throw error;
+      setIds((v) => ({ ...v, [atleta.id]: data.id }));
       return atleta.id;
     },
     onSuccess: (id) => {
@@ -188,9 +189,10 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
               <span className="text-[12px] text-muted-foreground">
                 {a.categoria_peso ?? categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "—"} · {existing[a.id]}
               </span>
+              <Button type="button" size="sm" variant="destructive" disabled={elimina.isPending} onClick={() => { if (confirm(`Eliminare l'iscrizione di ${a.cognome} ${a.nome} a questa gara?`)) elimina.mutate(a.id); }}>Elimina iscrizione</Button>
             </div>)}
           </div>
-          <p className="mt-2 text-[12px] text-muted-foreground">Per cambiare peso, disciplina o ritirare un atleta usa <Link to="/area" className="text-primary underline">Le mie iscrizioni</Link>.</p>
+          <p className="mt-2 text-[12px] text-muted-foreground">Per cambiare peso o disciplina usa <Link to="/area" className="text-primary underline">Le mie iscrizioni</Link>.</p>
         </div>}
       </div>}
   </section>;
