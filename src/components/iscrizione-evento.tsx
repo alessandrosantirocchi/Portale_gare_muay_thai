@@ -24,6 +24,22 @@ const campoClass = "mt-1 block w-full min-w-0 rounded-md border border-input bg-
 export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; atleti: Atleta[]; userId: string | null }) {
   const qc = useQueryClient();
   const [existing, setExisting] = useState<Record<string, string>>({});
+  const [ids, setIds] = useState<Record<string, string>>({});
+  const elimina = useMutation({
+    mutationFn: async (atletaId: string) => {
+      const id = ids[atletaId];
+      if (!id || !userId) throw new Error("Iscrizione non trovata.");
+      const { error } = await supabase.from("iscrizioni").delete().eq("id", id).eq("societa_id", userId);
+      if (error) throw error;
+      return atletaId;
+    },
+    onSuccess: (atletaId) => {
+      setExisting(({ [atletaId]: _, ...rest }) => rest);
+      setMsg("Iscrizione eliminata.");
+      for (const key of ["iscritti", "mie-iscrizioni", "conteggi-iscritti", "iscrizioni-atleta", "public-pools"]) qc.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (error) => setMsg(error.message),
+  });
   const [msg, setMsg] = useState("");
   const [sel, setSel] = useState("");
   const [riga, setRiga] = useState<Riga | null>(null);
@@ -31,8 +47,8 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
   useEffect(() => {
     if (!userId) return;
     let active = true;
-    supabase.from("iscrizioni").select("atleta_id, stato").eq("evento_id", evento.id).eq("societa_id", userId).then(({ data }) => {
-      if (active) setExisting(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.stato])));
+    supabase.from("iscrizioni").select("id, atleta_id, stato").eq("evento_id", evento.id).eq("societa_id", userId).then(({ data }) => {
+      if (active) { setExisting(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.stato]))); setIds(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.id]))); }
     });
     return () => { active = false; };
   }, [userId, evento.id]);
@@ -76,7 +92,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       if (!peso || peso <= 0) throw new Error("Inserisci un peso di gara valido.");
       const categoriaPeso = riga.categoria_peso || categoriaPesoIfma(peso, atleta.sesso, atleta.data_nascita, evento.data_evento);
       if (!categoriaPeso) throw new Error("Seleziona la categoria di peso.");
-      const { error } = await supabase.from("iscrizioni").insert({
+      const { data, error } = await supabase.from("iscrizioni").insert({
         evento_id: evento.id, atleta_id: atleta.id, societa_id: userId, stato: "confermata",
         categoria_peso: categoriaPeso, disciplina: riga.disciplina,
         snapshot_nome: atleta.nome, snapshot_cognome: atleta.cognome,
@@ -87,8 +103,9 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         senior_17: riga.senior,
         snapshot_coach: riga.coach || null,
         snapshot_totale_match: Number(riga.totale_match) || 0,
-      });
+      }).select("id").single();
       if (error) throw error;
+      setIds((v) => ({ ...v, [atleta.id]: data.id }));
       return atleta.id;
     },
     onSuccess: (id) => {
@@ -172,9 +189,10 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
               <span className="text-[12px] text-muted-foreground">
                 {a.categoria_peso ?? categoriaPesoIfma(a.peso_kg, a.sesso, a.data_nascita, evento.data_evento) ?? "—"} · {existing[a.id]}
               </span>
+              <Button type="button" size="sm" variant="destructive" disabled={elimina.isPending} onClick={() => { if (confirm(`Eliminare l'iscrizione di ${a.cognome} ${a.nome} a questa gara?`)) elimina.mutate(a.id); }}>Elimina iscrizione</Button>
             </div>)}
           </div>
-          <p className="mt-2 text-[12px] text-muted-foreground">Per cambiare peso, disciplina o ritirare un atleta usa <Link to="/area" className="text-primary underline">Le mie iscrizioni</Link>.</p>
+          <p className="mt-2 text-[12px] text-muted-foreground">Per cambiare peso o disciplina usa <Link to="/area" className="text-primary underline">Le mie iscrizioni</Link>.</p>
         </div>}
       </div>}
   </section>;
