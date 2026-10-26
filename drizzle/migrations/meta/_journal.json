@@ -351,6 +351,13 @@
       "when": 1793005995773,
       "tag": "0049_pools_same_age_band_for_ko",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1793006379911,
+      "tag": "0050_organizer_updates_event_registrations",
+      "breakpoints": true
     }
   ]
 }
