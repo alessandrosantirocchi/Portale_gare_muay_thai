@@ -24,6 +24,22 @@ const campoClass = "mt-1 block w-full min-w-0 rounded-md border border-input bg-
 export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; atleti: Atleta[]; userId: string | null }) {
   const qc = useQueryClient();
   const [existing, setExisting] = useState<Record<string, string>>({});
+  const [ids, setIds] = useState<Record<string, string>>({});
+  const elimina = useMutation({
+    mutationFn: async (atletaId: string) => {
+      const id = ids[atletaId];
+      if (!id || !userId) throw new Error("Iscrizione non trovata.");
+      const { error } = await supabase.from("iscrizioni").delete().eq("id", id).eq("societa_id", userId);
+      if (error) throw error;
+      return atletaId;
+    },
+    onSuccess: (atletaId) => {
+      setExisting(({ [atletaId]: _, ...rest }) => rest);
+      setMsg("Iscrizione eliminata.");
+      for (const key of ["iscritti", "mie-iscrizioni", "conteggi-iscritti", "iscrizioni-atleta", "public-pools"]) qc.invalidateQueries({ queryKey: [key] });
+    },
+    onError: (error) => setMsg(error.message),
+  });
   const [msg, setMsg] = useState("");
   const [sel, setSel] = useState("");
   const [riga, setRiga] = useState<Riga | null>(null);
@@ -31,8 +47,8 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
   useEffect(() => {
     if (!userId) return;
     let active = true;
-    supabase.from("iscrizioni").select("atleta_id, stato").eq("evento_id", evento.id).eq("societa_id", userId).then(({ data }) => {
-      if (active) setExisting(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.stato])));
+    supabase.from("iscrizioni").select("id, atleta_id, stato").eq("evento_id", evento.id).eq("societa_id", userId).then(({ data }) => {
+      if (active) { setExisting(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.stato]))); setIds(Object.fromEntries((data ?? []).map((i) => [i.atleta_id, i.id]))); }
     });
     return () => { active = false; };
   }, [userId, evento.id]);
