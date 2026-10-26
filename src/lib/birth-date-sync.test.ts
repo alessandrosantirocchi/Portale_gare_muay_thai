@@ -24,3 +24,10 @@ test("Birth-date synchronization preserves closed and past registration history"
   assert.match(sql, /e\.fine_iscrizioni > now\(\)/);
   assert.match(sql, /e\.stato IN \('aperto', 'iscrizioni aperte'\)/);
 });
+
+test("Registration validation accepts only the roster birth date for an open event", () => {
+  const validator = readFileSync(new URL("../../drizzle/migrations/0052_allow_validated_birth_snapshot_sync.sql", import.meta.url), "utf8");
+  assert.match(validator, /NEW\.snapshot_data_nascita IS NOT DISTINCT FROM a\.data_nascita/);
+  assert.match(validator, /AND e\.stato IN \('aperto', 'iscrizioni aperte'\) AND e\.fine_iscrizioni > now\(\)/);
+  assert.match(validator, /ELSE\s+NEW\.snapshot_data_nascita := OLD\.snapshot_data_nascita/);
+});
