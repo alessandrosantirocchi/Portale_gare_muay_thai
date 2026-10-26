@@ -149,6 +149,22 @@ function Auth() {
           )}
           <Campo label="Email" type="email" value={email} onChange={setEmail} required />
           <Campo label="Password" type="password" value={password} onChange={setPassword} required />
+          {mode === "login" && (
+            <button
+              type="button"
+              className="-mt-2 self-end text-[12px] text-primary underline"
+              onClick={async () => {
+                setErrore(null);
+                setInfo(null);
+                if (!email) return setErrore("Scrivi prima la tua email, poi clicca qui.");
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+                if (error) setErrore(error.message);
+                else setInfo("Ti abbiamo inviato un'email con il link per scegliere una nuova password.");
+              }}
+            >
+              Password dimenticata?
+            </button>
+          )}
           {mode === "signup" && (
             <label className="flex items-start gap-2 text-[12px] text-muted-foreground">
               <input type="checkbox" required className="mt-0.5" />
