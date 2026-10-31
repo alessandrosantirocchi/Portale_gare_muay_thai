@@ -28,7 +28,7 @@ export function categoriePesoPerCategoria(sesso: string, categoria: string): str
   const limiti = fascia[gender];
   const base = limiti.map((peso) => `-${peso} kg`);
   // Tutte le fasce hanno la categoria + per entrambi i generi (es. Young Cadet +60, Older Cadet +69/+65).
-  return [...base, `+${limiti[limiti.length - 1]} kg`];
+  return limiti[limiti.length - 1] === 75 ? base : [...base, `+${limiti[limiti.length - 1]} kg`];
 }
 
 function etaCompiuta(nascita: string, data: string): number | null {
