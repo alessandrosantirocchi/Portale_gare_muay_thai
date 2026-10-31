@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Unificare Senior nei filtri, iscrizioni e matchmaking; chiarire il passaggio Junior e verificare pool e anti-derby senza cambiare le regole.
+- [x] Unificare Senior nei filtri, iscrizioni e matchmaking; chiarire il passaggio Junior e verificare pool e anti-derby senza cambiare le regole (15 test e verifica nella pagina gara e area admin).
 
 - [x] Correggere la nascita nell’iscrizione di Scurtarelli e sincronizzare le correzioni del roster nelle gare aperte; verificati 17 anni · JUNIOR nel matchmaking e 8 test superati.
 
