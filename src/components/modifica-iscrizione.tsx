@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CLASSI, CATEGORIE, etaAllaData } from "@/lib/fight-hub";
+import { CLASSI, CATEGORIE, categoriaEtaGara, etaAllaData } from "@/lib/fight-hub";
 import { Button } from "@/components/ui/button";
 import { categoriePesoRoster } from "@/lib/pesi-ifma";
 import { InfoClasse } from "@/components/info-classe";
@@ -21,14 +21,14 @@ export function ModificaIscrizione({ iscrizione: i, userId }: { iscrizione: Regi
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [form, setForm] = useState({ peso: String(i.snapshot_peso_kg ?? ""), classe: i.snapshot_serie ?? "N", categoria: i.snapshot_categoria ?? "SENIOR", coach: i.snapshot_coach ?? "", match: String(i.snapshot_totale_match ?? 0), disciplina: i.disciplina ?? "", senior_17: i.senior_17 ?? false, categoria_peso: i.categoria_peso ?? "" });
+  const [form, setForm] = useState({ peso: String(i.snapshot_peso_kg ?? ""), classe: i.snapshot_serie ?? "N", categoria: i.senior_17 ? "JUNIOR 16–18 ANNI" : categoriaEtaGara(i.snapshot_categoria) || "SENIOR 19–40 ANNI", coach: i.snapshot_coach ?? "", match: String(i.snapshot_totale_match ?? 0), disciplina: i.disciplina ?? "", senior_17: i.senior_17 ?? false, categoria_peso: i.categoria_peso ?? "" });
   const [roster, setRoster] = useState(false);
   const evento = i.eventi;
   const editable = !!evento && ["aperto", "iscrizioni aperte"].includes(evento.stato) && new Date(evento.fine_iscrizioni).getTime() > Date.now() && (!evento.apertura_iscrizioni || new Date(evento.apertura_iscrizioni).getTime() <= Date.now());
   const refresh = () => { qc.invalidateQueries({ queryKey: ["mie-iscrizioni"] }); qc.invalidateQueries({ queryKey: ["iscritti"] }); qc.invalidateQueries({ queryKey: ["iscrizioni-atleta"] }); qc.invalidateQueries({ queryKey: ["miei-atleti"] }); qc.invalidateQueries({ queryKey: ["conteggi-iscritti"] }); qc.invalidateQueries({ queryKey: ["public-pools"] }); };
   const save = useMutation({ mutationFn: async () => {
     if (!editable) throw new Error("Le iscrizioni sono chiuse.");
-    const values = { snapshot_peso_kg: form.peso ? Number(form.peso) : null, snapshot_serie: form.classe, snapshot_categoria: form.senior_17 ? "SENIOR" : form.categoria, senior_17: form.senior_17, snapshot_coach: form.coach, snapshot_totale_match: Number(form.match), disciplina: form.disciplina, categoria_peso: form.categoria_peso || null };
+    const values = { snapshot_peso_kg: form.peso ? Number(form.peso) : null, snapshot_serie: form.classe, snapshot_categoria: categoriaEtaGara(form.categoria, form.senior_17), senior_17: form.senior_17, snapshot_coach: form.coach, snapshot_totale_match: Number(form.match), disciplina: form.disciplina, categoria_peso: form.categoria_peso || null };
     if (!values.snapshot_peso_kg || values.snapshot_peso_kg <= 0) throw new Error("Inserisci un peso valido.");
     const { error } = await supabase.from("iscrizioni").update(values).eq("id", i.id).eq("societa_id", userId);
     if (error) throw error;

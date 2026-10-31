@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { categoriaEtaGara } from "@/lib/fight-hub";
 
 export type Evento = {
   id: string;
@@ -99,7 +100,7 @@ export async function fetchIscrittiEvento(eventoId: string) {
     .eq("evento_id", eventoId)
     .order("created_at", { ascending: true });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((i) => ({ ...i, categoria_eta: categoriaEtaGara(i.categoria_eta, i.senior_17 ?? false) }));
 }
 
 export async function fetchTitoli() {

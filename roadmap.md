@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Unificare Senior nei filtri, iscrizioni e matchmaking; chiarire il passaggio Junior e verificare pool e anti-derby senza cambiare le regole.
+
 - [x] Correggere la nascita nell’iscrizione di Scurtarelli e sincronizzare le correzioni del roster nelle gare aperte; verificati 17 anni · JUNIOR nel matchmaking e 8 test superati.
 
 - [x] Adeguare fasce di età e categorie di peso alla tabella IFMA (roster + DB, migrazione 0024)
