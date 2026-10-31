@@ -7,6 +7,15 @@ const migration = readFileSync(new URL("../../drizzle/migrations/0034_align_athl
 const accepted = new Set([...migration.matchAll(/'([+-][\d.]+ kg)'/g)].map((match) => match[1]));
 
 describe("Categorie giovanili accettate dal roster e dal database", () => {
+  test("La tendina iscrizione propone -75 una sola volta e non +75", () => {
+    for (const gender of ["M", "F"]) {
+      for (const band of ["YOUNG CADET 10–12 ANNI", "OLD CADET 13–15 ANNI", "JUNIOR 16–18 ANNI", "SENIOR 19–40 ANNI"]) {
+        const options = categoriePesoPerCategoria(gender, band);
+        assert.equal(options.includes("+75 kg"), false);
+        assert.equal(options.filter((option) => option === "-75 kg").length, 1);
+      }
+    }
+  });
   test("Young Cadet di 67 kg rientra nella -67", () => {
     assert.equal(categoriaPesoIfma(67, "M", "2015-01-01", "2026-10-22"), "-67 kg");
     assert.equal(accepted.has("-67 kg"), true);
