@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Atleta, Evento } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { categoriaPesoIfma, categoriePesoPerCategoria } from "@/lib/pesi-ifma";
-import { CLASSI, categorieEtaDisponibili, etaAllaData } from "@/lib/fight-hub";
+import { CLASSI, CATEGORIA_SENIOR, categoriaEtaGara, categorieEtaDisponibili, etaAllaData } from "@/lib/fight-hub";
 import { InfoClasse } from "@/components/info-classe";
 
 type Riga = {
@@ -74,7 +74,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
       disciplina: discipline.find((d) => d.toUpperCase() === (a.disciplina ?? "").toUpperCase()) ?? discipline[0] ?? "",
       peso_kg: String(a.peso_kg ?? ""),
       serie: formato === "Light" ? "" : (a.serie ?? "N"),
-      categoria: a.categoria && disponibili.includes(a.categoria) ? a.categoria : (disponibili[0] ?? ""),
+      categoria: disponibili.includes(categoriaEtaGara(a.categoria)) ? categoriaEtaGara(a.categoria) : (disponibili[0] ?? ""),
       coach: a.coach ?? "",
       totale_match: String(a.totale_match ?? 0),
       senior: false,
@@ -99,7 +99,7 @@ export function IscrizioneEvento({ evento, atleti, userId }: { evento: Evento; a
         snapshot_sesso: atleta.sesso, snapshot_data_nascita: atleta.data_nascita,
         snapshot_team: atleta.nome_societa, snapshot_peso_kg: peso,
         snapshot_serie: riga.serie || null,
-        snapshot_categoria: riga.senior ? "SENIOR" : riga.categoria || "SENIOR",
+        snapshot_categoria: categoriaEtaGara(riga.categoria, riga.senior) || CATEGORIA_SENIOR,
         senior_17: riga.senior,
         snapshot_coach: riga.coach || null,
         snapshot_totale_match: Number(riga.totale_match) || 0,

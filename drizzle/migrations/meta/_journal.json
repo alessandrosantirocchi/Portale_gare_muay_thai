@@ -372,6 +372,13 @@
       "when": 1793007879484,
       "tag": "0052_allow_validated_birth_snapshot_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1793440946772,
+      "tag": "0053_canonical_senior_registration_category",
+      "breakpoints": true
     }
   ]
 }

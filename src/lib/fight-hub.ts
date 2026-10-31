@@ -1,7 +1,17 @@
 import type { Database } from "@/integrations/supabase/types";
 
 export const CLASSI = ["A", "B", "C", "N"] as const;
-export const CATEGORIE = ["SENIOR", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 ANNI", "YOUNG CADETTI 10–12 ANNI", "GIOCO SPORT 6–9 ANNI", "ALTRO"] as const;
+export const CATEGORIE = ["SENIOR 19–40 ANNI", "JUNIOR 16–18 ANNI", "OLD CADETTI 13–15 ANNI", "YOUNG CADETTI 10–12 ANNI", "GIOCO SPORT 6–9 ANNI", "ALTRO"] as const;
+export const CATEGORIA_SENIOR = "SENIOR 19–40 ANNI";
+
+export function categoriaEtaGara(categoria: string | null | undefined, passaggioSenior = false) {
+  const valore = (categoria ?? "").trim().toUpperCase();
+  return passaggioSenior || /^SENIOR(?:\s|$)/.test(valore) ? CATEGORIA_SENIOR : valore;
+}
+
+export function etichettaCategoriaEta(categoria: string | null | undefined, passaggioSenior = false) {
+  return passaggioSenior ? "JUNIOR → Senior" : categoriaEtaGara(categoria) || "—";
+}
 export const FORMATI_ATLETA = ["KO", "Light"] as const;
 export const CATEGORIE_ETA_PER_FORMATO: Record<string, readonly string[]> = {
   KO: ["JUNIOR 16–18 ANNI", "SENIOR 19–40 ANNI"],
@@ -39,7 +49,7 @@ export function datiGara(i: Iscrizione, dataEvento: string) {
     peso: i.snapshot_peso_kg ?? i.atleti?.peso_kg ?? null,
     disciplina: i.disciplina ?? i.atleti?.disciplina ?? "",
     serie: i.snapshot_serie ?? i.atleti?.serie ?? "",
-    categoria: i.snapshot_categoria ?? i.atleti?.categoria ?? "",
+    categoria: categoriaEtaGara(i.snapshot_categoria ?? i.atleti?.categoria, i.senior_17 ?? false),
     coach: i.snapshot_coach ?? "",
     match: i.snapshot_totale_match ?? i.atleti?.totale_match ?? 0,
   };
@@ -71,14 +81,18 @@ export function compatibilita(a: Iscrizione, b: Iscrizione, dataEvento: string) 
 
 export function motivoSenzaMatch(i: Iscrizione, altri: Iscrizione[], dataEvento: string) {
   const d = datiGara(i, dataEvento);
-  const disponibili = altri.filter((a) => a.id !== i.id && a.societa_id !== i.societa_id);
-  if (!disponibili.some((a) => datiGara(a, dataEvento).sesso === d.sesso)) return "Nessun avversario dello stesso genere";
-  if (!disponibili.some((a) => datiGara(a, dataEvento).sesso === d.sesso && datiGara(a, dataEvento).disciplina.toUpperCase() === d.disciplina.toUpperCase())) return "Disciplina non compatibile";
-  const candidati = disponibili.map((a) => compatibilita(i, a, dataEvento)).filter((c) => c !== null);
-  if (candidati.every((c) => c.categoriaDiversa)) return "Nessun atleta compatibile nella stessa categoria";
-  if (candidati.every((c) => c.serieDiversa)) return "Classe non compatibile";
-  if (candidati.every((c) => c.peso !== null && c.peso > 5)) return "Differenza peso elevata";
-  if (candidati.every((c) => c.esperienza > 5)) return "Differenza esperienza elevata";
+  let candidati = altri.filter((a) => a.id !== i.id);
+  if (!candidati.length) return "Nessun altro atleta disponibile";
+  const filtra = (condizione: (a: Iscrizione) => boolean) => { candidati = candidati.filter(condizione); return candidati.length > 0; };
+  if (!filtra((a) => datiGara(a, dataEvento).disciplina.toUpperCase() === d.disciplina.toUpperCase())) return "Nessun atleta della stessa disciplina";
+  if (!filtra((a) => a.atleti?.formato === i.atleti?.formato)) return "Nessun atleta dello stesso formato KO/Light";
+  if (!filtra((a) => fasciaGara(a, datiGara(a, dataEvento).categoria) === fasciaGara(i, d.categoria))) return "Nessun atleta della stessa categoria d’età";
+  if (!filtra((a) => datiGara(a, dataEvento).sesso === d.sesso)) return "Nessun atleta dello stesso genere";
+  if (!filtra((a) => a.categoria_peso === i.categoria_peso)) return "Nessun atleta della stessa categoria di peso";
+  if (i.atleti?.formato === "KO" && !filtra((a) => datiGara(a, dataEvento).serie === d.serie)) return "Nessun atleta della stessa classe KO";
+  if (!filtra((a) => a.societa_id !== i.societa_id)) return "Solo compagni della stessa società: blocco anti-derby";
+  if (!filtra((a) => { const peso = datiGara(a, dataEvento).peso; return peso == null || d.peso == null || Math.abs(peso - d.peso) <= 5; })) return "Differenza peso superiore a 5 kg";
+  if (!candidati.some((a) => (compatibilita(i, a, dataEvento)?.score ?? 0) >= 55)) return "Compatibilità inferiore a 55/100";
   return "Nessun abbinamento confermato";
 }
 
